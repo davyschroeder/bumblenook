@@ -78,6 +78,11 @@ node test/t3.js
 
 Some of the older numbered tests were written for earlier versions and may need updating.
 
+## Artwork
+
+`node tools/art.js` builds a town in the sandbox and photographs it: the box art, the wide picture and (with
+`ONLY=clip`) the frames of the gameplay clip on the website. The pictures land in `art/`, which is not committed.
+
 ## Credits
 
 - [three.js](https://threejs.org) r149 (`lib/three.min.js`), MIT licence.
