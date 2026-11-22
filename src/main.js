@@ -13,6 +13,7 @@ function resize() {
   renderer.setSize(w, h, false);
   camera.aspect = w / h; camera.fov = w < h ? Math.min(52, 32 / Math.sqrt(w / h)) : 32;
   camera.updateProjectionMatrix();
+  gfxResize();
 }
 function frame(now) {
   requestAnimationFrame(frame);
@@ -55,7 +56,7 @@ function frame(now) {
   _uiT -= dt;
   if (G.started && (UIS.dirty || _uiT <= 0)) { _uiT = 0.25; refreshUI(); }
   _saveT += dt; if (_saveT > 40) { _saveT = 0; saveGame(); }
-  renderer.render(scene, camera);
+  gfxTick(); gfxRender(dt);
 }
 function boot(hotData) {
   const cv = $('c');

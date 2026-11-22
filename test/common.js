@@ -11,6 +11,8 @@ async function open(opts) {
     if (u.startsWith('http://localhost')) return r.continue();
     return r.abort();
   });
+  // tests run on a software renderer: use the plain picture unless a test asks for the full one
+  if (!opts.gfx) await ctx.addInitScript(() => { try { if (!localStorage.getItem('bumblenook-settings')) localStorage.setItem('bumblenook-settings', JSON.stringify({ gfx: 'mid', gfxSet: true })); } catch (e) { /* no storage */ } });
   const page = await ctx.newPage();
   const errors = [];
   page.on('console', (m) => { if (m.type() === 'error' && !/ERR_FAILED|Failed to load resource/.test(m.text())) errors.push(m.text()); });

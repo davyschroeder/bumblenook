@@ -508,7 +508,7 @@ function photoMode(on) {
   else { G.time = UIS.photoTime; CAM.tilt = 0; setSpeed(UIS.photoPaused ? 0 : UIS.speed); }
 }
 function refreshSettingsUI() {
-  $('m-gfx').textContent = 'Graphics: ' + (SET.gfx === 'low' ? 'light (faster)' : 'full');
+  $('m-gfx').textContent = 'Graphics: ' + (SET.gfx === 'low' ? 'light (faster)' : SET.gfx === 'mid' ? 'plain' : 'beautiful');
   $('m-big').textContent = 'Text size: ' + (SET.big ? 'large' : 'normal');
   $('m-lang').textContent = 'Language: ' + (SET.lang === 'nl' ? 'Nederlands' : 'English');
 }
@@ -684,7 +684,7 @@ function initHud() {
     else if (a === 'music') { setMusic(!AU.musicOn); t.setAttribute('aria-pressed', String(AU.musicOn)); }
     else if (a === 'save') { toast(saveGame() ? 'Village saved in this browser.' : 'Saving isn\'t possible here.', 'good'); closeModal(); }
     else if (a === 'full') { const el = document.documentElement; try { if (document.fullscreenElement) document.exitFullscreen(); else if (el.requestFullscreen) el.requestFullscreen().catch(() => toast('Full screen isn\'t available here.', 'bad')); else toast('Full screen isn\'t available here.', 'bad'); } catch (er) { /* optional */ } closeModal(); }
-    else if (a === 'gfx') { SET.gfx = SET.gfx === 'low' ? 'high' : 'low'; saveSettings(); applySettings(); refreshSettingsUI(); }
+    else if (a === 'gfx') { SET.gfx = SET.gfx === 'high' ? 'mid' : SET.gfx === 'mid' ? 'low' : 'high'; SET.gfxSet = true; saveSettings(); applySettings(); refreshSettingsUI(); }
     else if (a === 'big') { SET.big = !SET.big; saveSettings(); applySettings(); refreshSettingsUI(); }
     else if (a === 'lang') { SET.lang = SET.lang === 'nl' ? 'en' : 'nl'; _i18nDirty = true; TUT.key = ''; saveSettings(); applySettings(); refreshSettingsUI(); if (G.started) refreshUI(); translateDom(); }
     else if (a === 'photo') photoMode(true);

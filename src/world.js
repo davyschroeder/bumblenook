@@ -107,7 +107,7 @@ function buildTerrain() {
   g.setAttribute('position', new THREE.BufferAttribute(W.tPos, 3));
   g.setAttribute('color', new THREE.BufferAttribute(W.tCol, 3));
   g.setAttribute('normal', new THREE.BufferAttribute(W.tNor, 3));
-  W.terrain = new THREE.Mesh(g, MAT.main);
+  W.terrain = new THREE.Mesh(g, terrainMaterial());
   W.terrain.receiveShadow = true;
   worldGroup.add(W.terrain);
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(600, 600), new THREE.MeshBasicMaterial({ color: 0x2f7f93 }));
@@ -123,13 +123,13 @@ function buildWater() {
   const mat = new THREE.ShaderMaterial({
     transparent: true,
     uniforms: {
-      hmap: { value: W.hmap }, time: SWAY.uTime, tint: { value: new THREE.Color(1, 1, 1) },
+      hmap: { value: W.hmap }, time: SWAY.uTime, lin: { value: 0 }, sunK: { value: 1 }, tint: { value: new THREE.Color(1, 1, 1) },
       shallow: { value: new THREE.Color(0x7fdcd6) }, deep: { value: new THREE.Color(0x2f8fb5) },
       fogC: { value: new THREE.Color(0xffffff) }, fogN: { value: 60 }, fogF: { value: 160 },
     },
     vertexShader: `varying vec3 wp; varying float vd;
       void main(){ vec4 w = modelMatrix*vec4(position,1.); wp = w.xyz; vec4 mv = viewMatrix*w; vd = -mv.z; gl_Position = projectionMatrix*mv; }`,
-    fragmentShader: `uniform sampler2D hmap; uniform float time; uniform vec3 tint, shallow, deep, fogC; uniform float fogN, fogF;
+    fragmentShader: `uniform sampler2D hmap; uniform float time, lin, sunK; uniform vec3 tint, shallow, deep, fogC; uniform float fogN, fogF;
       varying vec3 wp; varying float vd;
       void main(){
         vec2 uv = (wp.xz + ${HALF.toFixed(1)}) / ${N.toFixed(1)};
@@ -141,6 +141,10 @@ function buildWater() {
         vec3 col = mix(shallow, deep, smoothstep(0., .95, depth));
         float sp = sin(wp.x*3.1 + time*1.3 + sin(wp.z*2.3 + time))*sin(wp.z*2.7 - time*1.1);
         col += smoothstep(.9, 1., sp)*.1;
+        float sw = sin(wp.x*.55 + wp.z*.32 + time*.45) + sin(wp.x*.21 - wp.z*.63 - time*.33);
+        col *= 1. + .05*sw*smoothstep(.2, 1., depth);
+        float gl = sin(wp.x*7.3 + time*2.1 + sin(wp.z*5.1 - time*1.3)*1.7)*sin(wp.z*6.7 - time*1.7 + sin(wp.x*4.3 + time)*1.4);
+        col += vec3(1., .95, .8)*smoothstep(.93, 1., gl)*(.35 + .35*sw*.5)*sunK*smoothstep(.15, .7, depth);
         float band = sin(depth*24. - time*1.5 + w*1.6);
         float foam = smoothstep(.5, .9, band)*smoothstep(.4, .08, depth);
         foam = max(foam, smoothstep(.075, .02, depth));
@@ -148,7 +152,7 @@ function buildWater() {
         float alpha = max(mix(.6, .96, smoothstep(0., .7, depth)), foam);
         col *= tint;
         col = mix(col, fogC, smoothstep(fogN, fogF, vd));
-        gl_FragColor = vec4(pow(col, vec3(1./2.2)), alpha);
+        gl_FragColor = vec4(mix(pow(col, vec3(1./2.2)), col, lin), alpha);
       }`,
   });
   W.water = new THREE.Mesh(new THREE.PlaneGeometry(600, 600), mat);

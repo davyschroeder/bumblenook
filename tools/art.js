@@ -9,10 +9,11 @@ const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'application/javascr
 const SEED = +(process.env.SEED || 4242), TIME = +(process.env.TIME || 0.5), SEASON = +(process.env.SEASON || 0);
 
 async function town(page, started) {
-  if (!started) { await page.click('#s-sand'); await page.waitForTimeout(600); }
-  return page.evaluate(({ SEED, TIME, SEASON }) => {
+  if (!started) { await page.evaluate(() => document.getElementById('s-sand').click()); await page.waitForTimeout(1500); }
+  return page.evaluate(({ SEED, TIME, SEASON, GFXSET }) => {
     const { G, W, BT, api, UIS, CAM } = __hh;
     api.newGame(SEED, 'sandbox'); G.started = true; UIS.paused = true; G.tut = 6;
+    __hh.SET.gfxSet = true; if (GFXSET) { __hh.SET.gfx = GFXSET; api.applySettings(); }
     const c = G.center, N = 56, H = 28;
     for (let j = c.j - 1; j <= c.j + 3; j++) for (let i = c.i - 1; i <= c.i + 3; i++) if (!(i >= c.i && i < c.i + 3 && j >= c.j && j < c.j + 3) && !api.canPlace('path', i, j)) api.placeBuilding('path', i, j, 0, { silent: true });
     const list = ['house', 'house', 'well', 'bakery', 'market', 'tavern', 'house', 'fountain', 'apiary', 'flowers', 'flowers', 'lantern', 'lantern', 'bench', 'bench',
@@ -44,7 +45,7 @@ async function town(page, started) {
     document.getElementById('modal').hidden = true;
     const bb = (t) => { const b = G.buildings.find((b) => b.type === t); return b ? [+b.cx.toFixed(1), +b.cz.toFixed(1)] : null; };
     return { placed: placed.length, missing, pop: G.villagers.length, center: [c.cx, c.cz], lighthouse: bb('lighthouse'), cathedral: bb('cathedral'), hive: bb('greathive'), windmill: bb('windmill') };
-  }, { SEED, TIME, SEASON });
+  }, { SEED, TIME, SEASON, GFXSET: process.env.GFX || '' });
 }
 const HIDE = '#hud,#labels,#coach,#toasts,#floats,#photo,#modal{display:none!important}';
 const cam = (page, o) => page.evaluate((o) => { const { CAM, G } = __hh; const c = G.center; CAM.follow = null; CAM.attract = false; CAM.gx = CAM.tx = c.cx + (o.dx || 0); CAM.gz = CAM.tz = c.cz + (o.dz || 0); CAM.gd = CAM.dist = o.dist; CAM.gyaw = CAM.yaw = o.yaw; if (o.pitch) CAM.pitch = o.pitch; }, o);
@@ -74,7 +75,7 @@ const WIDE = `<div id="art" style="position:fixed;inset:0;z-index:99;pointer-eve
     const page = await browser.newPage({ viewport: { width: s.w, height: s.h }, deviceScaleFactor: +(process.env.DSF || 2) });
     page.on('pageerror', (e) => console.log('PAGEERROR', e.message));
     await page.goto('http://localhost:8125/'); await page.waitForTimeout(2500);
-    console.log(s.name, JSON.stringify(await town(page)));
+    console.log(s.name, JSON.stringify(await town(page)), 'post', await page.evaluate(() => __hh.GFX.on + ' broken ' + __hh.GFX.broken));
     await page.addStyleTag({ content: HIDE }); await cam(page, s.cam); await page.waitForTimeout(2500);
     await page.screenshot({ path: path.join(out, 'plain-' + s.name + '.png') });
     await page.evaluate((h) => document.body.insertAdjacentHTML('beforeend', h), s.overlay); await page.evaluate(() => document.fonts.ready); await page.waitForTimeout(400);

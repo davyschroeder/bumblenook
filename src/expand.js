@@ -305,6 +305,7 @@ function applySettings() {
   for (const c of clouds) c.visible = !low;
   document.body.classList.toggle('bigtext', !!SET.big);
   document.documentElement.lang = SET.lang;
+  gfxApply();
   if (typeof resize === 'function' && camera) resize();
 }
 

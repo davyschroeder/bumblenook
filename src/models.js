@@ -281,6 +281,7 @@ function makeBuildingGroup(type, variant) {
     ex.beam.add(b1, b2); g.add(ex.beam);
   }
   if (EXTRA_FN[type]) EXTRA_FN[type](g, ex);
+  dressBuilding(g, type);
   return g;
 }
 

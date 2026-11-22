@@ -42,6 +42,7 @@ There is nothing to install for the build; it only needs Node.
 | `src/core.js` | Constants, random numbers, the model builder, colours and materials. |
 | `src/world.js` | The island: terrain, water, trees, rocks, weather, sky, day and night. |
 | `src/models*.js` | Buildings, villagers and animals. |
+| `src/gfx.js` | The look: soft glow, miniature depth of field and colour grading on top of the picture, contact shadows, light on the ground at night, detail in the grass. Graphics has three settings; a phone that cannot keep up drops to the plain picture by itself. |
 | `src/audio.js` | Sound effects and music. |
 | `src/sim.js` | Buildings, pathfinding, villagers and their jobs, saving and loading. Pacing lives in `PACE`. |
 | `src/progress.js` | Village levels, requests, badges, festivals and the trading ship. |
