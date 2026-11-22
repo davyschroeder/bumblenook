@@ -257,7 +257,7 @@ function cachedGeo(key, fn) { return _geoCache[key] || (_geoCache[key] = fn()); 
 // Group for a building: static body + glowing windows + animated extras
 function makeBuildingGroup(type, variant) {
   const g = new THREE.Group(), m = getModel(type, variant);
-  const body = new THREE.Mesh(m.geo, MAT.main); body.castShadow = true; body.receiveShadow = true;
+  const body = new THREE.Mesh(m.geo, MAT.build); body.castShadow = true; body.receiveShadow = true;
   g.add(body); g.userData.body = body;
   if (m.glow) { g.userData.glow = new THREE.Mesh(m.glow, MAT.glow); g.add(g.userData.glow); }
   const ex = g.userData;

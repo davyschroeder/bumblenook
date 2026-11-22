@@ -329,7 +329,7 @@ function renderThumbs() {
         g.add(new THREE.Mesh(b.build().geo, MAT.main));
       } else {
         const m = getModel(type, type === 'house' ? 0 : type === 'flowers' ? 1 : 0);
-        g.add(new THREE.Mesh(m.geo, MAT.main));
+        g.add(new THREE.Mesh(m.geo, MAT.build));
         if (m.glow) g.add(new THREE.Mesh(m.glow, new THREE.MeshBasicMaterial({ color: 0xffd98a })));
         if (type === 'windmill') { const bl = new THREE.Mesh(cachedGeo('blades', mBlades), MAT.main); bl.position.set(0, 1.6, 0.6); bl.rotation.z = 0.4; g.add(bl); }
         if (type === 'farm') { const cr = new THREE.Mesh(cachedGeo('crops', mCrops), new THREE.MeshLambertMaterial({ color: 0xd9c04f })); g.add(cr); }

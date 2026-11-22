@@ -171,7 +171,7 @@ function updateHmap() {
 const TREE_TINT = [[0x6fb04a, 0x5fa243, 0x84c057, 0x9fc94f, 0x79b94f, 0xe2a23c], [0x3f8a55, 0x357a4c, 0x4a9660]];
 function buildNatureMeshes() {
   const mkMat = (sway) => {
-    const m = new THREE.MeshLambertMaterial({ color: 0xffffff });
+    const m = new THREE.MeshLambertMaterial({ color: 0xffffff, vertexColors: true });
     if (sway) m.onBeforeCompile = (sh) => {
       sh.uniforms.uTime = SWAY.uTime;
       sh.vertexShader = 'uniform float uTime;\n' + sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
@@ -186,9 +186,9 @@ function buildNatureMeshes() {
   const flat = (g) => { const n = g.index ? g.toNonIndexed() : g; n.computeVertexNormals(); return n; };
   let b = new MB(); b.cyl(0.06, 0.1, 0.55, 5, 0, 0, 0, 0xffffff);
   const trunkG = b.build().geo;
-  b = new MB(); b.sph(0.46, 0, 0.86, 0, 0xffffff, [1, 0.92, 1]); b.sph(0.32, 0.12, 1.26, 0.05, 0xffffff); b.sph(0.26, -0.26, 0.98, 0.12, 0xffffff);
+  b = new MB(); b.sph(0.46, 0, 0.86, 0, 0xffffff, [1, 0.92, 1], 1); b.sph(0.32, 0.12, 1.26, 0.05, 0xffffff, null, 1); b.sph(0.26, -0.28, 0.98, 0.14, 0xffffff, null, 1); b.sph(0.24, 0.3, 0.9, -0.16, 0xf2f2f2, null, 1); b.sph(0.2, -0.08, 1.08, -0.3, 0xececec);
   const roundG = b.build().geo;
-  b = new MB(); b.cone(0.48, 0.6, 6, 0, 0.36, 0, 0xffffff); b.cone(0.38, 0.55, 6, 0, 0.72, 0, 0xffffff); b.cone(0.26, 0.5, 6, 0, 1.08, 0, 0xffffff);
+  b = new MB(); b.cone(0.5, 0.52, 7, 0, 0.34, 0, 0xe9e9e9); b.cone(0.41, 0.5, 7, 0, 0.62, 0, 0xf2f2f2, [0, 0.45, 0]); b.cone(0.32, 0.48, 7, 0, 0.9, 0, 0xfafafa, [0, 0.9, 0]); b.cone(0.22, 0.46, 7, 0, 1.18, 0, 0xffffff, [0, 1.35, 0]);
   const pineG = b.build().geo;
   const mk = (g, mat, max, shadow) => {
     const m = new THREE.InstancedMesh(g, mat, max);
@@ -196,11 +196,11 @@ function buildNatureMeshes() {
     for (let q = 0; q < max; q++) { m.setMatrixAt(q, ZERO_M); m.setColorAt(q, _c.set(0xffffff)); }
     worldGroup.add(m); return m;
   };
-  W.mTrunk = mk(trunkG, new THREE.MeshLambertMaterial({ color: 0x8a5d3b }), MAXT, true);
+  W.mTrunk = mk(trunkG, new THREE.MeshLambertMaterial({ color: 0x8a5d3b, vertexColors: true }), MAXT, true);
   W.mRound = mk(roundG, mkMat(true), MAXT, true);
   W.mPine = mk(pineG, mkMat(true), MAXT, true);
   W.mRock = mk(flat(new THREE.DodecahedronGeometry(0.42, 0)), new THREE.MeshLambertMaterial({ color: 0xffffff }), MAXR, true);
-  b = new MB(); b.sph(0.3, 0, 0.2, 0, 0xffffff, [1, 0.75, 1]); b.sph(0.2, 0.2, 0.18, 0.1, 0xffffff, [1, 0.8, 1]);
+  b = new MB(); b.sph(0.3, 0, 0.2, 0, 0xffffff, [1, 0.75, 1], 1); b.sph(0.2, 0.2, 0.18, 0.1, 0xffffff, [1, 0.8, 1]); b.sph(0.17, -0.2, 0.16, -0.12, 0xf0f0f0, [1, 0.8, 1]);
   W.mBush = mk(b.build().geo, mkMat(false), MAXB, true);
   b = new MB();
   for (const p of [[0.1, 0.36, 0.2], [-0.2, 0.3, 0.12], [0.24, 0.26, -0.08], [-0.05, 0.4, -0.12], [0.28, 0.3, 0.2], [-0.24, 0.22, -0.14], [0.02, 0.3, 0.28]])

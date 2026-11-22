@@ -1,6 +1,6 @@
 // Bundles src/*.js into one page. dist/bumblenook.html is the page body; dist/index.html is a standalone copy.
 const fs = require('fs'), path = require('path');
-const order = ['core', 'world', 'gfx', 'models', 'models2', 'models3', 'audio', 'sim', 'progress', 'expand', 'more', 'i18n', 'ui', 'tutorial', 'main'];
+const order = ['core', 'world', 'gfx', 'models', 'models2', 'models3', 'models4', 'audio', 'sim', 'progress', 'expand', 'more', 'i18n', 'ui', 'tutorial', 'main'];
 const js = order.map((n) => fs.readFileSync(path.join(__dirname, 'src', n + '.js'), 'utf8')).join('\n');
 const CDN = 'https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js';
 const bundle = '(function(){\n"use strict";\n' + js + '\nwindow.__hh={get renderer(){return renderer;},TRACKS:TRACKS,TREASURES:TREASURES,startExpedition:startExpedition,PACE:PACE,QUESTS:QUESTS,doTrade:doTrade,TRADES:TRADES,G:G,W:W,CAM:CAM,UIS:UIS,BT:BT,TUT:TUT,LEVELS:LEVELS,ACH:ACH,TECHS:TECHS,STORY:STORY,FISH:FISH,SET:SET,UPGRADES:UPGRADES,SEASONS:SEASONS,CIVICS:CIVICS,NL:NL,GFX:GFX,api:{applySettings:applySettings,tr:trText,civic:buyCivic,capOf:capOf,research:research,upgrade:upgradeBuilding,upgradeBlock:upgradeBlock,explore:exploreSite,newGame:newGame,loadGame:loadGame,readSave:readSave,lock:lockReason,deliver:deliverMission,festival:holdFestival,newMission:newMission,blocks:sealsOff,tutSpot:tutSpot,placeBuilding:placeBuilding,canPlace:canPlace,assignWorker:assignWorker,serialize:serialize,screenOf:screenOf,stepSim:stepSim,trees:trees,rocks:rocks,bushes:bushes}};\n})();';

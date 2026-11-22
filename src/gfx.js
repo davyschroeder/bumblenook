@@ -151,3 +151,46 @@ function terrainMaterial() {
   };
   return m;
 }
+
+// buildings: surfaces drawn into the flat colours. Roofs get rows of shingles, timber gets planks,
+// stone gets blocks and plaster a soft, uneven wash; everything is a touch darker where it meets the ground.
+function buildingMaterial() {
+  const m = new THREE.MeshLambertMaterial({ vertexColors: true });
+  m.extensions = { derivatives: true };
+  m.onBeforeCompile = (sh) => {
+    sh.vertexShader = 'varying vec3 vOP; varying vec3 vON;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n  vOP = position; vON = normal;');
+    sh.fragmentShader = `varying vec3 vOP; varying vec3 vON;
+      float bHash(vec2 p){ return fract(sin(dot(p, vec2(41.3, 289.1)))*43758.5453); }
+      float bNoise(vec2 p){ vec2 i = floor(p), f = fract(p); f = f*f*(3. - 2.*f);
+        return mix(mix(bHash(i), bHash(i + vec2(1., 0.)), f.x), mix(bHash(i + vec2(0., 1.)), bHash(i + vec2(1., 1.)), f.x), f.y); }
+      float bLine(float x, float w){ float f = fract(x), a = fwidth(x)*1.2; return 1. - smoothstep(w, w + a + .02, f); }
+      ` + sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
+      {
+        vec3 bc = diffuseColor.rgb, an = abs(normalize(vON));
+        float mx = max(bc.r, max(bc.g, bc.b)), mn = min(bc.r, min(bc.g, bc.b)), sat = (mx - mn)/max(mx, .001);
+        float pxs = fwidth(vOP.x) + fwidth(vOP.y) + fwidth(vOP.z);
+        float fade = clamp(1.7 - pxs*30., 0., 1.), pat = 0.;
+        float hz = an.x > an.z ? vOP.z : vOP.x;
+        if (an.y > .22 && an.y < .97 && vOP.y > .4) {
+          vec2 tg = normalize(vec2(vON.z, -vON.x) + vec2(1e-4));
+          float u = dot(vOP.xz, tg)*6.5, v = vOP.y/max(sqrt(1. - an.y*an.y), .2)*8.;
+          float row = floor(v); u += mod(row, 2.)*.5;
+          pat = (bHash(vec2(floor(u), row)) - .5)*.2 - bLine(v, .12)*.22 - bLine(u, .06)*.12;
+        } else if (an.y <= .22) {
+          if (sat < .17 && mx < .62) {
+            float v = vOP.y*8.5, row = floor(v), u = hz*5. + mod(row, 2.)*.5;
+            pat = (bHash(vec2(floor(u), row)) - .5)*.2 - bLine(v, .09)*.2 - bLine(u, .06)*.15;
+          } else if (bc.g/max(bc.r, .001) > .3 && bc.b < bc.g*.8 && sat > .45 && mx < .8) {
+            float v = vOP.y*9.;
+            pat = (bHash(vec2(floor(v), 3.)) - .5)*.16 - bLine(v, .1)*.2 + (bNoise(vec2(hz*26., v*1.5)) - .5)*.1;
+          } else {
+            pat = (bNoise(vec2(hz, vOP.y)*8.) - .5)*.1 + (bNoise(vec2(hz, vOP.y)*27.) - .5)*.05 - (1. - smoothstep(.1, .34, vOP.y))*.07;
+          }
+        } else pat = (bNoise(vOP.xz*11.) - .5)*.08;
+        diffuseColor.rgb *= 1. + pat*fade;
+        diffuseColor.rgb *= .84 + .16*smoothstep(0., .2, vOP.y);
+      }`);
+  };
+  return m;
+}
+MAT.build = buildingMaterial();

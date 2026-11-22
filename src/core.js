@@ -46,6 +46,29 @@ const ZERO_M = new THREE.Matrix4().makeScale(0, 0, 0);
 const AXIS_Y = new THREE.Vector3(0, 1, 0), AXIS_Z = new THREE.Vector3(0, 0, 1), AXIS_X = new THREE.Vector3(1, 0, 0);
 
 // Merges coloured primitives into one flat-shaded geometry (plus an optional "glow" geometry for windows).
+// a box with its edges cut off: catches the light on its corners instead of looking like a crate
+function bevelBox(w, h, d, bv) {
+  const a = w / 2, b = h / 2, c = d / 2, out = [];
+  const P = (ax, sx, sy, sz) => [sx * (ax === 0 ? a : a - bv), sy * (ax === 1 ? b : b - bv), sz * (ax === 2 ? c : c - bv)];
+  const tri = (p, q, r) => {
+    const ux = q[0] - p[0], uy = q[1] - p[1], uz = q[2] - p[2], vx = r[0] - p[0], vy = r[1] - p[1], vz = r[2] - p[2];
+    const nx = uy * vz - uz * vy, ny = uz * vx - ux * vz, nz = ux * vy - uy * vx;
+    if (nx * (p[0] + q[0] + r[0]) + ny * (p[1] + q[1] + r[1]) + nz * (p[2] + q[2] + r[2]) < 0) out.push(...p, ...r, ...q); else out.push(...p, ...q, ...r);
+  };
+  const quad = (p, q, r, s) => { tri(p, q, r); tri(p, r, s); };
+  for (const s of [-1, 1]) {
+    quad(P(0, s, -1, -1), P(0, s, 1, -1), P(0, s, 1, 1), P(0, s, -1, 1));
+    quad(P(1, -1, s, -1), P(1, 1, s, -1), P(1, 1, s, 1), P(1, -1, s, 1));
+    quad(P(2, -1, -1, s), P(2, 1, -1, s), P(2, 1, 1, s), P(2, -1, 1, s));
+    for (const t of [-1, 1]) {
+      quad(P(1, -1, s, t), P(1, 1, s, t), P(2, 1, s, t), P(2, -1, s, t));       // edges along x
+      quad(P(0, s, -1, t), P(0, s, 1, t), P(2, s, 1, t), P(2, s, -1, t));       // edges along y
+      quad(P(0, s, t, -1), P(0, s, t, 1), P(1, s, t, 1), P(1, s, t, -1));       // edges along z
+      for (const r of [-1, 1]) tri(P(0, s, t, r), P(1, s, t, r), P(2, s, t, r));
+    }
+  }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(out, 3)); return g;
+}
 class MB {
   constructor() { this.pos = []; this.col = []; this.gpos = []; }
   _add(geo, x, y, z, color, rot, glow, scl) {
@@ -59,13 +82,20 @@ class MB {
     if (glow) { for (let i = 0; i < p.length; i++) this.gpos.push(p[i]); }
     else {
       _c.set(color);
-      for (let i = 0; i < p.length; i += 3) { this.pos.push(p[i], p[i + 1], p[i + 2]); this.col.push(_c.r, _c.g, _c.b); }
+      // painted look: every part is a little lighter at the top than at the bottom
+      let lo = 1e9, hi = -1e9;
+      for (let i = 1; i < p.length; i += 3) { if (p[i] < lo) lo = p[i]; if (p[i] > hi) hi = p[i]; }
+      const span = hi - lo, grad = span > 0.16 ? Math.min(0.2, 0.08 + span * 0.1) : 0;
+      for (let i = 0; i < p.length; i += 3) {
+        const k = grad ? 1 - grad * 0.55 + grad * (p[i + 1] - lo) / span : 1;
+        this.pos.push(p[i], p[i + 1], p[i + 2]); this.col.push(_c.r * k, _c.g * k, _c.b * k);
+      }
     }
     g.dispose(); if (g !== geo) geo.dispose();
     return this;
   }
   // y is always the BOTTOM of the primitive (except sph: centre)
-  box(w, h, d, x, y, z, color, rot) { return this._add(new THREE.BoxGeometry(w, h, d), x, y + h / 2, z, color, rot); }
+  box(w, h, d, x, y, z, color, rot) { const m = Math.min(w, h, d); return this._add(m >= 0.15 ? bevelBox(w, h, d, Math.min(0.03, m * 0.12)) : new THREE.BoxGeometry(w, h, d), x, y + h / 2, z, color, rot); }
   cyl(rt, rb, h, seg, x, y, z, color, rot) { return this._add(new THREE.CylinderGeometry(rt, rb, h, seg), x, y + h / 2, z, color, rot); }
   cone(r, h, seg, x, y, z, color, rot) { return this._add(new THREE.ConeGeometry(r, h, seg), x, y + h / 2, z, color, rot); }
   sph(r, x, y, z, color, scl, detail) { return this._add(new THREE.IcosahedronGeometry(r, detail || 0), x, y, z, color, null, false, scl); }
@@ -106,6 +136,7 @@ const C = {
 
 const MAT = {
   main: new THREE.MeshLambertMaterial({ vertexColors: true }),
+  build: null,
   glow: new THREE.MeshBasicMaterial({ color: 0x2d3d50 }),
   ghostOk: new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.82, depthWrite: false }),
   ghostBad: new THREE.MeshBasicMaterial({ color: 0xff3b2e, transparent: true, opacity: 0.72, depthWrite: false }),
