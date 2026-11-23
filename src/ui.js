@@ -482,7 +482,7 @@ function openSitePanel(s) {
   const K = SITE_KINDS[s.kind];
   openPanel('s', s, K.name, 'Old site', '<p class="status">' + K.text + '</p><p class="note" id="s-note"></p><div class="row end"><button type="button" class="btn" id="s-go">Send an explorer</button></div>', () => {
     const blk = exploreBlock(s);
-    $('s-note').textContent = blk || 'A free villager will walk there and take a careful look.';
+    $('s-note').textContent = blk || 'A villager will walk there and take a careful look.';
     $('s-go').disabled = !!blk; $('s-go').hidden = s.found;
   });
 }

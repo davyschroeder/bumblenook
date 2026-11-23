@@ -667,7 +667,7 @@ function updateVillager(v, dt) {
     if (!v.path || v.navV !== W.nav) {
       if (s.goals.length === 1 && W.solid[s.goals[0]] && !v.carry) { clearPlan(v); return; }      // something was built where they were heading
       v.path = findPath(curTile(v), s.goals); v.pi = 0; v.navV = W.nav;
-      if (!v.path) { clearPlan(v); v.plan.push(act(2, 'idle', 'Can\'t get there')); return; }
+      if (!v.path) { if (v.exploring) toast(v.name + ' cannot find a way to the site. Check that nothing blocks the path.', 'bad'); clearPlan(v); v.plan.push(act(2, 'idle', 'Can\'t get there')); return; }
     }
     if (v.pi >= v.path.length) { v.path = null; v.plan.shift(); return; }
     const k = v.path[v.pi]; let tx = tileX(k % N) + v.off[0], tz = tileX((k / N) | 0) + v.off[1];

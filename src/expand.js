@@ -183,14 +183,21 @@ function markSite(s) { const f = new THREE.Mesh(cachedGeo('siteflag', mSiteFlag)
 function exploreBlock(s) {
   if (s.found) return 'Explored. Its story is in the almanac.';
   if (s.busy && G.villagers.includes(s.busy)) return s.busy.name + ' is on the way.';
-  if (!G.villagers.some((v) => !v.job && v.state !== 'sleep')) return 'No free villager to send right now.';
+  if (!G.villagers.some((v) => v.state !== 'sleep')) return 'Everyone is asleep. Send someone in the morning.';
   return null;
 }
 function exploreSite(s) {
   if (exploreBlock(s)) { sfx('error'); return false; }
   let v = null, bd = 1e9;
-  for (const c of G.villagers) { if (c.job || c.state === 'sleep') continue; const d = dist2(c.x, c.z, s.x, s.z); if (d < bd) { bd = d; v = c; } }
-  clearPlan(v); s.busy = v; v.exploring = s;
+  // a villager without a job goes first; if everyone has one, the nearest worker takes a break from it and returns afterwards
+  for (const free of [true, false]) {
+    for (const c of G.villagers) { if (c.state === 'sleep' || (free && c.job) || c.buildSite) continue; const d = dist2(c.x, c.z, s.x, s.z); if (d < bd) { bd = d; v = c; } }
+    if (v) break;
+  }
+  if (!v) for (const c of G.villagers) { if (c.state === 'sleep') continue; const d = dist2(c.x, c.z, s.x, s.z); if (d < bd) { bd = d; v = c; } }
+  if (!v) { sfx('error'); return false; }
+  dropCarry(v); clearPlan(v); s.busy = v; v.exploring = s;
+  toast(v.name + ' sets out to explore the ' + SITE_KINDS[s.kind].name + '.');
   v.plan.push(go(standNear(s.i, s.j), 'Setting out to explore'), { t: 'near', o: s, d: 0.75 }, act(10, 'chop', 'Exploring the ' + SITE_KINDS[s.kind].name.toLowerCase(), { face: s, hit: 1.1, onHit(q) { sfx('mine', hearK(q.x, q.z) * 0.6); puff(s.x, s.y + 0.2, s.z, [0xd9c79a, 0xa89a78], 2, { speed: 0.8, life: 0.5, size: 0.05 }); } }), call(() => {
     s.busy = null; v.exploring = null; if (s.found) return;
     s.found = true; markSite(s); G.stats.explored++;

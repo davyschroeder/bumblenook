@@ -2951,7 +2951,7 @@ function updateVillager(v, dt) {
     if (!v.path || v.navV !== W.nav) {
       if (s.goals.length === 1 && W.solid[s.goals[0]] && !v.carry) { clearPlan(v); return; }      // something was built where they were heading
       v.path = findPath(curTile(v), s.goals); v.pi = 0; v.navV = W.nav;
-      if (!v.path) { clearPlan(v); v.plan.push(act(2, 'idle', 'Can\'t get there')); return; }
+      if (!v.path) { if (v.exploring) toast(v.name + ' cannot find a way to the site. Check that nothing blocks the path.', 'bad'); clearPlan(v); v.plan.push(act(2, 'idle', 'Can\'t get there')); return; }
     }
     if (v.pi >= v.path.length) { v.path = null; v.plan.shift(); return; }
     const k = v.path[v.pi]; let tx = tileX(k % N) + v.off[0], tz = tileX((k / N) | 0) + v.off[1];
@@ -3716,14 +3716,21 @@ function markSite(s) { const f = new THREE.Mesh(cachedGeo('siteflag', mSiteFlag)
 function exploreBlock(s) {
   if (s.found) return 'Explored. Its story is in the almanac.';
   if (s.busy && G.villagers.includes(s.busy)) return s.busy.name + ' is on the way.';
-  if (!G.villagers.some((v) => !v.job && v.state !== 'sleep')) return 'No free villager to send right now.';
+  if (!G.villagers.some((v) => v.state !== 'sleep')) return 'Everyone is asleep. Send someone in the morning.';
   return null;
 }
 function exploreSite(s) {
   if (exploreBlock(s)) { sfx('error'); return false; }
   let v = null, bd = 1e9;
-  for (const c of G.villagers) { if (c.job || c.state === 'sleep') continue; const d = dist2(c.x, c.z, s.x, s.z); if (d < bd) { bd = d; v = c; } }
-  clearPlan(v); s.busy = v; v.exploring = s;
+  // a villager without a job goes first; if everyone has one, the nearest worker takes a break from it and returns afterwards
+  for (const free of [true, false]) {
+    for (const c of G.villagers) { if (c.state === 'sleep' || (free && c.job) || c.buildSite) continue; const d = dist2(c.x, c.z, s.x, s.z); if (d < bd) { bd = d; v = c; } }
+    if (v) break;
+  }
+  if (!v) for (const c of G.villagers) { if (c.state === 'sleep') continue; const d = dist2(c.x, c.z, s.x, s.z); if (d < bd) { bd = d; v = c; } }
+  if (!v) { sfx('error'); return false; }
+  dropCarry(v); clearPlan(v); s.busy = v; v.exploring = s;
+  toast(v.name + ' sets out to explore the ' + SITE_KINDS[s.kind].name + '.');
   v.plan.push(go(standNear(s.i, s.j), 'Setting out to explore'), { t: 'near', o: s, d: 0.75 }, act(10, 'chop', 'Exploring the ' + SITE_KINDS[s.kind].name.toLowerCase(), { face: s, hit: 1.1, onHit(q) { sfx('mine', hearK(q.x, q.z) * 0.6); puff(s.x, s.y + 0.2, s.z, [0xd9c79a, 0xa89a78], 2, { speed: 0.8, life: 0.5, size: 0.05 }); } }), call(() => {
     s.busy = null; v.exploring = null; if (s.found) return;
     s.found = true; markSite(s); G.stats.explored++;
@@ -4252,6 +4259,7 @@ const NL = new Map([
   [`A fox is bothering the sheep: no wool until this evening. A Watchtower keeps foxes away.`, `Een vos valt de schapen lastig: geen wol tot vanavond. Een Wachttoren houdt vossen weg.`],
   // exploring, fish, story
   [`Old site`, `Oude plek`], [`Send an explorer`, `Stuur een verkenner`], [`Explored. Its story is in the almanac.`, `Verkend. Het verhaal staat in de almanak.`], [`No free villager to send right now.`, `Er is nu geen vrije dorpeling om te sturen.`],
+  [`A villager will walk there and take a careful look.`, `Een dorpeling loopt erheen en kijkt goed rond.`], [`{a} cannot find a way to the site. Check that nothing blocks the path.`, `{a} vindt geen weg naar de plek. Kijk of er iets in de weg staat.`], [`Everyone is asleep. Send someone in the morning.`, `Iedereen slaapt. Stuur morgenochtend iemand.`], [`{a} sets out to explore the {b}.`, `{a} gaat op pad om {b} te verkennen.`],
   [`A free villager will walk there and take a careful look.`, `Een vrije dorpeling loopt erheen en kijkt goed rond.`], [`Stone Circle`, `Steencirkel`], [`Mossy stones older than the island's oldest tree.`, `Bemoste stenen, ouder dan de oudste boom van het eiland.`],
   [`Old Shipwreck`, `Oud scheepswrak`], [`Sun-bleached ribs of a ship that never made it home.`, `Door de zon gebleekte spanten van een schip dat nooit thuiskwam.`], [`Lonely Cairn`, `Eenzame steenstapel`],
   [`Someone stacked these stones with great care, long ago.`, `Iemand stapelde deze stenen lang geleden met veel zorg.`], [`Bee Shrine`, `Bijenschrijn`], [`A tiny shrine with a carved bumblebee, half hidden in the grass.`, `Een piepklein schrijn met een uitgesneden hommel, half verscholen in het gras.`],
@@ -4944,7 +4952,7 @@ function openSitePanel(s) {
   const K = SITE_KINDS[s.kind];
   openPanel('s', s, K.name, 'Old site', '<p class="status">' + K.text + '</p><p class="note" id="s-note"></p><div class="row end"><button type="button" class="btn" id="s-go">Send an explorer</button></div>', () => {
     const blk = exploreBlock(s);
-    $('s-note').textContent = blk || 'A free villager will walk there and take a careful look.';
+    $('s-note').textContent = blk || 'A villager will walk there and take a careful look.';
     $('s-go').disabled = !!blk; $('s-go').hidden = s.found;
   });
 }
