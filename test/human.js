@@ -64,7 +64,9 @@ const MAXMIN = +process.env.MAXMIN || 200;
         if (G.villagers.length > lpop) { lpop = G.villagers.length; if (marks.settler === undefined) { marks.settler = mins(); ev('first settler (pop ' + lpop + ', beds ' + G.buildings.reduce((n, b) => n + (b.done && b.def.beds ? b.def.beds : 0), 0) + ', houses ' + count('house') + ')', 1); } else ev('settler'); if (lpop === 10 && marks.pop10 === undefined) marks.pop10 = mins(); }
         for (const t of TRACKS) while (lqt[t.id] < G.q[t.id]) { ev(t.name.toUpperCase().padEnd(8) + ' ' + t.goals[lqt[t.id]].text, 1); lqt[t.id]++; }
         if (G.won && marks1.Lighthouse === undefined) { marks1.Lighthouse = +(slow / 60).toFixed(0); marks.Lighthouse = mins(); }
-        if (count('shipyard') && G.exp.state === 'home' && G.res.food > 200) __hh.startExpedition();
+        if (count('shipyard') && G.exp.state === 'home' && G.res.food > 260 && Object.keys(G.treasure).length < 6) __hh.startExpedition();
+        // a player with a full purse buys the bricks the next project is short of
+        if (count('market') && G.res.coins > 1500 && G.res.brick < 130 && G.res.brick < api.capOf('brick') - 5 && thinks % 4 === 0) { G.res.coins -= 18; G.res.brick += 5; }
         if (G.level !== ll) { ll = G.level; marks[LEVELS[ll].name] = mins(); marks1[LEVELS[ll].name] = +(slow / 60).toFixed(0); ev('LEVEL ' + LEVELS[ll].name, 1); }
         if (G.stats.research !== lr) { lr = G.stats.research; ev('research #' + lr, lr === 1); }
         if (G.story !== ls) { ls = G.story; ev('story ' + ls, 1); }
