@@ -2283,6 +2283,7 @@ function audioTick(night) {
 }
 
 // ---------- sim: buildings, villagers, economy ----------
+const BRICK_STOP = 150;
 const RES = { wood: 'Wood', stone: 'Stone', food: 'Food', grain: 'Grain', honey: 'Honey', wool: 'Wool', cloth: 'Cloth', brick: 'Bricks', cider: 'Cider', coins: 'Coins' };
 const BT = {
   center: { name: 'Village Green', size: 3, beds: 4, storage: true, decor: 5, desc: 'The heart of the village. Villagers bring their harvest here.' },
@@ -2318,7 +2319,7 @@ const BT = {
   bathhouse: { tech: 'springs', max: 1, name: 'Bathhouse', cat: 'dorp', size: 2, cost: { stone: 50, brick: 15, coins: 20 }, time: 20, job: 'attendant', slots: 1, desc: 'A hot soak after a long day. With an attendant it makes everyone happier.' },
   watchtower: { tech: 'watch', max: 1, name: 'Watchtower', cat: 'dorp', size: 1, cost: { wood: 40, stone: 10 }, time: 14, job: 'guard', slots: 1, desc: 'A watchman keeps foxes away from the sheep and warns farmers before a storm.' },
   mine: { tech: 'mining', name: 'Mine', cat: 'grond', size: 2, cost: { wood: 50, coins: 20 }, time: 20, job: 'miner', slots: 2, nearRock: true, desc: 'Miners dig stone that never runs out. Must stand at the foot of rocky ground.' },
-  brickworks: { tech: 'masonry', name: 'Brickworks', cat: 'grond', size: 2, cost: { wood: 30, stone: 40 }, time: 16, job: 'brickmaker', slots: 2, desc: 'Fires 2 stone and 1 wood into a brick. Bricks pay for upgrades and grand buildings.' },
+  brickworks: { tech: 'masonry', name: 'Brickworks', cat: 'grond', size: 2, cost: { wood: 30, stone: 40 }, time: 16, job: 'brickmaker', slots: 2, desc: 'Fires 2 stone and 1 wood into a brick. Bricks pay for upgrades and grand buildings. The kiln rests at 150 bricks and always leaves 40 stone and 25 wood.' },
   orchard: { tech: 'orchards', name: 'Orchard', cat: 'voedsel', size: 3, cost: { wood: 30 }, time: 14, job: 'picker', slots: 2, desc: 'Fruit pickers bring baskets of apples from spring to autumn. The trees rest in winter.' },
   ciderpress: { tech: 'orchards', name: 'Cider Press', cat: 'voedsel', size: 2, cost: { wood: 40, stone: 20 }, time: 16, job: 'brewer', slots: 1, desc: 'Presses 4 food into a jug of cider. Cider cheers the village and sells well.' },
   greenhouse: { tech: 'glass', name: 'Greenhouse', cat: 'voedsel', size: 2, cost: { wood: 30, brick: 20 }, time: 18, job: 'gardener', slots: 1, desc: 'A gardener grows vegetables under glass, even in the middle of winter.' },
@@ -2916,9 +2917,9 @@ const JOB_THINK = {
     processJob(v, b, { bring: 'Carrying apples to the press', fetch: 'Fetching fruit from storage', say: 'Pressing cider', wait: 'Waiting for spare food to press', dur: 8, carry: 'food',
       ready: () => G.res.food >= 4 + G.villagers.length * 3, take: () => { G.res.food -= 4; }, done: (q) => { G.stats.cider++; setCarry(q, 'cider', 1); } });
   },
-  brickmaker(v, b) {
-    processJob(v, b, { bring: 'Carrying clay and stone to the kiln', fetch: 'Fetching stone from storage', say: 'Firing bricks', wait: 'Waiting for spare stone and wood', dur: 7, carry: 'stone',
-      ready: () => G.res.stone >= 40 && G.res.wood >= 25 && G.res.brick < capOf('brick'), take: () => { G.res.stone -= 2; G.res.wood -= 1; }, done: (q) => { G.stats.brick++; setCarry(q, 'brick', 1); } });
+  brickmaker(v, b) {      // the kiln rests at BRICK_STOP bricks, so it does not burn the stone a grand project needs
+    processJob(v, b, { bring: 'Carrying clay and stone to the kiln', fetch: 'Fetching stone from storage', say: 'Firing bricks', get wait() { return G.res.brick >= Math.min(BRICK_STOP, capOf('brick')) ? 'Plenty of bricks in store: the kiln rests' : 'Waiting for spare stone and wood'; }, dur: 7, carry: 'stone',
+      ready: () => G.res.stone >= 40 && G.res.wood >= 25 && G.res.brick < Math.min(BRICK_STOP, capOf('brick')), take: () => { G.res.stone -= 2; G.res.wood -= 1; }, done: (q) => { G.stats.brick++; setCarry(q, 'brick', 1); } });
   },
   attendant(v, b) { v.plan.push(go(accessTiles(b), 'Walking to the bathhouse'), act(8, 'idle', pick(['Folding towels', 'Stoking the boiler', 'Testing the water']), { face: { x: b.cx, z: b.cz } })); },
   guard(v, b) { v.plan.push(go(accessTiles(b), 'Walking to the watchtower'), act(9, 'idle', pick(['Keeping watch', 'Scanning the tree line', 'Whistling a tune']), { face: { x: b.cx, z: b.cz } })); },
@@ -3875,7 +3876,7 @@ const TRACKS = [
     { text: 'Grow the Town into a Harbour Town', hint: 'Build a Harbour and keep the settlers coming.', prog: () => [Math.min(G.level, 4), 4], reward: { coins: 40 } },
     { text: 'Build the Lighthouse', hint: 'The pride of the island, right by the water.', prog: () => [countDone('lighthouse'), 1], reward: { coins: 50 } },
     { text: 'Build the Cathedral', hint: 'A grand project for a grand town. It takes a mountain of stone and bricks.', prog: () => [countDone('cathedral'), 1], reward: { coins: 100 } },
-    { text: 'Raise the Great Hive', hint: 'The crowning wonder of Bumblenook, paid for in honey.', prog: () => [countDone('greathive'), 1], reward: { coins: 200 } },
+    { text: 'Raise the Great Hive', hint: 'The crowning wonder of Bumblenook, paid for in honey. It also takes 250 stone: short of stone? Take your brickmakers off the kiln for a while.', prog: () => [countDone('greathive'), 1], reward: { coins: 200 } },
   ] },
   { id: 'prosper', name: 'Prosper', goals: [
     { text: 'Stock 60 food', hint: 'A full pantry keeps settlers coming.', prog: () => [Math.min(60, Math.floor(G.res.food)), 60], reward: { wood: 10 } },
@@ -4149,7 +4150,7 @@ const NL = new Map([
   [`Bathhouse`, `Badhuis`], [`A hot soak after a long day. With an attendant it makes everyone happier.`, `Een warm bad na een lange dag. Met een badmeester maakt het iedereen blijer.`],
   [`Watchtower`, `Wachttoren`], [`A watchman keeps foxes away from the sheep and warns farmers before a storm.`, `Een wachter houdt vossen bij de schapen weg en waarschuwt boeren voor storm.`],
   [`Mine`, `Mijn`], [`Miners dig stone that never runs out. Must stand at the foot of rocky ground.`, `Mijnwerkers delven steen die nooit opraakt. Moet aan de voet van rotsgrond staan.`],
-  [`Brickworks`, `Steenbakkerij`], [`Fires 2 stone and 1 wood into a brick. Bricks pay for upgrades and grand buildings.`, `Bakt van 2 steen en 1 hout een baksteen. Met bakstenen betaal je upgrades en grote gebouwen.`],
+  [`Brickworks`, `Steenbakkerij`], [`Fires 2 stone and 1 wood into a brick. Bricks pay for upgrades and grand buildings. The kiln rests at 150 bricks and always leaves 40 stone and 25 wood.`, `Bakt van 2 steen en 1 hout een baksteen. Met bakstenen betaal je upgrades en grote gebouwen. De oven rust bij 150 bakstenen en laat altijd 40 steen en 25 hout liggen.`], [`Plenty of bricks in store: the kiln rests`, `Genoeg bakstenen op voorraad: de oven rust`],
   [`Orchard`, `Boomgaard`], [`Fruit pickers bring baskets of apples from spring to autumn. The trees rest in winter.`, `Fruitplukkers brengen manden appels van lente tot herfst. In de winter rusten de bomen.`],
   [`Cider Press`, `Ciderpers`], [`Presses 4 food into a jug of cider. Cider cheers the village and sells well.`, `Perst van 4 voedsel een kruik cider. Cider vrolijkt het dorp op en verkoopt goed.`],
   [`Greenhouse`, `Kas`], [`A gardener grows vegetables under glass, even in the middle of winter.`, `Een tuinier kweekt groente onder glas, zelfs midden in de winter.`],
@@ -4367,7 +4368,7 @@ for (const [k, v] of [
   [`In the evening villagers gather there.`, `'s Avonds komen de dorpelingen er samen.`], [`More villagers and a happy mood unlock the market, tavern and more.`, `Meer dorpelingen en een goed humeur ontgrendelen de markt, de herberg en meer.`],
   [`Keep growing and earn coins by trading.`, `Blijf groeien en verdien munten met handel.`], [`Grow the Town into a Harbour Town`, `Laat de Stad uitgroeien tot een Havenstad`], [`Build a Harbour and keep the settlers coming.`, `Bouw een Haven en zorg dat er bewoners blijven komen.`],
   [`Build the Cathedral`, `Bouw de Kathedraal`], [`A grand project for a grand town. It takes a mountain of stone and bricks.`, `Een groots project voor een grootse stad. Het vraagt een berg steen en bakstenen.`],
-  [`Raise the Great Hive`, `Richt de Grote Korf op`], [`The crowning wonder of Bumblenook, paid for in honey.`, `Het pronkstuk van Bumblenook, betaald met honing.`],
+  [`Raise the Great Hive`, `Richt de Grote Korf op`], [`The crowning wonder of Bumblenook, paid for in honey. It also takes 250 stone: short of stone? Take your brickmakers off the kiln for a while.`, `Het pronkstuk van Bumblenook, betaald met honing. Er is ook 250 steen nodig: te weinig steen? Haal je steenbakkers dan even van de oven.`],
   [`Stock 60 food`, `Leg 60 voedsel in voorraad`], [`A full pantry keeps settlers coming.`, `Een volle voorraadkast trekt bewoners aan.`], [`Requests start once the camp is a Hamlet. Tap this card to see them.`, `Verzoeken beginnen zodra het kamp een Gehucht is. Tik op deze kaart om ze te zien.`],
   [`Earn 600 coins in total`, `Verdien in totaal 600 munten`], [`Trade surplus at the Market and keep filling requests.`, `Ruil overschotten op de Markt en blijf verzoeken vervullen.`], [`Pay for 3 town improvements`, `Betaal 3 stadsverbeteringen`],
   [`Tap the Town Hall to see what the council can do.`, `Tik op het Raadhuis om te zien wat de raad kan doen.`], [`Fill 25 requests`, `Vervul 25 verzoeken`], [`A village that helps each other.`, `Een dorp dat elkaar helpt.`],

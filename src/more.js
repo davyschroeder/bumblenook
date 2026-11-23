@@ -20,7 +20,7 @@ const TRACKS = [
     { text: 'Grow the Town into a Harbour Town', hint: 'Build a Harbour and keep the settlers coming.', prog: () => [Math.min(G.level, 4), 4], reward: { coins: 40 } },
     { text: 'Build the Lighthouse', hint: 'The pride of the island, right by the water.', prog: () => [countDone('lighthouse'), 1], reward: { coins: 50 } },
     { text: 'Build the Cathedral', hint: 'A grand project for a grand town. It takes a mountain of stone and bricks.', prog: () => [countDone('cathedral'), 1], reward: { coins: 100 } },
-    { text: 'Raise the Great Hive', hint: 'The crowning wonder of Bumblenook, paid for in honey.', prog: () => [countDone('greathive'), 1], reward: { coins: 200 } },
+    { text: 'Raise the Great Hive', hint: 'The crowning wonder of Bumblenook, paid for in honey. It also takes 250 stone: short of stone? Take your brickmakers off the kiln for a while.', prog: () => [countDone('greathive'), 1], reward: { coins: 200 } },
   ] },
   { id: 'prosper', name: 'Prosper', goals: [
     { text: 'Stock 60 food', hint: 'A full pantry keeps settlers coming.', prog: () => [Math.min(60, Math.floor(G.res.food)), 60], reward: { wood: 10 } },

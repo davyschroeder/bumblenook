@@ -1,4 +1,5 @@
 // ---------- sim: buildings, villagers, economy ----------
+const BRICK_STOP = 150;
 const RES = { wood: 'Wood', stone: 'Stone', food: 'Food', grain: 'Grain', honey: 'Honey', wool: 'Wool', cloth: 'Cloth', brick: 'Bricks', cider: 'Cider', coins: 'Coins' };
 const BT = {
   center: { name: 'Village Green', size: 3, beds: 4, storage: true, decor: 5, desc: 'The heart of the village. Villagers bring their harvest here.' },
@@ -34,7 +35,7 @@ const BT = {
   bathhouse: { tech: 'springs', max: 1, name: 'Bathhouse', cat: 'dorp', size: 2, cost: { stone: 50, brick: 15, coins: 20 }, time: 20, job: 'attendant', slots: 1, desc: 'A hot soak after a long day. With an attendant it makes everyone happier.' },
   watchtower: { tech: 'watch', max: 1, name: 'Watchtower', cat: 'dorp', size: 1, cost: { wood: 40, stone: 10 }, time: 14, job: 'guard', slots: 1, desc: 'A watchman keeps foxes away from the sheep and warns farmers before a storm.' },
   mine: { tech: 'mining', name: 'Mine', cat: 'grond', size: 2, cost: { wood: 50, coins: 20 }, time: 20, job: 'miner', slots: 2, nearRock: true, desc: 'Miners dig stone that never runs out. Must stand at the foot of rocky ground.' },
-  brickworks: { tech: 'masonry', name: 'Brickworks', cat: 'grond', size: 2, cost: { wood: 30, stone: 40 }, time: 16, job: 'brickmaker', slots: 2, desc: 'Fires 2 stone and 1 wood into a brick. Bricks pay for upgrades and grand buildings.' },
+  brickworks: { tech: 'masonry', name: 'Brickworks', cat: 'grond', size: 2, cost: { wood: 30, stone: 40 }, time: 16, job: 'brickmaker', slots: 2, desc: 'Fires 2 stone and 1 wood into a brick. Bricks pay for upgrades and grand buildings. The kiln rests at 150 bricks and always leaves 40 stone and 25 wood.' },
   orchard: { tech: 'orchards', name: 'Orchard', cat: 'voedsel', size: 3, cost: { wood: 30 }, time: 14, job: 'picker', slots: 2, desc: 'Fruit pickers bring baskets of apples from spring to autumn. The trees rest in winter.' },
   ciderpress: { tech: 'orchards', name: 'Cider Press', cat: 'voedsel', size: 2, cost: { wood: 40, stone: 20 }, time: 16, job: 'brewer', slots: 1, desc: 'Presses 4 food into a jug of cider. Cider cheers the village and sells well.' },
   greenhouse: { tech: 'glass', name: 'Greenhouse', cat: 'voedsel', size: 2, cost: { wood: 30, brick: 20 }, time: 18, job: 'gardener', slots: 1, desc: 'A gardener grows vegetables under glass, even in the middle of winter.' },
@@ -632,9 +633,9 @@ const JOB_THINK = {
     processJob(v, b, { bring: 'Carrying apples to the press', fetch: 'Fetching fruit from storage', say: 'Pressing cider', wait: 'Waiting for spare food to press', dur: 8, carry: 'food',
       ready: () => G.res.food >= 4 + G.villagers.length * 3, take: () => { G.res.food -= 4; }, done: (q) => { G.stats.cider++; setCarry(q, 'cider', 1); } });
   },
-  brickmaker(v, b) {
-    processJob(v, b, { bring: 'Carrying clay and stone to the kiln', fetch: 'Fetching stone from storage', say: 'Firing bricks', wait: 'Waiting for spare stone and wood', dur: 7, carry: 'stone',
-      ready: () => G.res.stone >= 40 && G.res.wood >= 25 && G.res.brick < capOf('brick'), take: () => { G.res.stone -= 2; G.res.wood -= 1; }, done: (q) => { G.stats.brick++; setCarry(q, 'brick', 1); } });
+  brickmaker(v, b) {      // the kiln rests at BRICK_STOP bricks, so it does not burn the stone a grand project needs
+    processJob(v, b, { bring: 'Carrying clay and stone to the kiln', fetch: 'Fetching stone from storage', say: 'Firing bricks', get wait() { return G.res.brick >= Math.min(BRICK_STOP, capOf('brick')) ? 'Plenty of bricks in store: the kiln rests' : 'Waiting for spare stone and wood'; }, dur: 7, carry: 'stone',
+      ready: () => G.res.stone >= 40 && G.res.wood >= 25 && G.res.brick < Math.min(BRICK_STOP, capOf('brick')), take: () => { G.res.stone -= 2; G.res.wood -= 1; }, done: (q) => { G.stats.brick++; setCarry(q, 'brick', 1); } });
   },
   attendant(v, b) { v.plan.push(go(accessTiles(b), 'Walking to the bathhouse'), act(8, 'idle', pick(['Folding towels', 'Stoking the boiler', 'Testing the water']), { face: { x: b.cx, z: b.cz } })); },
   guard(v, b) { v.plan.push(go(accessTiles(b), 'Walking to the watchtower'), act(9, 'idle', pick(['Keeping watch', 'Scanning the tree line', 'Whistling a tune']), { face: { x: b.cx, z: b.cz } })); },
