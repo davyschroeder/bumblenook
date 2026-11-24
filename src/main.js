@@ -84,7 +84,7 @@ function boot(hotData) {
   UIS.hadSave = false;
   if (save) { try { loadGame(save); UIS.hadSave = true; } catch (e) { UIS.hadSave = false; } }
   if (!UIS.hadSave) { newGame((Math.random() * 1e6) | 0); buildShowcase(); centerCamera(); CAM.gd = CAM.dist = 27; }
-  renderThumbs(); initHud(); initInput(); resize(); applySettings();
+  renderThumbs(); initHud(); initInput(); resize(); applySettings(); gfxPreflight();
   window.addEventListener('resize', resize);
   document.addEventListener('visibilitychange', () => { if (document.hidden) saveGame(); });
   window.addEventListener('pagehide', saveGame);

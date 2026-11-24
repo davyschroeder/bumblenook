@@ -12,6 +12,12 @@ For a website, upload the **contents of `site/`** to the game's existing directo
 
 The menu's Graphics setting cycles through the original High, Plain and Low levels. High adds glow, filmic grading and depth-aware miniature focus. Plain retains the new models and materials; Low reduces shadows, environmental decoration and character detail. Existing gameplay, building identifiers, production chains and save format remain compatible.
 
+### Mobile rendering correction.
+
+The high-quality scene now uses a single-sampled colour/depth target, avoiding a device-specific multisampled-depth resolve path while retaining the high pixel ratio, detailed models, animated materials, bloom and depth-aware focus. At startup, the game draws and reads back small samples of its real building, terrain and villager materials on the current GPU. If a lighting feature fails to draw, it retries without environment reflections and then without shadow maps. It also checks the actual postprocessing framebuffers and keeps those compatibility decisions when changing settings.
+
+The inline chat preview additionally isolates text colours from the surrounding chat theme and preserves the original panel selectors. These corrections address the reported pale tutorial text and missing main-scene graphics; the specific Android device has not been directly retested here.
+
 ### What changed.
 
 - 37 building types have new models or substantial architectural detail. Twelve cottage variants now have modelled shingles, roof caps, framed windows, doors, shutters, flower boxes and masonry.

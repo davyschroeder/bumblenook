@@ -307,8 +307,8 @@ function loadSettings() { try { Object.assign(SET, JSON.parse(localStorage.getIt
 function saveSettings() { try { localStorage.setItem('bumblenook-settings', JSON.stringify(SET)); } catch (e) { /* optional */ } }
 function applySettings() {
   const low = SET.gfx === 'low';
-  if(typeof ENV!=='undefined'&&ENV.sky)scene.environment=low?null:ENV.sky;
-  sun.castShadow = !low;
+  if(typeof ENV!=='undefined'&&ENV.sky)scene.environment=low||GFX.compat.environment?null:ENV.sky;
+  sun.castShadow = !low && !GFX.compat.shadows;
   renderer.setPixelRatio(low ? 1 : Math.min(window.devicePixelRatio || 1, UIS.coarse ? 1.75 : 2));
   for (const c of clouds) c.visible = !low;
   document.body.classList.toggle('bigtext', !!SET.big);

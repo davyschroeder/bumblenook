@@ -1491,15 +1491,19 @@ function resetWorld(seed) {
 
 // ---------- gfx: the look. A soft glow, a miniature depth of field and colour grading on top of the picture,
 // and in the world itself contact shadows, pools of light at night and painted detail in the grass. ----------
-const GFX = { on: false, broken: false, rt: null, slow: 0, frames: 0, t: 0 };
+const GFX = { on: false, broken: false, rt: null, slow: 0, frames: 0, t: 0,
+  // These flags disable only a feature that failed a native rendering check.
+  compat: { environment: false, shadows: false, post: false }, diagnostics: null };
 const _gs = new THREE.Vector2();
 const POST_VERT = 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }';
-function gfxWanted() { return SET.gfx === 'high' && !GFX.broken && renderer && renderer.capabilities.isWebGL2; }
+function gfxWanted() { return SET.gfx === 'high' && !GFX.broken && !GFX.compat.post && renderer && renderer.capabilities.isWebGL2; }
 function gfxBuild() {
   const float = renderer.extensions.has('EXT_color_buffer_float') || renderer.extensions.has('EXT_color_buffer_half_float');
   const type = float ? THREE.HalfFloatType : THREE.UnsignedByteType;
   const opt = { type, depthBuffer: false, minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter };
-  GFX.rt = new THREE.WebGLRenderTarget(4, 4, { type, samples: 4, minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter });
+  // A sampled depth attachment must not depend on Android's multisampled render-to-texture path.
+  // The renderer's high pixel ratio still provides fine edges without an MSAA depth resolve.
+  GFX.rt = new THREE.WebGLRenderTarget(4, 4, { type, samples: 0, minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter });
   GFX.rt.depthTexture = new THREE.DepthTexture(4, 4, THREE.UnsignedIntType);
   GFX.b0 = new THREE.WebGLRenderTarget(4, 4, opt); GFX.b1 = new THREE.WebGLRenderTarget(4, 4, opt);
   GFX.c0 = new THREE.WebGLRenderTarget(4, 4, opt); GFX.c1 = new THREE.WebGLRenderTarget(4, 4, opt);
@@ -1573,6 +1577,103 @@ function gfxApply() {
   GFX.on = want && !GFX.broken;
   if (GFX.on) gfxResize();
   if (W.water) W.water.material.uniforms.lin.value = GFX.on ? 1 : 0;
+}
+
+// A shader can compile yet fail to draw on a particular GPU. Test real fragments with
+// the game's lit materials before opening the island; fall back one feature at a time.
+function gfxPreflight() {
+  if (GFX.diagnostics) return GFX.diagnostics;
+  const report = GFX.diagnostics = { probes: [], framebuffers: [], passed: false, reason: '' };
+  const gl = renderer.getContext(), savedTarget = renderer.getRenderTarget();
+  const savedClear = renderer.getClearColor(new THREE.Color()), savedAlpha = renderer.getClearAlpha();
+  const savedAutoClear = renderer.autoClear, initialEnvironment = scene.environment, initialShadows = sun.castShadow;
+  const errors = () => { const out = []; for (let q = 0; q < 8; q++) { const e = gl.getError(); if (e === gl.NO_ERROR) break; out.push(e); } return out; };
+  report.initialErrors = errors();
+  const probeScene = new THREE.Scene();
+  probeScene.fog = scene.fog ? scene.fog.clone() : null;
+  const probeCamera = new THREE.PerspectiveCamera(35, 1, .1, 20);
+  probeCamera.position.set(2.1, 1.8, 3); probeCamera.lookAt(0, .35, 0);
+  const probeTarget = new THREE.WebGLRenderTarget(32, 32, { type: THREE.UnsignedByteType, minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter, depthBuffer: true, samples: 0 });
+  const geo = new THREE.BoxGeometry(1, 1, 1), count = geo.attributes.position.count;
+  const colors = new Float32Array(count * 3);
+  for (let q = 0; q < count; q++) colors.set([.42, .64, .28], q * 3);
+  geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+  geo.setAttribute('aSurface', new THREE.BufferAttribute(new Float32Array(count), 1));
+  const building = MAT.build.clone(); building.onBeforeCompile = MAT.build.onBeforeCompile;
+  const ground = terrainMaterial(), plain = MAT.main.clone(); plain.onBeforeCompile = MAT.main.onBeforeCompile;
+  const materials = [['building', building], ['terrain', ground], ['plain', plain]];
+  const mesh = new THREE.Mesh(geo, building); mesh.position.y = .5; mesh.castShadow = mesh.receiveShadow = true;
+  const key = new THREE.DirectionalLight(0xffefd9, 1.1); key.position.set(3, 5, 4); key.shadow.mapSize.set(64, 64);
+  key.shadow.camera.near = .1; key.shadow.camera.far = 20; key.shadow.camera.left = key.shadow.camera.bottom = -3; key.shadow.camera.right = key.shadow.camera.top = 3;
+  key.shadow.camera.updateProjectionMatrix();
+  const rim = new THREE.DirectionalLight(0xc0e0d8, .22); rim.position.set(-3, 2, -3);
+  probeScene.add(mesh, key, key.target, rim, new THREE.HemisphereLight(0xd6efff, 0x93a86f, .75));
+  const pixels = new Uint8Array(32 * 32 * 4);
+  let selected = null;
+  const variants = [{ environment: initialEnvironment, shadows: initialShadows }];
+  if (initialEnvironment) variants.push({ environment: null, shadows: initialShadows });
+  if (initialShadows) variants.push({ environment: null, shadows: false });
+  try {
+    renderer.autoClear = true; renderer.setClearColor(0x030507, 1);
+    for (const variant of variants) {
+      probeScene.environment = variant.environment; key.castShadow = variant.shadows;
+      const result = { environment: !!variant.environment, shadows: !!variant.shadows, materials: [], passed: true };
+      for (const [name, material] of materials) {
+        mesh.material = material; material.needsUpdate = true;
+        pixels.fill(0); errors();
+        try {
+          renderer.setRenderTarget(probeTarget); renderer.clear(true, true, true);
+          renderer.render(probeScene, probeCamera);
+          renderer.readRenderTargetPixels(probeTarget, 0, 0, 32, 32, pixels);
+          const gpuErrors = errors(); let visible = 0;
+          for (let p = 0; p < pixels.length; p += 4) if (pixels[p + 3] > 240 && Math.max(pixels[p], pixels[p + 1], pixels[p + 2]) > 32) visible++;
+          const passed = visible >= 32 && gpuErrors.length === 0;
+          result.materials.push({ name, visiblePixels: visible, errors: gpuErrors, passed });
+          if (!passed) result.passed = false;
+        } catch (error) {
+          result.materials.push({ name, passed: false, error: String(error).slice(0, 200) }); result.passed = false;
+        }
+      }
+      report.probes.push(result);
+      if (result.passed) { selected = variant; break; }
+    }
+    if (selected) {
+      GFX.compat.environment = !!initialEnvironment && !selected.environment;
+      GFX.compat.shadows = !!initialShadows && !selected.shadows;
+      report.passed = true;
+    } else {
+      GFX.compat.environment = GFX.compat.shadows = GFX.compat.post = true;
+      report.reason = 'Native lit-material validation failed; optional rendering effects were disabled.';
+    }
+    // Check the actual, full-resolution postprocessing attachments on this device.
+    if (GFX.on && !GFX.compat.post) for (const name of ['rt', 'b0', 'b1', 'c0', 'c1']) {
+      errors();
+      try {
+        renderer.setRenderTarget(GFX[name]);
+        const status = gl.checkFramebufferStatus(gl.FRAMEBUFFER), gpuErrors = errors();
+        const passed = status === gl.FRAMEBUFFER_COMPLETE && gpuErrors.length === 0;
+        report.framebuffers.push({ name, status, errors: gpuErrors, passed });
+        if (!passed) GFX.compat.post = true;
+      } catch (error) {
+        report.framebuffers.push({ name, passed: false, error: String(error).slice(0, 200) }); GFX.compat.post = true;
+      }
+    }
+  } catch (error) {
+    GFX.compat.environment = GFX.compat.shadows = GFX.compat.post = true;
+    report.reason = 'Native rendering check could not finish: ' + String(error).slice(0, 200);
+  } finally {
+    renderer.setRenderTarget(savedTarget); renderer.setClearColor(savedClear, savedAlpha); renderer.autoClear = savedAutoClear;
+    if (key.shadow.map) key.shadow.map.dispose();
+    if (key.shadow.mapPass) key.shadow.mapPass.dispose();
+    geo.dispose(); for (const [, material] of materials) material.dispose(); probeTarget.dispose();
+  }
+  if (GFX.compat.environment) scene.environment = null;
+  if (GFX.compat.shadows) sun.castShadow = false;
+  if (GFX.compat.post) GFX.on = false;
+  if (W.water) W.water.material.uniforms.lin.value = GFX.on ? 1 : 0;
+  if (!report.reason && (GFX.compat.environment || GFX.compat.shadows || GFX.compat.post)) report.reason = 'Rendering was adapted after a native graphics compatibility check.';
+  if (report.reason) console.warn('Bumblenook graphics:', report.reason, report);
+  return report;
 }
 function gfxPass(mat, target) { GFX.quad.material = mat; renderer.setRenderTarget(target); renderer.render(GFX.scene, GFX.cam); }
 function gfxRender(dt) {
@@ -4324,8 +4425,8 @@ function loadSettings() { try { Object.assign(SET, JSON.parse(localStorage.getIt
 function saveSettings() { try { localStorage.setItem('bumblenook-settings', JSON.stringify(SET)); } catch (e) { /* optional */ } }
 function applySettings() {
   const low = SET.gfx === 'low';
-  if(typeof ENV!=='undefined'&&ENV.sky)scene.environment=low?null:ENV.sky;
-  sun.castShadow = !low;
+  if(typeof ENV!=='undefined'&&ENV.sky)scene.environment=low||GFX.compat.environment?null:ENV.sky;
+  sun.castShadow = !low && !GFX.compat.shadows;
   renderer.setPixelRatio(low ? 1 : Math.min(window.devicePixelRatio || 1, UIS.coarse ? 1.75 : 2));
   for (const c of clouds) c.visible = !low;
   document.body.classList.toggle('bigtext', !!SET.big);
@@ -7369,7 +7470,7 @@ function boot(hotData) {
   UIS.hadSave = false;
   if (save) { try { loadGame(save); UIS.hadSave = true; } catch (e) { UIS.hadSave = false; } }
   if (!UIS.hadSave) { newGame((Math.random() * 1e6) | 0); buildShowcase(); centerCamera(); CAM.gd = CAM.dist = 27; }
-  renderThumbs(); initHud(); initInput(); resize(); applySettings();
+  renderThumbs(); initHud(); initInput(); resize(); applySettings(); gfxPreflight();
   window.addEventListener('resize', resize);
   document.addEventListener('visibilitychange', () => { if (document.hidden) saveGame(); });
   window.addEventListener('pagehide', saveGame);

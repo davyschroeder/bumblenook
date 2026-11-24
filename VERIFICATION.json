@@ -45,5 +45,18 @@
     "The available browser has WebGL disabled even for the original game. Full browser GPU rendering and frame rates were not measured.",
     "The separate model review approximates game shaders and is not a gameplay screenshot."
   ],
-  "portable_html": "Bumblenook.html contains embedded Three.js and both fonts; no external scripts."
+  "portable_html": "Bumblenook.html contains embedded Three.js and both fonts; no external scripts.",
+  "mobile_compatibility_revision": {
+    "scene_target_samples": 0,
+    "startup_native_probe": "Pixel readback of building, terrain and plain Standard materials; selective environment/shadow fallback; postprocessing framebuffer validation.",
+    "recovery_logic_scenarios_passed": 5,
+    "production_shader_programs": {
+      "webgl1": 25,
+      "webgl2": 25,
+      "all_compile_and_link": true,
+      "context": "Mesa GLES via EGL; exact Three.js r149 shader assembly"
+    },
+    "inline_ui": "390px dark-theme Visualize wrapper: tutorial text verified dark rgb(30,53,44), intact panel selectors, no UI runtime errors.",
+    "device_verification": "The reported Android main-scene failure could not be reproduced with native WebGL in the available browser; the device-specific fix awaits user-side confirmation."
+  }
 }
