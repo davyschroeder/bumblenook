@@ -191,10 +191,10 @@ function exploreSite(s) {
   let v = null, bd = 1e9;
   // a villager without a job goes first; if everyone has one, the nearest worker takes a break from it and returns afterwards
   for (const free of [true, false]) {
-    for (const c of G.villagers) { if (c.state === 'sleep' || (free && c.job) || c.buildSite) continue; const d = dist2(c.x, c.z, s.x, s.z); if (d < bd) { bd = d; v = c; } }
+    for (const c of G.villagers) { if (c.state === 'sleep' || c.child || (free && c.job) || c.buildSite) continue; const d = dist2(c.x, c.z, s.x, s.z); if (d < bd) { bd = d; v = c; } }
     if (v) break;
   }
-  if (!v) for (const c of G.villagers) { if (c.state === 'sleep') continue; const d = dist2(c.x, c.z, s.x, s.z); if (d < bd) { bd = d; v = c; } }
+  if (!v) for (const c of G.villagers) { if (c.state === 'sleep' || c.child) continue; const d = dist2(c.x, c.z, s.x, s.z); if (d < bd) { bd = d; v = c; } }
   if (!v) { sfx('error'); return false; }
   dropCarry(v); clearPlan(v); s.busy = v; v.exploring = s;
   toast(v.name + ' sets out to explore the ' + SITE_KINDS[s.kind].name + '.');

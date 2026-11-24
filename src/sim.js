@@ -148,7 +148,7 @@ function placeBuilding(type, i, j, rot, o) {
     const th = b.rot * Math.PI / 2, cs = Math.cos(th), sn = Math.sin(th);
     eachTile(i, j, d.size, (k, ti, tj) => {
       let solid = !d.walk, paint = d.size > 1 ? 2 : 0;
-      if (type === 'farm' || type === 'pasture') {
+      if (type === 'farm' || type === 'pasture' || d.field) {
         const l = localOf(b, ti, tj);
         if (l[1] >= 0) {
           paint = type === 'farm' ? 3 : 0;
@@ -203,7 +203,7 @@ function onBuilt(b, quiet) {
     if (b.type === 'greathive' && !G.finale) finale();
   }
   if (bedsOf(b)) assignHomes();
-  G.critDirty = true;
+  G.critDirty = true; lifeDirty();
 }
 function demolish(b, full) {
   if (b.type === 'center') return;
@@ -297,7 +297,7 @@ function sealsOff(type, i0, j0, rot) {
   const after = floodReach(_reach2, i0, j0, d.size);
   if (_reachN - covered - after > 3) return 'Would block the way';
   if (!ringReached(i0, j0, d.size, _reach2)) return 'Villagers could not reach it';
-  if (type === 'farm' || type === 'pasture') {
+  if (type === 'farm' || type === 'pasture' || d.field) {
     const th = (rot || 0) * Math.PI / 2, gx = i0 + 1.5 - HALF + 2 * Math.sin(th), gz = j0 + 1.5 - HALF + 2 * Math.cos(th), gi = worldToTile(gx), gj = worldToTile(gz);
     if (!inGrid(gi, gj) || !_reach2[tileIdx(gi, gj)] || W.fence[tileIdx(gi, gj)]) return 'The gate would be blocked. Rotate it';
   }
@@ -387,7 +387,7 @@ function spawnVillager(x, z, o) {
   const v = {
     id: G.nextId++, name: o.name || (free.length ? pick(free) : pick(NAMES)), x, z, y: heightAt(x, z), rot: Math.random() * TAU,
     skin: o.skin !== undefined ? o.skin : (Math.random() * 4) | 0, hair: o.hair !== undefined ? o.hair : (Math.random() * 5) | 0,
-    talent: o.talent || pick(TALENT_JOBS),
+    talent: o.talent || pick(TALENT_JOBS), age: 6 + ((Math.random() * 22) | 0), child: false, need: null,
     job: null, home: null, state: 'awake', plan: [], path: null, pi: 0, carry: null, hold: false, target: null, buildSite: null, inside: null,
     anim: 'idle', animT: Math.random() * 10, moving: false, say: 'Looking around', off: [rand(-0.18, 0.18), rand(-0.18, 0.18)], goingHome: false,
   };
@@ -413,9 +413,9 @@ function assignWorker(b, v) {
   if (!b.def.job || !b.done || b.workers.length >= slotsOf(b)) return false;
   if (!v) {
     let bd = 1e9;        // the nearest free villager, but someone with a talent for the job goes first
-    for (const c of G.villagers) { if (c.job) continue; const d = dist2(c.x, c.z, b.cx, b.cz) - (c.talent === b.def.job ? 5000 : 0); if (d < bd) { bd = d; v = c; } }
+    for (const c of G.villagers) { if (c.job || c.child) continue; const d = dist2(c.x, c.z, b.cx, b.cz) - (c.talent === b.def.job ? 5000 : 0); if (d < bd) { bd = d; v = c; } }
   }
-  if (!v) return false;
+  if (!v || v.child) return false;
   if (v.job) unassignWorker(v.job, v);
   const asleep = v.state === 'sleep';
   clearPlan(v);
@@ -468,6 +468,7 @@ function think(v) {
     v.plan.push(go(accessTiles(st), 'Carrying ' + RES[v.carry.res].toLowerCase() + ' to storage'), call(deposit));
     return;
   }
+  if (v.child) return childThink(v);
   // evenings are for the tavern, a bench or the fire; during a festival the free villagers dance all day
   if ((isEvening() || (G.festival > 0 && !v.job && Math.random() < 0.5)) && !(v.job && NO_BREAK.includes(v.job.def.job)) && leisure(v, false)) return;
   if (!v.job) return thinkFree(v);
@@ -476,7 +477,7 @@ function think(v) {
 }
 function deposit(v) {
   const c = v.carry; if (!c) return;
-  const got = store(c.res, c.amt);
+  const got = store(c.res, c.amt + cartBonus(v, c.amt));       // a workplace on the road sends a little more by handcart
   if (c.res === 'honey') G.stats.honey += c.amt;
   floatText(v.x, v.y + 0.9, v.z, got ? '+' + got : 'Full', c.res);
   sfx('drop', hearK(v.x, v.z) * 0.6);
@@ -635,7 +636,7 @@ const JOB_THINK = {
   },
   brickmaker(v, b) {      // the kiln rests at BRICK_STOP bricks, so it does not burn the stone a grand project needs
     processJob(v, b, { bring: 'Carrying clay and stone to the kiln', fetch: 'Fetching stone from storage', say: 'Firing bricks', get wait() { return G.res.brick >= Math.min(BRICK_STOP, capOf('brick')) ? 'Plenty of bricks in store: the kiln rests' : 'Waiting for spare stone and wood'; }, dur: 7, carry: 'stone',
-      ready: () => G.res.stone >= 40 && G.res.wood >= 25 && G.res.brick < Math.min(BRICK_STOP, capOf('brick')), take: () => { G.res.stone -= 2; G.res.wood -= 1; }, done: (q) => { G.stats.brick++; setCarry(q, 'brick', 1); } });
+      ready: () => (G.res.clay >= 2 ? G.res.wood >= 1 : G.res.stone >= 40 && G.res.wood >= 25) && G.res.brick < Math.min(BRICK_STOP, capOf('brick')), take: () => { if (G.res.clay >= 2) G.res.clay -= 2; else G.res.stone -= 2; G.res.wood -= 1; }, done: (q) => { G.stats.brick++; setCarry(q, 'brick', 1); } });
   },
   attendant(v, b) { v.plan.push(go(accessTiles(b), 'Walking to the bathhouse'), act(8, 'idle', pick(['Folding towels', 'Stoking the boiler', 'Testing the water']), { face: { x: b.cx, z: b.cz } })); },
   guard(v, b) { v.plan.push(go(accessTiles(b), 'Walking to the watchtower'), act(9, 'idle', pick(['Keeping watch', 'Scanning the tree line', 'Whistling a tune']), { face: { x: b.cx, z: b.cz } })); },
@@ -661,7 +662,7 @@ function updateVillager(v, dt) {
   if (!v.plan.length) think(v);
   const s = v.plan[0];
   if (!s) return;
-  const ws = workSpeed() * (v.job && v.job.def.job === v.talent ? 1.3 : 1);
+  const ws = workSpeed() * (v.job && v.job.def.job === v.talent ? 1.3 : 1) * lifeSpeed(v);
   v.moving = false;
   if (s.say) v.say = s.say;
   if (s.t === 'go') {
@@ -788,6 +789,7 @@ function calcHappy() {
   if (G.level >= 2 && !staffed('tavern')) add('Nowhere to gather in the evening', -5);
   if (G.level >= 2 && G.clock - G.lastBread >= 150) add('Missing fresh bread', -4);
   if ((G.level >= 3 || G.season === 3) && G.res.cloth <= 0) add(G.season === 3 ? 'Shivering without warm clothes' : 'Worn-out clothes', -5);
+  lifeHappy(add);
   G.taught = staffed('school');
   G.happyTarget = clamp(h, 0, 100); G.happyParts = parts;
 }
@@ -801,6 +803,7 @@ function doTrade(t) {
 }
 function arrive() {
   if (G.villagers.length >= Math.min(bedCount(), MAX_POP) || G.hungry || G.res.food < G.villagers.length * 3 || G.happy < 35) return;
+  if (tryBirth()) return;
   const c = G.center; let best = -1, bd = 1e9;
   for (let q = 0; q < 60; q++) {
     const k = (Math.random() * N * N) | 0;
@@ -817,9 +820,9 @@ function arrive() {
 function simTick(dt) {         // dt in game seconds
   G.clock += dt;
   const pop = G.villagers.length;
-  if (G.mode !== 'sandbox') G.foodAcc += pop * dt / 26;
+  if (G.mode !== 'sandbox') G.foodAcc += pop * dt / 26 * foodK();
   while (G.foodAcc >= 1) { G.foodAcc -= 1; if (G.res.food > 0) { G.res.food--; G.hungry = false; } else { if (!G.hungry && G.clock - G.hungryMsg > 90) { G.hungryMsg = G.clock; toast('The food has run out! Villagers work slower.', 'bad'); } G.hungry = true; } }
-  G.happyT -= dt; if (G.happyT <= 0) { G.happyT = 1; calcHappy(); checkLevel(); checkQuest(); checkAch(); expandTick(dt); }
+  G.happyT -= dt; if (G.happyT <= 0) { G.happyT = 1; calcHappy(); checkLevel(); checkQuest(); checkAch(); expandTick(dt); lifeTick(); }
   G.happy += (G.happyTarget - G.happy) * Math.min(1, dt * 0.25);
   G.arriveT -= dt; if (G.arriveT <= 0) { G.arriveT = arriveGap(G.villagers.length) * (G.happy > 80 ? 0.85 : 1); arrive(); }
   // nature
@@ -854,7 +857,7 @@ function simTick(dt) {         // dt in game seconds
 }
 function newDay() {
   G.day++;
-  seasonTurn(); dailyEvent();
+  seasonTurn(); dailyEvent(); lifeDay();
   if (countDone('townhall')) { const n = Math.round(G.villagers.length * 0.6); G.res.coins += n; G.stats.coins += n; logNews('The Town Hall collected ' + n + ' coins in tax.'); }
   if (G.day >= 2 && Math.random() < 0.3) G.rainAt = G.clock + rand(15, 90);
   G.flowY = G.flow; G.flow = { in: {}, out: {} };
@@ -881,6 +884,7 @@ function animateBuildings(dt, t) {
     if (!b.done) continue;
     if (u.blades) u.blades.rotation.z -= dt * 0.9;
     if (u.sheep) animateSheep(u, dt, t);
+    if (u.flock) animateFlock(u, dt, t);
     if (u.ducks) animateDucks(u, dt, t);
     if (u.crops) { const gr = b.growth; u.crops.scale.y = Math.max(0.03, gr); u.cropMat.color.set(0x7fbf4d).lerp(_c2.set(0xe6c450), smooth(0.6, 1, gr)); }
     if (u.flame) { u.flame.scale.set(1 + Math.sin(t * 13) * 0.12, 1 + Math.sin(t * 17 + 1) * 0.2, 1 + Math.cos(t * 11) * 0.12); u.flame.rotation.y = t * 2; }
@@ -978,6 +982,7 @@ function baseState(seed) {
     level: 0, missions: [], ach: {}, festival: 0, cheer: -1, missionT: 50, rain: 0, rainAt: -1, taught: false, ship: { state: 'away', t: 0, day: 0, mesh: null, x: 0, z: 0, rot: 0 },
     arriveT: 20, hungryMsg: -999, tut: 0, demo: false, happyT: 0, growT: 1, sapT: 5, clock: 0, lastBread: -999, won: false, fireworks: 0, critDirty: true, started: false,
   });
+  lifeBase();
   G.res = trackRes(G.res); resetFlow();
   if (buildGroup) scene.remove(buildGroup);
   if (villGroup) scene.remove(villGroup);
@@ -999,6 +1004,7 @@ function newGame(seed, mode) {
     for (let q = 0; q < 8; q++) { const a = q / 8 * TAU; spawnVillager(G.center.cx + Math.cos(a) * 3, G.center.cz + Math.sin(a) * 3); }
   } else if (G.mode === 'daily') { const key = todayKey(); G.daily = { date: key, goal: dailySeed(key) % DAILY_GOALS.length, done: false, score: 0 }; }
   W.snowmen = []; applySeason(); resetWildlife();
+  scenarioSetup();
   calcHappy(); G.happy = G.happyTarget; resetFlow();
 }
 function serialize() {
@@ -1007,7 +1013,7 @@ function serialize() {
   const rk = []; for (const r of rocks) if (r.amount > 0) rk.push(r.i, r.j, r.amount);
   const bu = []; for (const b of bushes) if (!b.gone) bu.push(b.i, b.j, b.ripe ? 1 : 0, Math.round(b.timer));
   return {
-    v: 4, q: G.q, treasure: G.treasure, exp: { state: G.exp.state === 'away' ? 'away' : 'home', left: Math.max(0, G.exp.until - G.clock) }, fair: G.fair, finale: G.finale,
+    v: 4, x: lifeSave(), q: G.q, treasure: G.treasure, exp: { state: G.exp.state === 'away' ? 'away' : 'home', left: Math.max(0, G.exp.until - G.clock) }, fair: G.fair, finale: G.finale,
     sn: (W.snowmen || []).map((q) => [+q.x.toFixed(2), +q.z.toFixed(2)]), oc: G.outcrop || null, mode: G.mode, rp: G.rp, tech: G.tech, civic: G.civic, news: G.news, lastEvent: G.lastEvent, story: G.story, storyOn: G.storyOn, storyBase: G.storyBase, fish: G.fish, daily: G.daily,
     fox: Math.max(0, G.foxUntil - G.clock), sf: W.sites.map((q) => (q.found ? 1 : 0)), level: G.level, ach: G.ach, festival: G.festival, cheer: Math.max(0, G.cheer - G.clock),
     missions: G.missions.filter((m) => !m.ship).map((m) => Object.assign({}, m, { until: m.until - G.clock })),
@@ -1047,6 +1053,7 @@ function loadGame(d) {
     if (hm && hm.type === 'house') v.home = hm;
     if (a[7]) G.res[a[7]] += a[8];
   }
+  lifeLoad(d.x);
   assignHomes(); calcHappy();
   G.quest = G.q.grow + G.q.prosper + G.q.discover;
   W.snowmen = []; G.season = seasonOf(G.day); applySeason(); resetWildlife();

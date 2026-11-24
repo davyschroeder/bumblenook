@@ -99,6 +99,7 @@ function initMarkers() {
 function lockReason(type) {
   const d = BT[type];
   if (d.max && G.buildings.filter((q) => q.type === type).length >= d.max) return 'Already built';
+  const sc = scnOf(); if (sc && sc.ban.includes(type)) return 'Not in this challenge';
   if (G.mode === 'sandbox') return null;
   if ((d.lvl || 0) > G.level) return 'Unlocks at ' + LEVELS[d.lvl].name;
   if (d.after && !countDone(d.after)) return 'Build the ' + BT[d.after].name + ' first';
@@ -369,6 +370,7 @@ function refreshBar() {
 }
 function refreshTop() {
   const show = { wood: 1, stone: 1, food: 1, grain: G.res.grain > 0 || countDone('farm') > 0, honey: G.res.honey > 0 || countDone('apiary') > 0, wool: G.res.wool > 0 || countDone('pasture') > 0, cloth: G.res.cloth > 0 || countDone('weaver') > 0, brick: G.res.brick > 0 || countDone('brickworks') > 0, cider: G.res.cider > 0 || countDone('ciderpress') > 0, coins: G.res.coins > 0 || countDone('market') > 0 };
+  for (const r of NEW_RES) show[r] = G.res[r] > 0;
   for (const r of Object.keys(RES)) {
     const el = $('r-' + r);
     el.hidden = !show[r];
@@ -388,7 +390,7 @@ function refreshTop() {
   $('time').textContent = (hh < 10 ? '0' : '') + hh + ':' + (mm < 10 ? '0' : '') + mm;
   $('clock').classList.toggle('night', isNight());
   const qc = $('quest');
-  $('q-n').textContent = LEVELS[G.level].name + ' \u00b7 ' + G.quest + ' of ' + QUESTS.length + ' goals';
+  $('q-n').textContent = lifeCardText(LEVELS[G.level].name + ' \u00b7 ' + G.quest + ' of ' + QUESTS.length + ' goals');
   setH('q-list', TRACKS.map((t) => {
     const q = goalOf(t);
     if (!q) return '<span class="qg done"><i>' + t.name + '</i><span class="qx">All done</span></span>';
@@ -436,6 +438,7 @@ function openBuildingPanel(b) {
   if (b.type === 'townhall') h += '<h3>Town improvements</h3><div id="b-civic"></div>';
   if (b.type === 'shipyard') h += '<h3>Expedition</h3><p class="note" id="b-exp"></p><div class="row"><span class="grow pline" id="b-expc"></span><button type="button" class="btn" id="b-expgo">Set sail</button></div>';
   if (d.storage) h += '<p class="note" id="b-cap"></p>';
+  h += lifePanelHtml(b);
   if (up) h += '<div id="b-up"></div>';
   if (b.type !== 'center') h += '<div class="row end"><button type="button" class="btn ghost" id="b-demo">Demolish</button></div>';
   openPanel('b', b, nameOf(b), d.job ? 'Workplace' : d.beds ? 'Home' : d.storage ? 'Storage' : 'Village', h, () => {
@@ -448,12 +451,13 @@ function openBuildingPanel(b) {
     else if (b.type === 'apiary') st = b.bonus ? 'The bees are thriving: double honey.' : d.desc;
     $('b-status').textContent = st; $('b-status').classList.toggle('bad', !!(b.done && ((b.warn && b.workers.length) || (d.job && !b.workers.length))));
     if (d.job) {
-      const freeV = G.villagers.filter((v) => !v.job), free = freeV.length, gift = freeV.filter((v) => v.talent === d.job).length;
+      const freeV = G.villagers.filter((v) => !v.job && !v.child), free = freeV.length, gift = freeV.filter((v) => v.talent === d.job).length;
       $('bw-n').textContent = b.workers.length + '/' + slots;
       $('bw-m').disabled = !b.workers.length; $('bw-p').disabled = !b.done || b.workers.length >= slots || !free;
       $('b-free').textContent = !b.done ? 'Workers can start once it is built.' : b.workers.length >= slots ? 'Fully staffed. Minus sends a villager back to building.'
         : free ? free + ' free villager' + (free === 1 ? '' : 's') + ' available' + (gift ? ', ' + gift + ' with a talent for this job' : '') + '. Plus puts one to work here.' : 'No free villagers. Take someone off another job or build cottages.';
     }
+    lifePanelUpdate(b);
     if (b.type === 'farm') $('b-grow').style.width = Math.round(b.growth * 100) + '%';
     if (d.beds) $('b-res').textContent = b.type === 'center' ? 'Tents for 4 villagers without a cottage.' : 'Residents (' + b.residents.length + '/' + bedsOf(b) + '): ' + (b.residents.map((v) => v.name).join(', ') || 'nobody yet');
     if (b.type === 'market') {
@@ -513,15 +517,16 @@ function refreshSettingsUI() {
   $('m-lang').textContent = 'Language: ' + (SET.lang === 'nl' ? 'Nederlands' : 'English');
 }
 function openVillagerPanel(v) {
-  let h = '<p class="status" id="v-say"></p><p class="note" id="v-home"></p><div class="chips" id="v-jobs"></div><div class="row end"><button type="button" class="btn ghost" id="v-follow">Follow</button><button type="button" class="btn ghost" id="v-free">Set free</button></div>';
+  let h = '<p class="status" id="v-say"></p><p class="note" id="v-home"></p>' + lifeVillagerHtml() + '<div class="chips" id="v-jobs"></div><div class="row end"><button type="button" class="btn ghost" id="v-follow">Follow</button><button type="button" class="btn ghost" id="v-free">Set free</button></div>';
   openPanel('v', v, v.name, '', h, () => {
     $('pn-sub').textContent = JOBS[v.job ? v.job.def.job : 'free'].title;
     $('v-say').textContent = v.say + (G.hungry ? ' (hungry)' : '');
     $('v-home').textContent = (v.home ? 'Lives in a cottage.' : 'Sleeps in a tent on the green.') + ' Has a talent for ' + JOBS[v.talent].title.toLowerCase() + ' work' + (v.job && v.job.def.job === v.talent ? ' and works 30% faster here.' : '.');
+    lifeVillagerUpdate(v);
     $('v-free').hidden = !v.job;
     $('v-follow').setAttribute('aria-pressed', String(CAM.follow === v));
     const open = {};
-    for (const b of G.buildings) if (b.done && b.def.job && b.workers.length < slotsOf(b) && b !== v.job) open[b.def.job] = 1;
+    if (!v.child) for (const b of G.buildings) if (b.done && b.def.job && b.workers.length < slotsOf(b) && b !== v.job) open[b.def.job] = 1;
     const html = Object.keys(open).map((j) => '<button type="button" class="chip" data-job="' + j + '">Become a ' + JOBS[j].title.toLowerCase() + '</button>').join('');
     const box = $('v-jobs'); if (box.dataset.h !== html) { box.innerHTML = html; box.dataset.h = html; }
   });
@@ -534,7 +539,7 @@ function openPeoplePanel() {
   h += '<p class="note">Free villagers build whatever you place.</p><div class="list" id="p-list"></div>';
   openPanel('people', null, 'Villagers', '', h, () => {
     $('pn-sub').textContent = G.villagers.length + ' villagers, ' + bedCount() + ' beds';
-    const free = G.villagers.filter((v) => !v.job).length;
+    const free = G.villagers.filter((v) => !v.job && !v.child).length;
     $('pj-free').textContent = free;
     for (const j of jobs) {
       const bs = G.buildings.filter((b) => b.done && b.def.job === j), slots = bs.reduce((n, b) => n + slotsOf(b), 0), n = jobCount(j);
@@ -556,13 +561,14 @@ function openHappyPanel() {
 const setH = (id, html) => { const el = $(id); if (el.dataset.h !== html) { el.innerHTML = html; el.dataset.h = html; } };
 function openVillagePanel() {
   select(null);
-  const h = '<div id="vl-daily"></div><div id="vl-needs"></div><p class="note" id="vl-unlocks"></p><div id="vl-story"></div>' +
+  const h = '<div id="vl-scn"></div><div id="vl-daily"></div><div id="vl-needs"></div><p class="note" id="vl-unlocks"></p><div id="vl-story"></div>' +
     '<h3>Goals</h3><div id="vl-goals"></div>' +
     '<h3>Requests</h3><div id="vl-missions"></div>' +
     '<h3>Festival</h3><p class="note" id="vl-fest-note"></p><div class="row end"><button type="button" class="btn" id="vl-fest">Hold a festival</button></div>' +
     '<h3>Badges</h3><div class="badges" id="vl-badges"></div><h3>Almanac</h3><div class="alms" id="vl-alm"></div><h3>News</h3><div id="vl-news"></div>';
   openPanel('village', null, 'Bumblenook', '', h, () => {
     $('pn-sub').textContent = LEVELS[G.level].name + ' \u00b7 ' + SEASONS[G.season].toLowerCase() + ', day ' + G.day;
+    lifeVillageUpdate();
     const D = G.daily, best = D ? dailyBest(D.date) : null;
     setH('vl-daily', D ? '<h3>Daily island</h3><p class="status">' + DAILY_GOALS[D.goal].text + (D.done ? ': done in ' + D.score.toFixed(1) + ' days!' : ' as fast as you can.') + '</p><p class="note">' + (best !== null ? 'Your best today: ' + best.toFixed(1) + ' days.' : 'Everyone gets the same island today.') + '</p>' : '');
     const ch = STORY[G.story], sp = ch && G.storyOn ? ch.prog() : null;
@@ -608,7 +614,8 @@ function initPanelEvents() {
     if (t.id === 'pn-close') { if (UIS.sel) select(null); else closePanel(); return; }
     if (P.kind === 'b') {
       const b = P.ref;
-      if (t.id === 'bw-p') { if (assignWorker(b)) sfx('click'); else sfx('error'); }
+      if (lifePanelClick(t)) { /* handled */ }
+      else if (t.id === 'bw-p') { if (assignWorker(b)) sfx('click'); else sfx('error'); }
       else if (t.id === 'bw-m') { if (unassignWorker(b)) sfx('click'); }
       else if (t.dataset.trade) doTrade(TRADES[+t.dataset.trade]);
       else if (t.dataset.tech) research(t.dataset.tech);
@@ -643,9 +650,9 @@ function initPanelEvents() {
 }
 
 // ----- modal: menu and help -----
-function closeModal() { $('modal').hidden = true; }
+function closeModal() { if (G.pending && !$('m-event').hidden) return; $('modal').hidden = true; }       // an event waits for an answer
 function openModal(which) {
-  $('m-menu').hidden = which !== 'menu'; $('m-help').hidden = which !== 'help'; $('m-win').hidden = which !== 'win'; $('m-letter').hidden = which !== 'letter'; $('m-final').hidden = which !== 'final';
+  $('m-menu').hidden = which !== 'menu'; $('m-help').hidden = which !== 'help'; $('m-win').hidden = which !== 'win'; $('m-letter').hidden = which !== 'letter'; $('m-final').hidden = which !== 'final'; $('m-event').hidden = which !== 'event'; $('m-chal').hidden = which !== 'chal';
   refreshSettingsUI(); translateDom();
   $('modal').hidden = false;
   $('m-sound').setAttribute('aria-pressed', String(AU.soundOn)); $('m-music').setAttribute('aria-pressed', String(AU.musicOn));
@@ -656,6 +663,7 @@ function enterGame() {
   $('start').hidden = true; $('hud').hidden = false;
   document.body.classList.add('playing');
   buildBar(); setSpeed(1); uiDirty();
+  if (G.pending) showChoice();
 }
 function initHud() {
   $('tabs').addEventListener('click', (e) => { const t = e.target.closest('button'); if (!t) return; UIS.tab = t.dataset.tab; buildBar(); uiDirty(); sfx('click'); });
@@ -677,6 +685,8 @@ function initHud() {
     if (e.target === $('modal')) { closeModal(); return; }
     const t = e.target.closest('button'); if (!t) return;
     const a = t.dataset.act;
+    if (t.dataset.scn) { startScenario(t.dataset.scn); return; }
+    if (a === 'ev0' || a === 'ev1') { const n = a === 'ev1' ? 1 : 0; $('m-event').hidden = true; resolveChoice(n); closeModal(); return; }
     if (a === 'close') closeModal();
     else if (a === 'help') openModal('help');
     else if (a === 'back') openModal('menu');
@@ -705,6 +715,7 @@ function initHud() {
   };
   $('s-daily').addEventListener('click', () => startMode('daily'));
   $('s-sand').addEventListener('click', () => startMode('sandbox'));
+  $('s-chal').addEventListener('click', () => { openChallenges(); sfx('click'); });
   $('c-undo').addEventListener('click', () => { if (!undoLast()) sfx('error'); });
   $('ph-exit').addEventListener('click', () => photoMode(false));
   $('ph-up').addEventListener('click', () => { CAM.tilt = clamp((CAM.tilt || 0) - 0.12, -0.5, 0.5); });

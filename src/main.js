@@ -19,7 +19,7 @@ function frame(now) {
   requestAnimationFrame(frame);
   const dt = Math.min(0.1, (now - _last) / 1000 || 0.016); _last = now; _abs += dt;
   keyCamera(dt); updateCamera(dt);
-  const sp = G.started ? (UIS.paused ? 0 : UIS.speed) : G.demo ? 1 : 0;
+  const sp = G.started ? (UIS.paused || G.pending ? 0 : UIS.speed) : G.demo ? 1 : 0;      // the village waits while you decide on an event
   if (sp > 0) {
     const asleep = isNight() && G.villagers.length > 0 && G.villagers.every((v) => v.state === 'sleep');
     let rem = dt * sp * (asleep ? 4 : 1);
@@ -27,7 +27,7 @@ function frame(now) {
   }
   const adt = sp > 0 ? dt * Math.min(sp, 2.2) : G.started ? 0 : dt;
   if (G.started) { positionLabels(); tutPosition(); }
-  for (const v of G.villagers) if (v.mesh.visible) animateVillager(v, adt);
+  for (const v of G.villagers) if (v.mesh.visible) { animateVillager(v, adt); lifeAnimate(v); }
   animateBuildings(adt, _abs);
   SWAY.uTime.value = _abs;
   updateRain(dt, CAM.tx, CAM.tz); updateWildlife(adt, _abs);

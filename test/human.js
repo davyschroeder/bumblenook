@@ -72,6 +72,7 @@ const MAXMIN = +process.env.MAXMIN || 200;
         if (G.story !== ls) { ls = G.story; ev('story ' + ls, 1); }
         if (G.stats.upgrades !== lu) { lu = G.stats.upgrades; ev('upgrade'); } if (G.stats.civic !== lc) { lc = G.stats.civic; ev('civic'); }
         for (const b of G.buildings) if (b.done && !seen[b.type]) { seen[b.type] = 1; ev('first ' + b.type); }
+        if (G.pending) __hh.life.resolveChoice(G.res.coins > 300 ? 0 : 1);
         if (asleep) continue;
         const a = act(); thinks++; stageThink[G.level]++;
         if (!a) { idle++; stageIdle[G.level]++; idleStreak++; } else idleStreak = 0;

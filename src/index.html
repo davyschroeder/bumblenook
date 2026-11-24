@@ -72,6 +72,9 @@ button.rc:hover{background:#46301f}
 .goal+.goal{margin-top:6px}
 .goal>b{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--honey)}
 .goal .need .bar{flex:1}
+#ch-list .btn{width:auto;flex:none;min-width:84px}
+#ch-list .tech{margin-top:8px}
+.isl{display:flex;align-items:center;gap:6px}
 .lg{display:grid;grid-template-columns:1fr 74px 76px 66px;gap:4px;align-items:center;min-height:30px;font-variant-numeric:tabular-nums;font-size:13px;border-bottom:1px solid var(--line)}
 .lg .grow{display:flex;align-items:center;gap:5px;font-weight:800}
 .lg span{text-align:right}
@@ -296,6 +299,11 @@ body.touch .round{width:42px;height:42px}
   <symbol id="i-wool" viewBox="0 0 24 24"><circle cx="8" cy="13" r="5" fill="#f5f1e6"/><circle cx="15.500" cy="12" r="5.500" fill="#f5f1e6"/><circle cx="11.500" cy="8.500" r="4.500" fill="#fff"/><circle cx="12" cy="16" r="4.500" fill="#e6dfcd"/><circle cx="16.500" cy="15.500" r="3.500" fill="#e6dfcd"/></symbol>
   <symbol id="i-cloth" viewBox="0 0 24 24"><path d="M4 7.500l12-3 4 2.500v10l-12 3-4-2.500z" fill="#4c7ea9"/><path d="M4 7.500l4 2.500 12-3-4-2.500z" fill="#7fb0d8"/><path d="M8 10v10" stroke="#35628a" stroke-width="1.400"/><path d="M11 9.300v10M14.500 8.400v10" stroke="#fff" stroke-width="1.200" opacity=".7"/></symbol>
   <symbol id="i-brick" viewBox="0 0 24 24"><rect x="3" y="12" width="12" height="7" rx="1.200" fill="#b5563c"/><rect x="9" y="5" width="12" height="7" rx="1.200" fill="#cc6f52"/><rect x="15.500" y="12.500" width="5.500" height="6.500" rx="1.200" fill="#9c4631"/></symbol>
+  <symbol id="i-cake" viewBox="0 0 24 24"><path d="M4 12h16v7.500c0 .8-.7 1.500-1.500 1.500h-13c-.8 0-1.500-.7-1.500-1.500z" fill="#f3e1c2"/><path d="M4 12h16v3.500c-1.300 1.400-2.700 1.400-4 0-1.300 1.400-2.700 1.400-4 0-1.300 1.400-2.700 1.400-4 0-1.300 1.400-2.700 1.400-4 0z" fill="#e98ba2"/><path d="M11 6h2v6h-2z" fill="#fff3d9"/><circle cx="12" cy="4.500" r="1.800" fill="#e2503c"/></symbol>
+  <symbol id="i-clothes" viewBox="0 0 24 24"><path d="M8 3.500l4 2 4-2 5 3.500-2.500 4-2.500-1.500V20.500H8V9.500L5.500 11 3 7z" fill="#6f5aa8"/><path d="M8 3.500l4 2 4-2-1 3.200c-2 1-4 1-6 0z" fill="#fff3d9"/><path d="M12 9v9" stroke="#fff3d9" stroke-width="1.200" stroke-dasharray="1.500 2"/></symbol>
+  <symbol id="i-salt" viewBox="0 0 24 24"><path d="M3 20c2.500-7 5-11 9-11s6.500 4 9 11z" fill="#f4f1ea"/><path d="M9 20c1-4 2.500-7 4-8.500" stroke="#c9d3da" stroke-width="1.400" fill="none"/><circle cx="12" cy="5" r="1" fill="#f4f1ea"/><circle cx="8" cy="7" r=".8" fill="#f4f1ea"/><circle cx="16" cy="7" r=".8" fill="#f4f1ea"/></symbol>
+  <symbol id="i-clay" viewBox="0 0 24 24"><path d="M8 5h8l-1 3c3 1.500 4.500 4 4.500 7 0 3.500-3 6-7.500 6s-7.500-2.500-7.500-6c0-3 1.500-5.500 4.500-7z" fill="#b5673f"/><path d="M8 5h8l-.4 1.600H8.400z" fill="#8a4a2b"/><path d="M7.500 14c1 2.500 3 3.500 5.500 3.500" stroke="#d98b62" stroke-width="1.400" fill="none"/></symbol>
+  <symbol id="i-grapes" viewBox="0 0 24 24"><path d="M12 3v4" stroke="#6b4529" stroke-width="1.600"/><path d="M12 5c2-2.500 4.500-2.500 6-1-1 2.500-3.500 3-6 1z" fill="#6fae4a"/><g fill="#8d5c9e"><circle cx="8.500" cy="9.500" r="3"/><circle cx="15.500" cy="9.500" r="3"/><circle cx="12" cy="10.500" r="3"/><circle cx="10" cy="14.500" r="3"/><circle cx="14" cy="14.500" r="3"/><circle cx="12" cy="18.500" r="3"/></g><circle cx="11" cy="9.500" r=".9" fill="#c7a3d6"/></symbol>
   <symbol id="i-cider" viewBox="0 0 24 24"><path d="M7 9h10l-1 10.500c-.1 1-1 1.500-2 1.500h-4c-1 0-1.900-.5-2-1.500z" fill="#c98a2e"/><path d="M7 9h10l-.3 3.500H7.300z" fill="#fff3d9"/><path d="M17 11h1.800c1.200 0 2.200 1 2.200 2.200v1.600c0 1.200-1 2.200-2.200 2.200h-2" fill="none" stroke="#c98a2e" stroke-width="2"/><circle cx="12" cy="5" r="2.600" fill="#e2503c"/></symbol>
   <symbol id="i-rp" viewBox="0 0 24 24"><path d="M12 2.500c4 0 7 3 7 6.800 0 2.500-1.300 4.200-2.800 5.500V17H7.800v-2.200C6.300 13.500 5 11.800 5 9.300c0-3.800 3-6.800 7-6.800z" fill="#ffd257"/><rect x="8" y="17.500" width="8" height="2" rx="1" fill="#7d7b78"/><rect x="9.300" y="20" width="5.400" height="1.800" rx=".9" fill="#7d7b78"/><path d="M10 13l2-4 2 4" fill="none" stroke="#c9820f" stroke-width="1.500" stroke-linejoin="round"/></symbol>
   <symbol id="i-coins" viewBox="0 0 24 24"><ellipse cx="12" cy="15.500" rx="8.500" ry="5" fill="#c9820f"/><ellipse cx="12" cy="12.500" rx="8.500" ry="5" fill="#e7a421"/><ellipse cx="12" cy="9.500" rx="8.500" ry="5" fill="#ffd257"/><ellipse cx="12" cy="9.500" rx="5" ry="2.600" fill="none" stroke="#e7a421" stroke-width="1.300"/></symbol>
@@ -329,6 +337,11 @@ body.touch .round{width:42px;height:42px}
       <button type="button" class="rc" id="r-cloth" title="Cloth" hidden><svg class="ic" aria-hidden="true"><use href="#i-cloth"/></svg><b>0</b></button>
       <button type="button" class="rc" id="r-brick" title="Bricks" hidden><svg class="ic" aria-hidden="true"><use href="#i-brick"/></svg><b>0</b></button>
       <button type="button" class="rc" id="r-cider" title="Cider" hidden><svg class="ic" aria-hidden="true"><use href="#i-cider"/></svg><b>0</b></button>
+      <button type="button" class="rc" id="r-cake" title="Cake" hidden><svg class="ic" aria-hidden="true"><use href="#i-cake"/></svg><b>0</b></button>
+      <button type="button" class="rc" id="r-clothes" title="Clothes" hidden><svg class="ic" aria-hidden="true"><use href="#i-clothes"/></svg><b>0</b></button>
+      <button type="button" class="rc" id="r-salt" title="Salt" hidden><svg class="ic" aria-hidden="true"><use href="#i-salt"/></svg><b>0</b></button>
+      <button type="button" class="rc" id="r-clay" title="Clay" hidden><svg class="ic" aria-hidden="true"><use href="#i-clay"/></svg><b>0</b></button>
+      <button type="button" class="rc" id="r-grapes" title="Grapes" hidden><svg class="ic" aria-hidden="true"><use href="#i-grapes"/></svg><b>0</b></button>
       <button type="button" class="rc" id="r-rp" title="Insight for research" hidden><svg class="ic" aria-hidden="true"><use href="#i-rp"/></svg><b>0</b></button>
       <button type="button" class="rc" id="r-coins" title="Coins" hidden><svg class="ic" aria-hidden="true"><use href="#i-coins"/></svg><b>0</b></button>
     </div>
@@ -428,6 +441,7 @@ body.touch .round{width:42px;height:42px}
   <div class="s-btns s-more">
     <button type="button" class="mid" id="s-daily">Daily island</button>
     <button type="button" class="mid" id="s-sand">Sandbox</button>
+    <button type="button" class="mid" id="s-chal">Challenges</button>
   </div>
   <p class="s-foot">Drag to move, pinch or scroll to zoom, rotate with two fingers or the right mouse button. Your village is saved in this browser.</p>
 </div>
@@ -456,6 +470,9 @@ body.touch .round{width:42px;height:42px}
       <li>Cottages bring new settlers. Wells, lanterns and flowers keep them happy.</li>
       <li>Three goals run side by side: Grow, Prosper and Discover. Tap the goal card for details, requests, badges and festivals.</li>
       <li>Tap any resource at the top for the village ledger: what came in and what was used, per day.</li>
+      <li>Join workplaces to a Storehouse with a path: their goods then travel by handcart and a quarter more arrives.</li>
+      <li>Tap a cottage to see its neighbourhood: warmth, company, rest and a lovely street all make its residents happier.</li>
+      <li>Now and then the village asks you to decide something. Take your time: the game waits.</li>
       <li>Build an Academy for research: it unlocks new buildings and upgrades. Old sites on the island can be explored.</li>
       <li>The seasons turn every four days. Stock up before winter, when berries and fruit are scarce.</li>
       <li>Everyone sleeps at night. The night passes faster by itself.</li>
@@ -471,6 +488,18 @@ body.touch .round{width:42px;height:42px}
     <p id="l-text"></p>
     <p id="l-task"></p>
     <button type="button" class="btn" data-act="close">I will see to it</button>
+  </div>
+  <div class="glass sheet" id="m-event" hidden>
+    <h2 id="ev-title"></h2>
+    <p id="ev-text"></p>
+    <button type="button" class="btn" data-act="ev0" id="ev-a"></button>
+    <button type="button" class="btn ghost" data-act="ev1" id="ev-b"></button>
+  </div>
+  <div class="glass sheet" id="m-chal" hidden>
+    <h2>Challenges</h2>
+    <p>Short games with one rule and a medal to win. Each has its own island and its own save.</p>
+    <div id="ch-list"></div>
+    <button type="button" class="btn ghost" data-act="close">Back</button>
   </div>
   <div class="glass sheet" id="m-final" hidden>
     <h2>The Great Hive hums</h2>

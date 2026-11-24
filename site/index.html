@@ -70,6 +70,9 @@ button.rc:hover{background:#46301f}
 .goal+.goal{margin-top:6px}
 .goal>b{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--honey)}
 .goal .need .bar{flex:1}
+#ch-list .btn{width:auto;flex:none;min-width:84px}
+#ch-list .tech{margin-top:8px}
+.isl{display:flex;align-items:center;gap:6px}
 .lg{display:grid;grid-template-columns:1fr 74px 76px 66px;gap:4px;align-items:center;min-height:30px;font-variant-numeric:tabular-nums;font-size:13px;border-bottom:1px solid var(--line)}
 .lg .grow{display:flex;align-items:center;gap:5px;font-weight:800}
 .lg span{text-align:right}
@@ -294,6 +297,11 @@ body.touch .round{width:42px;height:42px}
   <symbol id="i-wool" viewBox="0 0 24 24"><circle cx="8" cy="13" r="5" fill="#f5f1e6"/><circle cx="15.500" cy="12" r="5.500" fill="#f5f1e6"/><circle cx="11.500" cy="8.500" r="4.500" fill="#fff"/><circle cx="12" cy="16" r="4.500" fill="#e6dfcd"/><circle cx="16.500" cy="15.500" r="3.500" fill="#e6dfcd"/></symbol>
   <symbol id="i-cloth" viewBox="0 0 24 24"><path d="M4 7.500l12-3 4 2.500v10l-12 3-4-2.500z" fill="#4c7ea9"/><path d="M4 7.500l4 2.500 12-3-4-2.500z" fill="#7fb0d8"/><path d="M8 10v10" stroke="#35628a" stroke-width="1.400"/><path d="M11 9.300v10M14.500 8.400v10" stroke="#fff" stroke-width="1.200" opacity=".7"/></symbol>
   <symbol id="i-brick" viewBox="0 0 24 24"><rect x="3" y="12" width="12" height="7" rx="1.200" fill="#b5563c"/><rect x="9" y="5" width="12" height="7" rx="1.200" fill="#cc6f52"/><rect x="15.500" y="12.500" width="5.500" height="6.500" rx="1.200" fill="#9c4631"/></symbol>
+  <symbol id="i-cake" viewBox="0 0 24 24"><path d="M4 12h16v7.500c0 .8-.7 1.500-1.500 1.500h-13c-.8 0-1.500-.7-1.500-1.500z" fill="#f3e1c2"/><path d="M4 12h16v3.500c-1.300 1.400-2.700 1.400-4 0-1.300 1.400-2.700 1.400-4 0-1.300 1.400-2.700 1.400-4 0-1.300 1.400-2.700 1.400-4 0z" fill="#e98ba2"/><path d="M11 6h2v6h-2z" fill="#fff3d9"/><circle cx="12" cy="4.500" r="1.800" fill="#e2503c"/></symbol>
+  <symbol id="i-clothes" viewBox="0 0 24 24"><path d="M8 3.500l4 2 4-2 5 3.500-2.500 4-2.500-1.500V20.500H8V9.500L5.500 11 3 7z" fill="#6f5aa8"/><path d="M8 3.500l4 2 4-2-1 3.200c-2 1-4 1-6 0z" fill="#fff3d9"/><path d="M12 9v9" stroke="#fff3d9" stroke-width="1.200" stroke-dasharray="1.500 2"/></symbol>
+  <symbol id="i-salt" viewBox="0 0 24 24"><path d="M3 20c2.500-7 5-11 9-11s6.500 4 9 11z" fill="#f4f1ea"/><path d="M9 20c1-4 2.500-7 4-8.500" stroke="#c9d3da" stroke-width="1.400" fill="none"/><circle cx="12" cy="5" r="1" fill="#f4f1ea"/><circle cx="8" cy="7" r=".8" fill="#f4f1ea"/><circle cx="16" cy="7" r=".8" fill="#f4f1ea"/></symbol>
+  <symbol id="i-clay" viewBox="0 0 24 24"><path d="M8 5h8l-1 3c3 1.500 4.500 4 4.500 7 0 3.500-3 6-7.500 6s-7.500-2.500-7.500-6c0-3 1.500-5.500 4.500-7z" fill="#b5673f"/><path d="M8 5h8l-.4 1.600H8.400z" fill="#8a4a2b"/><path d="M7.500 14c1 2.500 3 3.500 5.500 3.500" stroke="#d98b62" stroke-width="1.400" fill="none"/></symbol>
+  <symbol id="i-grapes" viewBox="0 0 24 24"><path d="M12 3v4" stroke="#6b4529" stroke-width="1.600"/><path d="M12 5c2-2.500 4.500-2.500 6-1-1 2.500-3.500 3-6 1z" fill="#6fae4a"/><g fill="#8d5c9e"><circle cx="8.500" cy="9.500" r="3"/><circle cx="15.500" cy="9.500" r="3"/><circle cx="12" cy="10.500" r="3"/><circle cx="10" cy="14.500" r="3"/><circle cx="14" cy="14.500" r="3"/><circle cx="12" cy="18.500" r="3"/></g><circle cx="11" cy="9.500" r=".9" fill="#c7a3d6"/></symbol>
   <symbol id="i-cider" viewBox="0 0 24 24"><path d="M7 9h10l-1 10.500c-.1 1-1 1.500-2 1.500h-4c-1 0-1.900-.5-2-1.500z" fill="#c98a2e"/><path d="M7 9h10l-.3 3.500H7.300z" fill="#fff3d9"/><path d="M17 11h1.800c1.200 0 2.200 1 2.200 2.200v1.600c0 1.200-1 2.200-2.200 2.200h-2" fill="none" stroke="#c98a2e" stroke-width="2"/><circle cx="12" cy="5" r="2.600" fill="#e2503c"/></symbol>
   <symbol id="i-rp" viewBox="0 0 24 24"><path d="M12 2.500c4 0 7 3 7 6.800 0 2.500-1.300 4.200-2.800 5.500V17H7.800v-2.200C6.300 13.500 5 11.800 5 9.300c0-3.800 3-6.800 7-6.800z" fill="#ffd257"/><rect x="8" y="17.500" width="8" height="2" rx="1" fill="#7d7b78"/><rect x="9.300" y="20" width="5.400" height="1.800" rx=".9" fill="#7d7b78"/><path d="M10 13l2-4 2 4" fill="none" stroke="#c9820f" stroke-width="1.500" stroke-linejoin="round"/></symbol>
   <symbol id="i-coins" viewBox="0 0 24 24"><ellipse cx="12" cy="15.500" rx="8.500" ry="5" fill="#c9820f"/><ellipse cx="12" cy="12.500" rx="8.500" ry="5" fill="#e7a421"/><ellipse cx="12" cy="9.500" rx="8.500" ry="5" fill="#ffd257"/><ellipse cx="12" cy="9.500" rx="5" ry="2.600" fill="none" stroke="#e7a421" stroke-width="1.300"/></symbol>
@@ -327,6 +335,11 @@ body.touch .round{width:42px;height:42px}
       <button type="button" class="rc" id="r-cloth" title="Cloth" hidden><svg class="ic" aria-hidden="true"><use href="#i-cloth"/></svg><b>0</b></button>
       <button type="button" class="rc" id="r-brick" title="Bricks" hidden><svg class="ic" aria-hidden="true"><use href="#i-brick"/></svg><b>0</b></button>
       <button type="button" class="rc" id="r-cider" title="Cider" hidden><svg class="ic" aria-hidden="true"><use href="#i-cider"/></svg><b>0</b></button>
+      <button type="button" class="rc" id="r-cake" title="Cake" hidden><svg class="ic" aria-hidden="true"><use href="#i-cake"/></svg><b>0</b></button>
+      <button type="button" class="rc" id="r-clothes" title="Clothes" hidden><svg class="ic" aria-hidden="true"><use href="#i-clothes"/></svg><b>0</b></button>
+      <button type="button" class="rc" id="r-salt" title="Salt" hidden><svg class="ic" aria-hidden="true"><use href="#i-salt"/></svg><b>0</b></button>
+      <button type="button" class="rc" id="r-clay" title="Clay" hidden><svg class="ic" aria-hidden="true"><use href="#i-clay"/></svg><b>0</b></button>
+      <button type="button" class="rc" id="r-grapes" title="Grapes" hidden><svg class="ic" aria-hidden="true"><use href="#i-grapes"/></svg><b>0</b></button>
       <button type="button" class="rc" id="r-rp" title="Insight for research" hidden><svg class="ic" aria-hidden="true"><use href="#i-rp"/></svg><b>0</b></button>
       <button type="button" class="rc" id="r-coins" title="Coins" hidden><svg class="ic" aria-hidden="true"><use href="#i-coins"/></svg><b>0</b></button>
     </div>
@@ -426,6 +439,7 @@ body.touch .round{width:42px;height:42px}
   <div class="s-btns s-more">
     <button type="button" class="mid" id="s-daily">Daily island</button>
     <button type="button" class="mid" id="s-sand">Sandbox</button>
+    <button type="button" class="mid" id="s-chal">Challenges</button>
   </div>
   <p class="s-foot">Drag to move, pinch or scroll to zoom, rotate with two fingers or the right mouse button. Your village is saved in this browser.</p>
 </div>
@@ -454,6 +468,9 @@ body.touch .round{width:42px;height:42px}
       <li>Cottages bring new settlers. Wells, lanterns and flowers keep them happy.</li>
       <li>Three goals run side by side: Grow, Prosper and Discover. Tap the goal card for details, requests, badges and festivals.</li>
       <li>Tap any resource at the top for the village ledger: what came in and what was used, per day.</li>
+      <li>Join workplaces to a Storehouse with a path: their goods then travel by handcart and a quarter more arrives.</li>
+      <li>Tap a cottage to see its neighbourhood: warmth, company, rest and a lovely street all make its residents happier.</li>
+      <li>Now and then the village asks you to decide something. Take your time: the game waits.</li>
       <li>Build an Academy for research: it unlocks new buildings and upgrades. Old sites on the island can be explored.</li>
       <li>The seasons turn every four days. Stock up before winter, when berries and fruit are scarce.</li>
       <li>Everyone sleeps at night. The night passes faster by itself.</li>
@@ -469,6 +486,18 @@ body.touch .round{width:42px;height:42px}
     <p id="l-text"></p>
     <p id="l-task"></p>
     <button type="button" class="btn" data-act="close">I will see to it</button>
+  </div>
+  <div class="glass sheet" id="m-event" hidden>
+    <h2 id="ev-title"></h2>
+    <p id="ev-text"></p>
+    <button type="button" class="btn" data-act="ev0" id="ev-a"></button>
+    <button type="button" class="btn ghost" data-act="ev1" id="ev-b"></button>
+  </div>
+  <div class="glass sheet" id="m-chal" hidden>
+    <h2>Challenges</h2>
+    <p>Short games with one rule and a medal to win. Each has its own island and its own save.</p>
+    <div id="ch-list"></div>
+    <button type="button" class="btn ghost" data-act="close">Back</button>
   </div>
   <div class="glass sheet" id="m-final" hidden>
     <h2>The Great Hive hums</h2>
@@ -2432,7 +2461,7 @@ function placeBuilding(type, i, j, rot, o) {
     const th = b.rot * Math.PI / 2, cs = Math.cos(th), sn = Math.sin(th);
     eachTile(i, j, d.size, (k, ti, tj) => {
       let solid = !d.walk, paint = d.size > 1 ? 2 : 0;
-      if (type === 'farm' || type === 'pasture') {
+      if (type === 'farm' || type === 'pasture' || d.field) {
         const l = localOf(b, ti, tj);
         if (l[1] >= 0) {
           paint = type === 'farm' ? 3 : 0;
@@ -2487,7 +2516,7 @@ function onBuilt(b, quiet) {
     if (b.type === 'greathive' && !G.finale) finale();
   }
   if (bedsOf(b)) assignHomes();
-  G.critDirty = true;
+  G.critDirty = true; lifeDirty();
 }
 function demolish(b, full) {
   if (b.type === 'center') return;
@@ -2581,7 +2610,7 @@ function sealsOff(type, i0, j0, rot) {
   const after = floodReach(_reach2, i0, j0, d.size);
   if (_reachN - covered - after > 3) return 'Would block the way';
   if (!ringReached(i0, j0, d.size, _reach2)) return 'Villagers could not reach it';
-  if (type === 'farm' || type === 'pasture') {
+  if (type === 'farm' || type === 'pasture' || d.field) {
     const th = (rot || 0) * Math.PI / 2, gx = i0 + 1.5 - HALF + 2 * Math.sin(th), gz = j0 + 1.5 - HALF + 2 * Math.cos(th), gi = worldToTile(gx), gj = worldToTile(gz);
     if (!inGrid(gi, gj) || !_reach2[tileIdx(gi, gj)] || W.fence[tileIdx(gi, gj)]) return 'The gate would be blocked. Rotate it';
   }
@@ -2671,7 +2700,7 @@ function spawnVillager(x, z, o) {
   const v = {
     id: G.nextId++, name: o.name || (free.length ? pick(free) : pick(NAMES)), x, z, y: heightAt(x, z), rot: Math.random() * TAU,
     skin: o.skin !== undefined ? o.skin : (Math.random() * 4) | 0, hair: o.hair !== undefined ? o.hair : (Math.random() * 5) | 0,
-    talent: o.talent || pick(TALENT_JOBS),
+    talent: o.talent || pick(TALENT_JOBS), age: 6 + ((Math.random() * 22) | 0), child: false, need: null,
     job: null, home: null, state: 'awake', plan: [], path: null, pi: 0, carry: null, hold: false, target: null, buildSite: null, inside: null,
     anim: 'idle', animT: Math.random() * 10, moving: false, say: 'Looking around', off: [rand(-0.18, 0.18), rand(-0.18, 0.18)], goingHome: false,
   };
@@ -2697,9 +2726,9 @@ function assignWorker(b, v) {
   if (!b.def.job || !b.done || b.workers.length >= slotsOf(b)) return false;
   if (!v) {
     let bd = 1e9;        // the nearest free villager, but someone with a talent for the job goes first
-    for (const c of G.villagers) { if (c.job) continue; const d = dist2(c.x, c.z, b.cx, b.cz) - (c.talent === b.def.job ? 5000 : 0); if (d < bd) { bd = d; v = c; } }
+    for (const c of G.villagers) { if (c.job || c.child) continue; const d = dist2(c.x, c.z, b.cx, b.cz) - (c.talent === b.def.job ? 5000 : 0); if (d < bd) { bd = d; v = c; } }
   }
-  if (!v) return false;
+  if (!v || v.child) return false;
   if (v.job) unassignWorker(v.job, v);
   const asleep = v.state === 'sleep';
   clearPlan(v);
@@ -2752,6 +2781,7 @@ function think(v) {
     v.plan.push(go(accessTiles(st), 'Carrying ' + RES[v.carry.res].toLowerCase() + ' to storage'), call(deposit));
     return;
   }
+  if (v.child) return childThink(v);
   // evenings are for the tavern, a bench or the fire; during a festival the free villagers dance all day
   if ((isEvening() || (G.festival > 0 && !v.job && Math.random() < 0.5)) && !(v.job && NO_BREAK.includes(v.job.def.job)) && leisure(v, false)) return;
   if (!v.job) return thinkFree(v);
@@ -2760,7 +2790,7 @@ function think(v) {
 }
 function deposit(v) {
   const c = v.carry; if (!c) return;
-  const got = store(c.res, c.amt);
+  const got = store(c.res, c.amt + cartBonus(v, c.amt));       // a workplace on the road sends a little more by handcart
   if (c.res === 'honey') G.stats.honey += c.amt;
   floatText(v.x, v.y + 0.9, v.z, got ? '+' + got : 'Full', c.res);
   sfx('drop', hearK(v.x, v.z) * 0.6);
@@ -2919,7 +2949,7 @@ const JOB_THINK = {
   },
   brickmaker(v, b) {      // the kiln rests at BRICK_STOP bricks, so it does not burn the stone a grand project needs
     processJob(v, b, { bring: 'Carrying clay and stone to the kiln', fetch: 'Fetching stone from storage', say: 'Firing bricks', get wait() { return G.res.brick >= Math.min(BRICK_STOP, capOf('brick')) ? 'Plenty of bricks in store: the kiln rests' : 'Waiting for spare stone and wood'; }, dur: 7, carry: 'stone',
-      ready: () => G.res.stone >= 40 && G.res.wood >= 25 && G.res.brick < Math.min(BRICK_STOP, capOf('brick')), take: () => { G.res.stone -= 2; G.res.wood -= 1; }, done: (q) => { G.stats.brick++; setCarry(q, 'brick', 1); } });
+      ready: () => (G.res.clay >= 2 ? G.res.wood >= 1 : G.res.stone >= 40 && G.res.wood >= 25) && G.res.brick < Math.min(BRICK_STOP, capOf('brick')), take: () => { if (G.res.clay >= 2) G.res.clay -= 2; else G.res.stone -= 2; G.res.wood -= 1; }, done: (q) => { G.stats.brick++; setCarry(q, 'brick', 1); } });
   },
   attendant(v, b) { v.plan.push(go(accessTiles(b), 'Walking to the bathhouse'), act(8, 'idle', pick(['Folding towels', 'Stoking the boiler', 'Testing the water']), { face: { x: b.cx, z: b.cz } })); },
   guard(v, b) { v.plan.push(go(accessTiles(b), 'Walking to the watchtower'), act(9, 'idle', pick(['Keeping watch', 'Scanning the tree line', 'Whistling a tune']), { face: { x: b.cx, z: b.cz } })); },
@@ -2945,7 +2975,7 @@ function updateVillager(v, dt) {
   if (!v.plan.length) think(v);
   const s = v.plan[0];
   if (!s) return;
-  const ws = workSpeed() * (v.job && v.job.def.job === v.talent ? 1.3 : 1);
+  const ws = workSpeed() * (v.job && v.job.def.job === v.talent ? 1.3 : 1) * lifeSpeed(v);
   v.moving = false;
   if (s.say) v.say = s.say;
   if (s.t === 'go') {
@@ -3072,6 +3102,7 @@ function calcHappy() {
   if (G.level >= 2 && !staffed('tavern')) add('Nowhere to gather in the evening', -5);
   if (G.level >= 2 && G.clock - G.lastBread >= 150) add('Missing fresh bread', -4);
   if ((G.level >= 3 || G.season === 3) && G.res.cloth <= 0) add(G.season === 3 ? 'Shivering without warm clothes' : 'Worn-out clothes', -5);
+  lifeHappy(add);
   G.taught = staffed('school');
   G.happyTarget = clamp(h, 0, 100); G.happyParts = parts;
 }
@@ -3085,6 +3116,7 @@ function doTrade(t) {
 }
 function arrive() {
   if (G.villagers.length >= Math.min(bedCount(), MAX_POP) || G.hungry || G.res.food < G.villagers.length * 3 || G.happy < 35) return;
+  if (tryBirth()) return;
   const c = G.center; let best = -1, bd = 1e9;
   for (let q = 0; q < 60; q++) {
     const k = (Math.random() * N * N) | 0;
@@ -3101,9 +3133,9 @@ function arrive() {
 function simTick(dt) {         // dt in game seconds
   G.clock += dt;
   const pop = G.villagers.length;
-  if (G.mode !== 'sandbox') G.foodAcc += pop * dt / 26;
+  if (G.mode !== 'sandbox') G.foodAcc += pop * dt / 26 * foodK();
   while (G.foodAcc >= 1) { G.foodAcc -= 1; if (G.res.food > 0) { G.res.food--; G.hungry = false; } else { if (!G.hungry && G.clock - G.hungryMsg > 90) { G.hungryMsg = G.clock; toast('The food has run out! Villagers work slower.', 'bad'); } G.hungry = true; } }
-  G.happyT -= dt; if (G.happyT <= 0) { G.happyT = 1; calcHappy(); checkLevel(); checkQuest(); checkAch(); expandTick(dt); }
+  G.happyT -= dt; if (G.happyT <= 0) { G.happyT = 1; calcHappy(); checkLevel(); checkQuest(); checkAch(); expandTick(dt); lifeTick(); }
   G.happy += (G.happyTarget - G.happy) * Math.min(1, dt * 0.25);
   G.arriveT -= dt; if (G.arriveT <= 0) { G.arriveT = arriveGap(G.villagers.length) * (G.happy > 80 ? 0.85 : 1); arrive(); }
   // nature
@@ -3138,7 +3170,7 @@ function simTick(dt) {         // dt in game seconds
 }
 function newDay() {
   G.day++;
-  seasonTurn(); dailyEvent();
+  seasonTurn(); dailyEvent(); lifeDay();
   if (countDone('townhall')) { const n = Math.round(G.villagers.length * 0.6); G.res.coins += n; G.stats.coins += n; logNews('The Town Hall collected ' + n + ' coins in tax.'); }
   if (G.day >= 2 && Math.random() < 0.3) G.rainAt = G.clock + rand(15, 90);
   G.flowY = G.flow; G.flow = { in: {}, out: {} };
@@ -3165,6 +3197,7 @@ function animateBuildings(dt, t) {
     if (!b.done) continue;
     if (u.blades) u.blades.rotation.z -= dt * 0.9;
     if (u.sheep) animateSheep(u, dt, t);
+    if (u.flock) animateFlock(u, dt, t);
     if (u.ducks) animateDucks(u, dt, t);
     if (u.crops) { const gr = b.growth; u.crops.scale.y = Math.max(0.03, gr); u.cropMat.color.set(0x7fbf4d).lerp(_c2.set(0xe6c450), smooth(0.6, 1, gr)); }
     if (u.flame) { u.flame.scale.set(1 + Math.sin(t * 13) * 0.12, 1 + Math.sin(t * 17 + 1) * 0.2, 1 + Math.cos(t * 11) * 0.12); u.flame.rotation.y = t * 2; }
@@ -3262,6 +3295,7 @@ function baseState(seed) {
     level: 0, missions: [], ach: {}, festival: 0, cheer: -1, missionT: 50, rain: 0, rainAt: -1, taught: false, ship: { state: 'away', t: 0, day: 0, mesh: null, x: 0, z: 0, rot: 0 },
     arriveT: 20, hungryMsg: -999, tut: 0, demo: false, happyT: 0, growT: 1, sapT: 5, clock: 0, lastBread: -999, won: false, fireworks: 0, critDirty: true, started: false,
   });
+  lifeBase();
   G.res = trackRes(G.res); resetFlow();
   if (buildGroup) scene.remove(buildGroup);
   if (villGroup) scene.remove(villGroup);
@@ -3283,6 +3317,7 @@ function newGame(seed, mode) {
     for (let q = 0; q < 8; q++) { const a = q / 8 * TAU; spawnVillager(G.center.cx + Math.cos(a) * 3, G.center.cz + Math.sin(a) * 3); }
   } else if (G.mode === 'daily') { const key = todayKey(); G.daily = { date: key, goal: dailySeed(key) % DAILY_GOALS.length, done: false, score: 0 }; }
   W.snowmen = []; applySeason(); resetWildlife();
+  scenarioSetup();
   calcHappy(); G.happy = G.happyTarget; resetFlow();
 }
 function serialize() {
@@ -3291,7 +3326,7 @@ function serialize() {
   const rk = []; for (const r of rocks) if (r.amount > 0) rk.push(r.i, r.j, r.amount);
   const bu = []; for (const b of bushes) if (!b.gone) bu.push(b.i, b.j, b.ripe ? 1 : 0, Math.round(b.timer));
   return {
-    v: 4, q: G.q, treasure: G.treasure, exp: { state: G.exp.state === 'away' ? 'away' : 'home', left: Math.max(0, G.exp.until - G.clock) }, fair: G.fair, finale: G.finale,
+    v: 4, x: lifeSave(), q: G.q, treasure: G.treasure, exp: { state: G.exp.state === 'away' ? 'away' : 'home', left: Math.max(0, G.exp.until - G.clock) }, fair: G.fair, finale: G.finale,
     sn: (W.snowmen || []).map((q) => [+q.x.toFixed(2), +q.z.toFixed(2)]), oc: G.outcrop || null, mode: G.mode, rp: G.rp, tech: G.tech, civic: G.civic, news: G.news, lastEvent: G.lastEvent, story: G.story, storyOn: G.storyOn, storyBase: G.storyBase, fish: G.fish, daily: G.daily,
     fox: Math.max(0, G.foxUntil - G.clock), sf: W.sites.map((q) => (q.found ? 1 : 0)), level: G.level, ach: G.ach, festival: G.festival, cheer: Math.max(0, G.cheer - G.clock),
     missions: G.missions.filter((m) => !m.ship).map((m) => Object.assign({}, m, { until: m.until - G.clock })),
@@ -3331,6 +3366,7 @@ function loadGame(d) {
     if (hm && hm.type === 'house') v.home = hm;
     if (a[7]) G.res[a[7]] += a[8];
   }
+  lifeLoad(d.x);
   assignHomes(); calcHappy();
   G.quest = G.q.grow + G.q.prosper + G.q.discover;
   W.snowmen = []; G.season = seasonOf(G.day); applySeason(); resetWildlife();
@@ -3725,10 +3761,10 @@ function exploreSite(s) {
   let v = null, bd = 1e9;
   // a villager without a job goes first; if everyone has one, the nearest worker takes a break from it and returns afterwards
   for (const free of [true, false]) {
-    for (const c of G.villagers) { if (c.state === 'sleep' || (free && c.job) || c.buildSite) continue; const d = dist2(c.x, c.z, s.x, s.z); if (d < bd) { bd = d; v = c; } }
+    for (const c of G.villagers) { if (c.state === 'sleep' || c.child || (free && c.job) || c.buildSite) continue; const d = dist2(c.x, c.z, s.x, s.z); if (d < bd) { bd = d; v = c; } }
     if (v) break;
   }
-  if (!v) for (const c of G.villagers) { if (c.state === 'sleep') continue; const d = dist2(c.x, c.z, s.x, s.z); if (d < bd) { bd = d; v = c; } }
+  if (!v) for (const c of G.villagers) { if (c.state === 'sleep' || c.child) continue; const d = dist2(c.x, c.z, s.x, s.z); if (d < bd) { bd = d; v = c; } }
   if (!v) { sfx('error'); return false; }
   dropCarry(v); clearPlan(v); s.busy = v; v.exploring = s;
   toast(v.name + ' sets out to explore the ' + SITE_KINDS[s.kind].name + '.');
@@ -4110,6 +4146,579 @@ ACH.push(
 
 JOB_THINK.shipwright = (v, b) => { v.plan.push(go(accessTiles(b), 'Walking to the shipyard'), act(8, G.exp.state === 'home' ? 'chop' : 'idle', G.exp.state === 'home' ? 'Caulking the hull' : 'Watching for the sails', { face: { x: b.cx, z: b.cz } })); };
 
+// ---------- life: roads that matter, needs and neighbourhoods, the Far Isle, events with a choice,
+// longer production chains, animals, a life course for villagers, decor that works, and challenges ----------
+
+// ----- new goods -----
+Object.assign(RES, { cake: 'Cake', clothes: 'Clothes', salt: 'Salt', clay: 'Clay', grapes: 'Grapes' });
+Object.assign(CAP_K, { cake: 0.4, clothes: 0.4, salt: 0.4, clay: 0.6, grapes: 0.4 });
+const NEW_RES = ['cake', 'clothes', 'salt', 'clay', 'grapes'];
+TRADES.push({ give: 'cake', n: 1, get: 'coins', m: 12 }, { give: 'clothes', n: 1, get: 'coins', m: 22 });
+Object.assign(CARRY_FN, {
+  cake: (b) => b.cyl(0.07, 0.07, 0.06, 8, 0, 0, 0, 0xf3e1c2).cyl(0.072, 0.072, 0.02, 8, 0, 0.06, 0, C.pink).sph(0.02, 0, 0.09, 0, C.red),
+  clothes: (b) => b.box(0.15, 0.04, 0.12, 0, 0, 0, C.roofB).box(0.15, 0.04, 0.12, 0, 0.04, 0, C.roofR).box(0.15, 0.04, 0.12, 0, 0.08, 0, C.white),
+  egg: (b) => b.cyl(0.075, 0.06, 0.05, 7, 0, 0, 0, C.woodL).sph(0.03, -0.025, 0.06, 0, C.white, [1, 1.25, 1]).sph(0.03, 0.03, 0.06, 0.02, 0xf2dcc0, [1, 1.25, 1]).sph(0.03, 0, 0.06, -0.03, C.white, [1, 1.25, 1]),
+  milk: (b) => b.cyl(0.05, 0.06, 0.12, 7, 0, 0, 0, 0xc8ccd2).cyl(0.03, 0.05, 0.04, 7, 0, 0.12, 0, 0xb4b8be),
+});
+Object.assign(JOBS, {
+  confectioner: { title: 'Pastry cook', plural: 'Pastry cooks', shirt: 0xf6d7de, hat: 'toque' },
+  tailor: { title: 'Tailor', plural: 'Tailors', shirt: 0x6f5aa8, hat: 'cap', hatC: 0x3d2f66 },
+  poulterer: { title: 'Poultry keeper', plural: 'Poultry keepers', shirt: 0xd98f3d, hat: 'straw' },
+  dairy: { title: 'Dairy farmer', plural: 'Dairy farmers', shirt: 0x5f8f6a, hat: 'straw' },
+});
+
+// ----- new buildings -----
+Object.assign(BT, {
+  coop: { lvl: 1, name: 'Chicken Coop', cat: 'voedsel', size: 2, cost: { wood: 25 }, time: 10, job: 'poulterer', slots: 1, desc: 'Hens lay best on grain: 2 grain gives 6 food. Without grain they scratch around for a few eggs.' },
+  cowshed: { lvl: 2, name: 'Cowshed', cat: 'voedsel', size: 3, field: true, cost: { wood: 50, stone: 15 }, time: 18, job: 'dairy', slots: 2, desc: 'Cows give milk and cheese: 3 grain feeds them for 10 food. They graze for less when the grain runs out.' },
+  pastry: { lvl: 2, name: 'Pastry Shop', cat: 'voedsel', size: 2, cost: { wood: 40, stone: 30 }, time: 16, job: 'confectioner', slots: 1, desc: 'Bakes 6 food and 1 honey into a cake. Cake on the table makes everyone happy and sells well.' },
+  tailor: { lvl: 3, name: 'Tailor', cat: 'grond', size: 2, cost: { wood: 40, stone: 20 }, time: 16, job: 'tailor', slots: 1, desc: 'Sews 2 cloth into a set of clothes. Clothes keep every home warm in winter and sell for a good price.' },
+  brazier: { lvl: 1, name: 'Brazier', cat: 'sfeer', size: 1, cost: { stone: 8, wood: 4 }, time: 4, decor: 1, quick: true, desc: 'A fire basket for the street. Homes close by stay warm in winter.' },
+  garden: { lvl: 1, name: 'Garden', cat: 'sfeer', size: 2, cost: { wood: 12 }, time: 8, decor: 4, desc: 'A little park with roses and a bird bath. Makes the homes around it lovelier and good company.' },
+  flag: { name: 'Flagpole', cat: 'sfeer', size: 1, cost: { wood: 8 }, time: 4, decor: 2, quick: true, desc: 'The colours of Bumblenook. A cheerful sight for the homes around it.' },
+  arch: { lvl: 2, name: 'Rose Arch', cat: 'sfeer', size: 1, cost: { wood: 10 }, time: 5, decor: 3, quick: true, walk: true, desc: 'An arch of climbing roses. Villagers can walk under it.' },
+});
+for (const t of ['coop', 'cowshed', 'pastry', 'tailor', 'brazier', 'garden', 'arch']) {           // the same price steps as the older buildings
+  const d = BT[t], k = d.lvl >= 3 ? 1.5 : d.lvl === 2 ? 1.4 : 1.2;
+  for (const r of Object.keys(d.cost)) d.cost[r] = Math.max(1, Math.round(d.cost[r] * k / 5) * 5);
+}
+
+function mCoop() {
+  const b = new MB();
+  b.box(1.1, 0.08, 0.9, -0.15, 0, -0.3, C.woodD);
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) b.box(0.07, 0.3, 0.07, -0.15 + sx * 0.45, 0.08, -0.3 + sz * 0.35, C.woodD);
+  b.box(1.0, 0.5, 0.8, -0.15, 0.38, -0.3, C.plank).gable(0.84, 0.36, 1.04, -0.15, 0.88, -0.3, C.plank, Math.PI / 2).gable(1.0, 0.44, 1.2, -0.15, 0.86, -0.3, C.roofR, Math.PI / 2);
+  b.box(0.22, 0.26, 0.04, -0.15, 0.4, 0.1, C.dark).box(0.26, 0.04, 0.5, -0.15, 0.2, 0.34, C.woodL, [0.55, 0, 0]);
+  b.glow(0.16, 0.14, 0.04, 0.18, 0.66, 0.105);
+  b.box(0.5, 0.1, 0.22, 0.62, 0, 0.5, C.wood).box(0.44, 0.04, 0.16, 0.62, 0.1, 0.5, C.wheat);
+  for (let q = 0; q < 6; q++) b.box(0.04, 0.34, 0.04, 0.9, 0, -0.75 + q * 0.3, C.woodL);
+  b.box(0.03, 0.03, 1.56, 0.9, 0.26, 0, C.woodL);
+  return b.build();
+}
+function mHen() {
+  const b = new MB();
+  b.sph(0.085, 0, 0.11, 0, C.white, [1, 0.95, 1.25], 1).sph(0.055, 0, 0.2, 0.09, C.white, null, 1).cone(0.02, 0.05, 4, 0, 0.18, 0.15, C.gold, [Math.PI / 2, 0, 0]);
+  b.box(0.015, 0.05, 0.04, 0, 0.24, 0.09, C.red).cone(0.05, 0.1, 4, 0, 0.12, -0.12, 0xe8e2d4, [-0.9, 0, 0]);
+  b.box(0.012, 0.06, 0.012, -0.03, 0, 0, C.gold).box(0.012, 0.06, 0.012, 0.03, 0, 0, C.gold);
+  return b.build().geo;
+}
+function mCowshed() {
+  const b = new MB();
+  b.box(1.5, 0.08, 1.0, 0, 0, -0.95, C.stone).box(1.4, 0.72, 0.9, 0, 0.08, -0.95, C.red).gable(0.9, 0.5, 1.4, 0, 0.8, -0.95, C.red, Math.PI / 2).gable(1.08, 0.6, 1.56, 0, 0.78, -0.95, 0x5a4a42, Math.PI / 2);
+  b.box(0.5, 0.56, 0.05, 0, 0.08, -0.49, C.woodD).box(0.04, 0.56, 0.02, 0, 0.08, -0.46, C.white).box(0.5, 0.04, 0.02, 0, 0.36, -0.46, C.white);
+  b.glow(0.2, 0.18, 0.04, 0, 0.98, -0.475).box(0.5, 0.2, 0.24, -1.05, 0, -0.2, C.wood).box(0.44, 0.04, 0.18, -1.05, 0.2, -0.2, 0x7ec8e3);
+  b.sph(0.2, 1.1, 0.14, -0.3, C.wheat, [1, 0.8, 1], 1).sph(0.16, 0.95, 0.12, -0.12, 0xd9b84a, [1, 0.8, 1]);
+  for (const sx of [-1, 1]) for (let q = 0; q < 6; q++) b.box(0.05, 0.4, 0.05, sx * 1.42, 0, -0.42 + q * 0.37, C.woodL);
+  for (const sx of [-1, 1]) b.box(0.03, 0.03, 1.9, sx * 1.42, 0.3, 0.5, C.woodL).box(0.03, 0.03, 1.9, sx * 1.42, 0.14, 0.5, C.woodL);
+  for (const sx of [-1, 1]) for (let q = 0; q < 3; q++) b.box(0.05, 0.4, 0.05, sx * (0.55 + q * 0.42), 0, 1.44, C.woodL);
+  for (const sx of [-1, 1]) b.box(0.9, 0.03, 0.03, sx * 0.97, 0.3, 1.44, C.woodL).box(0.9, 0.03, 0.03, sx * 0.97, 0.14, 1.44, C.woodL);
+  return b.build();
+}
+function mCow() {
+  const b = new MB();
+  b.box(0.2, 0.2, 0.42, 0, 0.16, 0, C.white).box(0.15, 0.16, 0.18, 0, 0.26, 0.28, C.white).box(0.11, 0.08, 0.08, 0, 0.26, 0.4, C.pink);
+  b.box(0.21, 0.12, 0.16, 0, 0.24, -0.06, 0x3a2f2a).box(0.12, 0.1, 0.19, 0.045, 0.3, 0.2, 0x3a2f2a);
+  for (const sx of [-1, 1]) { b.box(0.05, 0.16, 0.05, sx * 0.07, 0, 0.15, C.white).box(0.05, 0.16, 0.05, sx * 0.07, 0, -0.15, C.white).cone(0.02, 0.06, 4, sx * 0.06, 0.42, 0.26, C.woodL); }
+  b.box(0.02, 0.16, 0.02, 0, 0.18, -0.23, C.white, [0.3, 0, 0]);
+  return b.build().geo;
+}
+function mPastry() {
+  const b = new MB();
+  b.box(1.5, 0.1, 1.3, 0, 0, 0, C.stone).box(1.3, 0.78, 1.1, 0, 0.1, 0, 0xf6d7de).box(1.34, 0.07, 1.14, 0, 0.84, 0, C.white);
+  b.gable(1.3, 0.5, 1.1, 0, 0.9, 0, 0xf6d7de).gable(1.56, 0.62, 1.42, 0, 0.88, 0, 0x8d5c9e);
+  b.box(0.3, 0.5, 0.05, -0.38, 0.1, 0.56, C.woodD).box(0.42, 0.06, 0.18, -0.38, 0.02, 0.68, C.stoneL);
+  b.glow(0.5, 0.3, 0.04, 0.25, 0.52, 0.555).box(0.6, 0.05, 0.14, 0.25, 0.32, 0.6, C.woodL);
+  for (let q = 0; q < 5; q++) b.box(0.132, 0.03, 0.34, -0.014 + q * 0.132, 0.86, 0.68, q % 2 ? C.white : C.pink, [0.5, 0, 0]);
+  b.cyl(0.05, 0.05, 0.05, 7, 0.12, 0.37, 0.6, 0xf3e1c2).cyl(0.05, 0.05, 0.02, 7, 0.12, 0.42, 0.6, C.pink).cyl(0.05, 0.05, 0.05, 7, 0.38, 0.37, 0.6, C.bread).sph(0.02, 0.38, 0.44, 0.6, C.red);
+  b.box(0.2, 0.55, 0.2, 0.38, 1.0, -0.25, C.stoneD).box(0.26, 0.06, 0.26, 0.38, 1.55, -0.25, C.stone);
+  b.box(0.04, 0.4, 0.04, -0.72, 0.6, 0.6, C.woodD).box(0.3, 0.2, 0.03, -0.6, 0.86, 0.6, C.white).cyl(0.06, 0.06, 0.02, 8, -0.6, 0.95, 0.62, C.pink, [Math.PI / 2, 0, 0]);
+  return b.build();
+}
+function mTailor() {
+  const b = new MB();
+  b.box(1.5, 0.1, 1.3, 0, 0, 0, C.stone).box(1.3, 0.7, 1.1, 0, 0.1, 0, C.plaster).box(1.36, 0.07, 1.16, 0, 0.8, 0, C.woodD).box(1.32, 0.5, 1.12, 0, 0.87, 0, C.plaster);
+  for (const sx of [-1, 0, 1]) b.box(0.06, 0.5, 0.05, sx * 0.63, 0.87, 0.55, C.woodD);
+  b.gable(1.32, 0.46, 1.12, 0, 1.37, 0, C.plaster).gable(1.56, 0.58, 1.4, 0, 1.35, 0, 0x4c5f73);
+  b.box(0.3, 0.5, 0.05, 0.38, 0.1, 0.56, 0x6f5aa8).box(0.42, 0.06, 0.18, 0.38, 0.02, 0.68, C.stoneL);
+  b.glow(0.46, 0.3, 0.04, -0.28, 0.5, 0.555).glow(0.2, 0.2, 0.04, -0.32, 1.12, 0.565).glow(0.2, 0.2, 0.04, 0.32, 1.12, 0.565);
+  b.box(0.04, 0.5, 0.04, -0.75, 0.1, 0.62, C.woodD).box(0.04, 0.5, 0.04, -0.2, 0.1, 0.72, C.woodD).box(0.6, 0.02, 0.02, -0.475, 0.58, 0.67, C.woodD, [0, -0.18, 0]);
+  b.box(0.14, 0.2, 0.02, -0.62, 0.38, 0.65, C.roofR).box(0.14, 0.2, 0.02, -0.45, 0.38, 0.68, C.roofB).box(0.14, 0.2, 0.02, -0.29, 0.38, 0.71, C.roofY);
+  b.box(0.3, 0.2, 0.03, 0.38, 0.9, 0.6, C.woodL).box(0.12, 0.02, 0.01, 0.38, 1.0, 0.62, C.dark, [0, 0, 0.6]).box(0.12, 0.02, 0.01, 0.38, 1.0, 0.62, C.dark, [0, 0, -0.6]);
+  return b.build();
+}
+function mBrazier() {
+  const b = new MB();
+  for (let q = 0; q < 3; q++) { const a = q / 3 * TAU; b.box(0.03, 0.34, 0.03, Math.cos(a) * 0.1, 0, Math.sin(a) * 0.1, C.iron, [Math.sin(a) * 0.25, 0, -Math.cos(a) * 0.25]); }
+  b.cyl(0.17, 0.11, 0.12, 8, 0, 0.3, 0, C.iron).cyl(0.14, 0.14, 0.03, 8, 0, 0.4, 0, 0x2a1a12).sph(0.05, 0.03, 0.44, 0, 0xff8a2a).sph(0.04, -0.04, 0.44, 0.03, 0xffd84d);
+  return b.build();
+}
+function mGarden() {
+  const b = new MB();
+  b.box(1.84, 0.04, 1.84, 0, 0, 0, 0x8fc46a);
+  for (const sx of [-1, 1]) for (const sz of [-1, 1]) { b.box(0.6, 0.12, 0.6, sx * 0.55, 0.04, sz * 0.55, C.soil); for (let q = 0; q < 5; q++) b.sph(0.07, sx * 0.55 + Math.cos(q * 1.9) * 0.18, 0.2, sz * 0.55 + Math.sin(q * 1.9) * 0.18, [C.pink, C.red, C.gold, C.white, 0xb07fd8][(q + (sx > 0 ? 1 : 0) + (sz > 0 ? 2 : 0)) % 5]); }
+  b.box(1.84, 0.02, 0.3, 0, 0.04, 0, 0xdcc79c).box(0.3, 0.02, 1.84, 0, 0.04, 0, 0xdcc79c);
+  b.cyl(0.07, 0.11, 0.3, 8, 0, 0.05, 0, C.stoneL).cyl(0.2, 0.1, 0.07, 10, 0, 0.35, 0, C.stoneL).cyl(0.16, 0.16, 0.015, 10, 0, 0.41, 0, 0x7ec8e3);
+  for (const s of [[-0.86, -0.86], [0.86, -0.86], [-0.86, 0.86], [0.86, 0.86]]) b.sph(0.13, s[0], 0.15, s[1], C.leafD, [1, 1.1, 1], 1);
+  return b.build();
+}
+function mFlag() {
+  const b = new MB();
+  b.cyl(0.09, 0.11, 0.08, 8, 0, 0, 0, C.stone).cyl(0.022, 0.028, 1.5, 6, 0, 0.08, 0, C.woodL).sph(0.04, 0, 1.6, 0, C.gold);
+  for (let q = 0; q < 4; q++) b.box(0.115, 0.3, 0.02, 0.08 + q * 0.115, 1.2 - (q % 2) * 0.012, 0, q % 2 ? C.dark : C.gold);
+  return b.build();
+}
+function mArch() {
+  const b = new MB();
+  for (const sx of [-1, 1]) { b.box(0.06, 0.8, 0.06, sx * 0.36, 0, 0.12, C.woodL).box(0.06, 0.8, 0.06, sx * 0.36, 0, -0.12, C.woodL); for (let q = 0; q < 4; q++) b.sph(0.07, sx * 0.37, 0.16 + q * 0.2, (q % 2 ? 0.1 : -0.1), q % 2 ? C.leaf : C.leafD); }
+  for (let q = 0; q < 7; q++) { const a = Math.PI * q / 6; b.box(0.14, 0.05, 0.32, Math.cos(a) * 0.36, 0.8 + Math.sin(a) * 0.2, 0, C.woodL, [0, 0, a + Math.PI / 2]); b.sph(0.055, Math.cos(a) * 0.37, 0.86 + Math.sin(a) * 0.21, q % 2 ? 0.14 : -0.14, [C.pink, C.red, C.white][q % 3]); }
+  return b.build();
+}
+Object.assign(MODEL_FN, { coop: mCoop, cowshed: mCowshed, pastry: mPastry, tailor: mTailor, brazier: mBrazier, garden: mGarden, flag: mFlag, arch: mArch });
+// animals wander inside a box in front of their building
+function addFlock(g, ex, n, geoKey, geoFn, box) {
+  ex.flock = { box, list: [] };
+  for (let q = 0; q < n; q++) {
+    const m = new THREE.Mesh(cachedGeo(geoKey, geoFn), MAT.main); m.castShadow = true;
+    const s = { m, x: rand(box[0], box[1]), z: rand(box[2], box[3]), tx: 0, tz: 0, wait: Math.random() * 4, rot: Math.random() * TAU, ph: Math.random() * 6 };
+    m.position.set(s.x, 0, s.z); g.add(m); ex.flock.list.push(s);
+  }
+}
+EXTRA_FN.coop = (g, ex) => addFlock(g, ex, 4, 'hen', mHen, [0.2, 0.75, -0.6, 0.75]);
+EXTRA_FN.cowshed = (g, ex) => addFlock(g, ex, 3, 'cow', mCow, [-1.1, 1.1, -0.1, 1.15]);
+EXTRA_FN.brazier = (g, ex) => { ex.sprite = makeGlowSprite(1.5); ex.sprite.position.set(0, 0.5, 0); g.add(ex.sprite); };
+POOLS.brazier = 2.2; POOLS.pastry = 2.2; POOLS.tailor = 2.2;
+function animateFlock(u, dt, t) {
+  const f = u.flock, cow = f.box[1] - f.box[0] > 1.5;
+  for (const s of f.list) {
+    s.wait -= dt;
+    if (s.wait <= 0 && s.wait > -90) { s.tx = rand(f.box[0], f.box[1]); s.tz = rand(f.box[2], f.box[3]); s.wait = -100; }
+    let bob = 0;
+    if (s.wait < -90) {
+      const dx = s.tx - s.x, dz = s.tz - s.z, d = Math.hypot(dx, dz), sp = cow ? 0.16 : 0.3;
+      if (d < 0.05) s.wait = rand(cow ? 4 : 1.5, cow ? 10 : 5);
+      else { s.x += dx / d * dt * sp; s.z += dz / d * dt * sp; let df = Math.atan2(dx, dz) - s.rot; while (df > Math.PI) df -= TAU; while (df < -Math.PI) df += TAU; s.rot += df * Math.min(1, dt * 4); bob = Math.abs(Math.sin(t * (cow ? 5 : 14) + s.ph)) * (cow ? 0.01 : 0.02); }
+    }
+    s.m.position.set(s.x, bob, s.z); s.m.rotation.y = s.rot;
+    s.m.rotation.x = s.wait > 0 && !cow && Math.sin(t * 2 + s.ph) > 0.6 ? 0.5 : 0;          // a hen pecks at the ground
+  }
+}
+
+// ----- the new jobs -----
+JOB_THINK.poulterer = (v, b) => {
+  const fed = G.res.grain >= 2, sick = G.sickUntil > G.clock;
+  if (sick) return idleAt(v, b, 'The animals are poorly: nothing to collect today');
+  b.warn = fed ? null : 'No grain to feed the hens: fewer eggs';
+  v.plan.push(go(accessTiles(b), 'Walking to the coop'), act(fed ? 7 : 10, 'bend', fed ? 'Feeding the hens' : 'Looking for eggs', { face: { x: b.cx, z: b.cz } }), call((q) => {
+    const ok = G.res.grain >= 2; if (ok) G.res.grain -= 2;
+    setCarry(q, 'food', ok ? 6 : 2, 'egg');
+  }));
+};
+JOB_THINK.dairy = (v, b) => {
+  const fed = G.res.grain >= 3, k = pick(b.fieldTiles);
+  if (G.sickUntil > G.clock) return idleAt(v, b, 'The animals are poorly: nothing to collect today');
+  b.warn = fed ? null : 'No grain for the cows: they give less milk on grass alone';
+  v.plan.push(go(k, 'Walking to the cows'), act(fed ? 8 : 10, 'bend', fed ? 'Milking a cow' : 'Leading the cows to graze'), call((q) => {
+    const ok = G.res.grain >= 3; if (ok) G.res.grain -= 3;
+    setCarry(q, 'food', (ok ? 10 : 3) + (G.season === 3 && !ok ? -1 : 0), 'milk');
+  }));
+};
+JOB_THINK.confectioner = (v, b) => processJob(v, b, { bring: 'Carrying flour and honey to the shop', fetch: 'Fetching bread and honey from storage', say: 'Baking a cake', wait: 'Waiting for spare food and a jar of honey', dur: 9, carry: 'bread',
+  ready: () => G.res.food >= 6 + G.villagers.length * 3 && G.res.honey >= 1 && G.res.cake < capOf('cake'), take: () => { G.res.food -= 6; G.res.honey -= 1; }, done: (q) => { G.stats.cake = (G.stats.cake || 0) + 1; setCarry(q, 'cake', 1); } });
+JOB_THINK.tailor = (v, b) => processJob(v, b, { bring: 'Carrying cloth to the workshop', fetch: 'Fetching cloth from storage', say: 'Sewing clothes', wait: 'Waiting for 2 cloth from the weaver', dur: 10, carry: 'wool',
+  ready: () => G.res.cloth >= 3 && G.res.clothes < capOf('clothes'), take: () => { G.res.cloth -= 2; }, done: (q) => { G.stats.clothes = (G.stats.clothes || 0) + 1; setCarry(q, 'clothes', 1); } });
+
+// ----- 1. roads that matter -----
+// A workplace joined to a storehouse (or the green) by an unbroken path sends its goods by handcart: a quarter more arrives.
+const ROAD_BONUS = 0.25;
+const CARRIERS = ['lumber', 'quarry', 'forager', 'farmer', 'fisher', 'baker', 'bee', 'shepherd', 'weaver', 'miner', 'picker', 'gardener', 'brewer', 'brickmaker', 'poulterer', 'dairy', 'confectioner', 'tailor'];
+let _roadNav = -1;
+const _road = new Uint8Array(N * N);
+const isPathTile = (k) => { const o = G.bmap.get(W.occ[k]); return !!o && (o.type === 'path' || o.type === 'arch'); };
+function ringTiles(b) {
+  const out = [];
+  for (let j = b.j - 1; j <= b.j + b.size; j++) for (let i = b.i - 1; i <= b.i + b.size; i++) {
+    if (!inGrid(i, j) || (i >= b.i && i < b.i + b.size && j >= b.j && j < b.j + b.size)) continue;
+    if ((i < b.i || i >= b.i + b.size) && (j < b.j || j >= b.j + b.size)) continue;      // corners do not touch
+    out.push(tileIdx(i, j));
+  }
+  return out;
+}
+function roadNet() {
+  if (_roadNav === W.nav) return _road;
+  _roadNav = W.nav; _road.fill(0);
+  const q = [];
+  for (const b of G.buildings) if (b.done && b.def.storage) for (const k of ringTiles(b)) if (isPathTile(k) && !_road[k]) { _road[k] = 1; q.push(k); }
+  while (q.length) {
+    const k = q.pop(), i = k % N, j = (k / N) | 0;
+    for (const d of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const p = i + d[0], r = j + d[1]; if (!inGrid(p, r)) continue; const n = tileIdx(p, r); if (!_road[n] && isPathTile(n)) { _road[n] = 1; q.push(n); } }
+  }
+  for (const b of G.buildings) b.onRoad = CARRIERS.includes(b.def.job) && b.done && ringTiles(b).some((k) => _road[k]);
+  return _road;
+}
+const roadCount = () => { roadNet(); return G.buildings.reduce((n, b) => n + (b.onRoad ? 1 : 0), 0); };
+function cartBonus(v, amt) {          // extra goods a handcart brings; whole numbers, fair on average
+  if (!v.job || !(roadNet(), v.job.onRoad)) return 0;
+  const x = amt * ROAD_BONUS, n = Math.floor(x);
+  return n + (Math.random() < x - n ? 1 : 0);
+}
+function mBarrow() {
+  const b = new MB();
+  b.box(0.16, 0.07, 0.2, 0, 0.07, 0.06, C.woodL).box(0.02, 0.02, 0.26, -0.07, 0.1, -0.14, C.woodD).box(0.02, 0.02, 0.26, 0.07, 0.1, -0.14, C.woodD);
+  b.cyl(0.05, 0.05, 0.03, 8, 0, 0.02, 0.19, C.dark, [0, 0, Math.PI / 2]).box(0.02, 0.06, 0.02, -0.06, 0, -0.02, C.woodD).box(0.02, 0.06, 0.02, 0.06, 0, -0.02, C.woodD);
+  return b.build().geo;
+}
+
+// ----- 2 + 8. needs, and the neighbourhood a home stands in -----
+// Every home is scored on four things by what stands around it. Residents slowly take on the scores of their home.
+const NEAR = {
+  warm: { center: [6, 1], tavern: [5, 0.7], bakery: [4.5, 0.6], pastry: [4.5, 0.6], bathhouse: [6, 0.8], brazier: [4.5, 0.55], brickworks: [4, 0.4], lantern: [2.5, 0.12] },
+  company: { center: [6, 0.6], tavern: [7, 0.7], bench: [4, 0.25], pond: [5, 0.35], fountain: [5, 0.4], garden: [5, 0.4], gazebo: [5, 0.4], bandstand: [7, 0.6], market: [5, 0.3], well: [4, 0.25], house: [3.2, 0.12] },
+  noise: { lumber: [4.5, 0.3], quarry: [5, 0.4], mine: [5.5, 0.45], brickworks: [4.5, 0.35], weaver: [3, 0.15], harbour: [4, 0.2], shipyard: [5, 0.35], cowshed: [3.5, 0.15], coop: [3, 0.12] },
+  beauty: { flowers: [4, 0.14], hedge: [3, 0.06], lantern: [3.5, 0.1], garden: [5.5, 0.4], flag: [5, 0.18], arch: [4, 0.2], statue: [6, 0.5], fountain: [6, 0.6], pond: [5, 0.35], well: [4.5, 0.3], bench: [3.5, 0.12], gazebo: [5, 0.35], belltower: [7, 0.5], cathedral: [9, 0.7], greathive: [9, 0.7], bandstand: [6, 0.35] },
+};
+const NEED_KEYS = ['warm', 'company', 'rest', 'beauty'];
+const NEED_NAME = { warm: 'Warmth', company: 'Company', rest: 'Rest', beauty: 'Lovely street' };
+let _hoodNav = -1;
+function scoreAt(x, z, table, skip) {
+  let s = 0, top = null, tv = 0;
+  for (const o of G.buildings) {
+    if (!o.done || o === skip) continue;
+    const e = table[o.type]; if (!e) continue;
+    const d = Math.hypot(o.cx - x, o.cz - z); if (d > e[0]) continue;
+    const c = e[1] * (1 - 0.6 * d / e[0]); s += c;
+    if (c > tv) { tv = c; top = o; }
+  }
+  return [s, top];
+}
+function neighbourhoods() {
+  if (_hoodNav === W.nav) return;
+  _hoodNav = W.nav;
+  for (const b of G.buildings) {
+    if (!b.done || (b.type !== 'house' && b.type !== 'center')) continue;
+    const w = scoreAt(b.cx, b.cz, NEAR.warm, b), c = scoreAt(b.cx, b.cz, NEAR.company, b), n = scoreAt(b.cx, b.cz, NEAR.noise, b), be = scoreAt(b.cx, b.cz, NEAR.beauty, b);
+    let green = 0;
+    for (const t of trees) if (t && t.state === 0 && Math.abs(t.x - b.cx) < 4 && Math.abs(t.z - b.cz) < 4) green++;
+    const tent = b.type === 'center';
+    b.hood = { warm: clamp((tent ? 0.25 : 0.3) + w[0], 0, 1), company: clamp(0.15 + c[0], 0, 1), rest: clamp((tent ? 0.45 : b.up ? 1 : 0.9) - n[0], 0, 1), beauty: clamp(be[0] + Math.min(0.25, green * 0.04), 0, 1), loud: n[1] };
+  }
+}
+const hoodOf = (v) => { neighbourhoods(); return ((v.home && v.home.hood) || (G.center && G.center.hood)) || null; };
+function needsTick(dt) {                 // once a second
+  const clothed = G.res.clothes > 0 ? 0.3 : G.res.cloth > 0 ? 0.12 : 0;
+  for (const v of G.villagers) {
+    const h = hoodOf(v); if (!h) continue;
+    if (!v.need) v.need = { warm: h.warm, company: h.company, rest: h.rest, beauty: h.beauty };
+    const k = Math.min(1, dt / 90);
+    v.need.warm += (clamp(h.warm + clothed, 0, 1) - v.need.warm) * k;
+    v.need.company += (h.company - v.need.company) * k * 0.6;
+    v.need.rest += (h.rest - v.need.rest) * k;
+    v.need.beauty += (h.beauty - v.need.beauty) * k;
+  }
+}
+function needAvg(key) { let s = 0, n = 0; for (const v of G.villagers) if (v.need) { s += v.need[key]; n++; } return n ? s / n : 0.5; }
+function needParts(add) {                // extra lines in the happiness sum
+  if (G.level < 1 || !G.villagers.some((v) => v.need)) return;
+  const co = needAvg('company'), re = needAvg('rest'), be = needAvg('beauty');
+  if (G.season === 3) { const w = needAvg('warm'), n = Math.round((w - 0.55) * 16); add(n >= 0 ? 'Warm homes in winter' : 'Cold homes: braziers, a tavern or clothes help', n); }
+  let n = Math.round((co - 0.4) * 10); if (n) add(n > 0 ? 'Good company close to home' : 'Lonely streets: benches and gardens help', n);
+  n = Math.round((re - 0.7) * 14); if (n) add(n > 0 ? 'A good night\'s sleep' : 'Noisy nights next to the workshops', n);
+  n = Math.round(be * 8); if (n) add('Lovely streets', n);
+}
+const lifeSpeed = (v) => (v.need && v.need.rest < 0.35 ? 0.9 : 1) * (v.age >= ELDER_AGE ? 0.9 : 1);
+
+// ----- 7. a life course -----
+const CHILD_DAYS = 3, ELDER_AGE = 40;
+const isChild = (v) => !!v.child;
+const ageName = (v) => (v.child ? 'Child' : v.age >= ELDER_AGE ? 'Elder' : 'Grown-up');
+function setChildLook(v) { v.mesh.scale.setScalar(v.child ? 0.62 : 1); }
+function tryBirth() {                    // a settler's place is sometimes taken by a baby
+  if (G.mode === 'sandbox' || G.level < 2 || G.happy < 60 || G.villagers.filter(isChild).length >= Math.max(1, Math.floor(G.villagers.length / 6))) return false;
+  const homes = G.buildings.filter((b) => b.type === 'house' && b.done && b.residents.length < bedsOf(b) && b.residents.filter((v) => !v.child && v.age < ELDER_AGE).length >= 2);
+  if (!homes.length || Math.random() > (G.babySoon ? 1 : 0.4)) return false;
+  G.babySoon = false;
+  const h = pick(homes), at = accessTiles(h)[0], x = at === undefined ? h.cx : tileX(at % N), z = at === undefined ? h.cz + 1.2 : tileX((at / N) | 0);
+  const v = spawnVillager(x, z);
+  v.child = true; v.age = 0; v.home = h; h.residents.push(v); setChildLook(v);
+  G.stats.born = (G.stats.born || 0) + 1;
+  puff(x, v.y + 0.4, z, [0xffd9e6, 0xffffff, 0xfff2b0], 10, { speed: 0.8, life: 0.8, size: 0.07, glow: true });
+  sfx('pop'); toast(v.name + ' was born in Bumblenook! ' + pick(h.residents.filter((q) => q !== v)).name + '\'s cottage has a new voice.', 'good'); logNews(v.name + ' was born.');
+  return true;
+}
+function childThink(v) {
+  const school = G.buildings.find((b) => b.type === 'school' && b.done && b.workers.length);
+  if (school && G.time > 0.12 && G.time < 0.45 && Math.random() < 0.7) { v.schooled = true; v.plan.push(go(accessTiles(school), 'Running to school'), act(rand(8, 14), 'idle', pick(['Learning letters', 'Counting bumblebees', 'Listening to a story']), { face: { x: school.cx, z: school.cz } })); return; }
+  const k = greenSpot(4.2);
+  if (k >= 0) { v.plan.push(go(k, pick(['Running across the green', 'Chasing a butterfly', 'Playing tag'])), act(rand(2, 5), Math.random() < 0.5 ? 'cheer' : 'idle', pick(['Playing on the green', 'Skipping stones', 'Building a den', 'Counting clouds']))); return; }
+  v.plan.push(act(3, 'idle', 'Looking around'));
+}
+function ageTick() {                     // every morning
+  const school = staffed('school');
+  for (const v of G.villagers) {
+    v.age = (v.age || 0) + 1;
+    if (v.child && v.age >= CHILD_DAYS - (v.schooled && school ? 1 : 0)) {
+      v.child = false; v.age = 8; setChildLook(v);
+      toast(v.schooled ? v.name + ' has grown up and is ready to work, quick and clever from school.' : v.name + ' has grown up and is ready to work.', 'good'); logNews(v.name + ' grew up.');
+    } else if (v.age === ELDER_AGE) {
+      v.hair = 3; refreshVillagerLook(v);
+      logNews(v.name + ' is now one of the village elders.');
+    }
+  }
+}
+const elderCount = () => G.villagers.reduce((n, v) => n + (v.age >= ELDER_AGE ? 1 : 0), 0);
+
+// ----- 3. the Far Isle -----
+// A second island over the horizon, reached from the Shipyard. It is run from a panel: crews dig clay, pan salt and
+// pick grapes, and a supply boat brings the harvest home every morning.
+const ISLE_COST = { wood: 150, food: 100, coins: 200 }, ISLE_UP = { brick: 60, coins: 300 };
+const ISLE_YIELD = { salt: 5, clay: 9, grapes: 5 }, ISLE_FOOD = 6;
+const isleCrews = () => (G.isle.up ? 5 : 3);
+function isleBlock() {
+  if (!countDone('shipyard')) return 'Build the Shipyard first.';
+  if (!G.stats.exped) return 'Finish one expedition first: the crew has to find the island.';
+  if (!canAfford(ISLE_COST)) return 'Not enough wood, food or coins yet to found an outpost.';
+  return null;
+}
+function foundIsle() {
+  if (G.isle.on || isleBlock()) { sfx('error'); return false; }
+  pay(ISLE_COST); G.isle.on = true; G.isle.crew = { salt: 1, clay: 1, grapes: 1 };
+  sfx('quest'); toast('The outpost on the Far Isle is founded. A supply boat will call every morning.', 'quest'); logNews('An outpost was founded on the Far Isle.'); uiDirty(); return true;
+}
+function isleShift(res, d) {
+  const c = G.isle.crew, used = c.salt + c.clay + c.grapes;
+  if (d > 0 && used >= isleCrews()) return false;
+  if (d < 0 && c[res] <= 0) return false;
+  c[res] += d; sfx('click'); uiDirty(); return true;
+}
+function upgradeIsle() {
+  if (!G.isle.on || G.isle.up || !canAfford(ISLE_UP)) { sfx('error'); return false; }
+  pay(ISLE_UP); G.isle.up = true; sfx('quest'); toast('The outpost has grown: room for 5 crews.', 'quest'); uiDirty(); return true;
+}
+function isleDay() {
+  if (!G.isle.on) return;
+  const c = G.isle.crew, crews = c.salt + c.clay + c.grapes; if (!crews) return;
+  const need = crews * ISLE_FOOD, fed = G.res.food >= need + G.villagers.length * 2;
+  if (fed) G.res.food -= need;
+  const got = [];
+  for (const r of ['salt', 'clay', 'grapes']) { const n = store(r, Math.round(c[r] * ISLE_YIELD[r] * (fed ? 1 : 0.5))); if (n) got.push(n + ' ' + RES[r].toLowerCase()); G.stats.isle = (G.stats.isle || 0) + n; }
+  const msg = 'The supply boat from the Far Isle brought ' + (got.join(', ') || 'nothing: the stores are full') + (fed ? '.' : '. There was no food to send, so the crews worked at half strength.');
+  logNews(msg); toast(msg, fed ? 'good' : 'bad');
+}
+function pantryDay() {                   // salt, grapes, cake and clothes are used up a little every day
+  const pop = G.villagers.length;
+  const use = (res, per) => { if (G.res[res] > 0) G.res[res] = Math.max(0, G.res[res] - Math.max(1, Math.round(pop / per))); };
+  use('salt', 8); if (staffed('tavern')) use('grapes', 10); use('cake', 12); if (G.season === 3) use('clothes', 10);
+}
+const foodK = () => (G.res.salt > 0 ? 0.85 : 1);          // salted food keeps: the village eats 15% less
+
+// ----- 4. events with a choice -----
+const CHOICE_GAP = 3;
+const CHOICES = [
+  { id: 'pedlar', when: () => countDone('farm') > 0 && G.res.coins >= 30, title: 'A pedlar with seeds',
+    text: 'A pedlar unpacks a tray of strange seeds on the green. "Thirty coins," she says, "and your fields will thank me by morning."',
+    a: ['Buy the seeds (30 coins)', () => { G.res.coins -= 30; for (const b of G.buildings) if (b.type === 'farm' && b.done) b.growth = 1; G.res.grain += 15; return 'The seeds were as good as her word: every field is ready and there are 15 sacks of grain besides.'; }],
+    b: ['Send her on her way', () => { G.res.coins += 5; G.stats.coins += 5; return 'She shrugs, sells a few ribbons instead and leaves 5 coins for the pitch.'; }] },
+  { id: 'storm', when: () => countDone('farm') > 0, title: 'Dark clouds over the sea',
+    text: 'The fishers say a storm will hit tonight. The grain is not quite ripe yet.',
+    a: ['Bring the harvest in early', () => { let n = 0; for (const b of G.buildings) if (b.type === 'farm' && b.done) { n += Math.round(8 * b.growth); b.growth = 0; } G.res.grain += n; G.rain = Math.max(G.rain, 50); return 'Everyone helped. ' + n + ' grain is safe in the store, and the storm found empty fields.'; }],
+    b: ['Trust the weather to turn', () => { G.rain = Math.max(G.rain, 50); if (Math.random() < 0.5) return 'The storm passed out at sea. The fields stand tall.'; const f = G.buildings.filter((b) => b.type === 'farm' && b.done); for (const b of f) b.growth *= 0.3; return 'The storm came ashore and flattened most of the grain.'; }] },
+  { id: 'sick', when: () => countDone('pasture') + countDone('coop') + countDone('cowshed') > 0, title: 'The animals are poorly',
+    text: 'The sheep cough, the hens will not lay. The herb woman can mix a cure, but she wants honey for it.',
+    a: ['Pay her 6 honey', () => { if (G.res.honey < 6) { G.sickUntil = G.clock + DAY_LEN * 0.5; return 'There was not enough honey for a full cure. The animals rest until this evening.'; } G.res.honey -= 6; return 'By noon the whole flock is back on its feet.'; }],
+    b: ['Let them rest', () => { G.sickUntil = G.clock + DAY_LEN; G.foxUntil = Math.max(G.foxUntil, G.clock + DAY_LEN); return 'No wool, eggs or milk today. They will be better tomorrow.'; }] },
+  { id: 'sailors', when: () => G.res.food >= 50, title: 'Stranded sailors',
+    text: 'A small boat washed up on the beach with three hungry sailors. They ask for food, and perhaps a place to stay.',
+    a: ['Take them in (40 food)', () => { G.res.food -= 40; if (G.villagers.length < Math.min(bedCount(), MAX_POP)) { const c = G.center, v = spawnVillager(c.cx + rand(-2, 2), c.cz + 2.5); v.age = 12; assignHomes(); return v.name + ' decides to stay in Bumblenook. The others sail on, well fed.'; } G.res.coins += 30; G.stats.coins += 30; return 'There was no free bed, so they sailed on after a good meal and left 30 coins in thanks.'; }],
+    b: ['Give them supplies for the journey (15 food)', () => { G.res.food -= 15; G.res.coins += 20; G.stats.coins += 20; return 'They mend the boat and leave on the evening tide, paying 20 coins for the kindness.'; }] },
+  { id: 'circus', when: () => G.res.coins >= 40 && G.villagers.length >= 8, title: 'A travelling circus',
+    text: 'Jugglers, a fire-eater and a very old bear in a hat. They will perform on the green for forty coins.',
+    a: ['Let the show begin (40 coins)', () => { G.res.coins -= 40; G.cheer = G.clock + DAY_LEN * 1.5; for (const v of G.villagers) if (v.need) v.need.company = Math.min(1, v.need.company + 0.3); G.fireworks = Math.max(G.fireworks || 0, 6); return 'The whole village laughed until dark. Spirits will be high for a day and a half.'; }],
+    b: ['Not today', () => 'The circus moves on to the next island. The children wave until it is out of sight.'] },
+  { id: 'map', when: () => G.res.coins >= 50 && W.sites && W.sites.some((s) => !s.found), title: 'An old map',
+    text: 'A sailor at the tavern has a map of this very island, with a cross on it. He will part with it for fifty coins.',
+    a: ['Buy the map (50 coins)', () => { G.res.coins -= 50; const s = W.sites.find((q) => !q.found); if (!s) return 'The cross marks a place you already know.'; s.found = true; markSite(s); G.stats.explored++; G.res.coins += 70; G.stats.coins += 70; return 'The cross was real: the ' + SITE_KINDS[s.kind].name + ' gave up 70 coins, and its story is in the almanac.'; }],
+    b: ['Keep the coins', () => 'He folds the map away with a grin. "Your loss."'] },
+  { id: 'wedding', when: () => G.res.food >= 40 && G.villagers.length >= 10, title: 'A wedding on the green',
+    text: 'Two villagers want to marry this week, and they would love a proper feast.',
+    a: ['Hold a feast (35 food, 3 honey)', () => { G.res.food -= 35; G.res.honey = Math.max(0, G.res.honey - 3); G.cheer = G.clock + DAY_LEN * 2; G.babySoon = true; return 'Music, dancing and far too much cake. The village will be cheerful for two days.'; }],
+    b: ['Keep it small', () => { G.cheer = G.clock + DAY_LEN * 0.5; return 'A quiet promise under the old tree. It was lovely all the same.'; }] },
+  { id: 'swarm', when: () => countDone('apiary') > 0 && countDone('house') > 2, title: 'Bees in the chimney',
+    text: 'A swarm has moved into a cottage chimney. The beekeeper could coax them into a hive, but it will take all day.',
+    a: ['Move them to the apiary', () => { G.res.honey += 8; G.stats.honey += 8; return 'It took all day and a few stings, but there is a new hive: 8 extra honey.'; }],
+    b: ['Smoke them out', () => { G.res.wood = Math.max(0, G.res.wood - 10); return 'A fire of damp wood did the trick. The bees left for the forest, and so did 10 wood.'; }] },
+];
+function choiceDay() {
+  if (G.pending || G.level < 1 || G.day < 5 || G.day - (G.lastChoice || 0) < CHOICE_GAP || Math.random() > 0.5) return;
+  const pool = CHOICES.filter((c) => c.when() && c.id !== G.prevChoice);
+  if (!pool.length) return;
+  const c = pick(pool); G.pending = c.id; G.lastChoice = G.day; G.prevChoice = c.id;
+  showChoice();
+}
+function resolveChoice(n) {
+  const c = CHOICES.find((q) => q.id === G.pending); if (!c) { G.pending = null; return; }
+  const msg = (n ? c.b : c.a)[1]();
+  G.pending = null; G.stats.choices = (G.stats.choices || 0) + 1;
+  logNews(msg); toast(msg, 'quest'); sfx('click'); uiDirty();
+}
+
+// ----- 9. challenges -----
+const SCENARIOS = [
+  { id: 'winter', name: 'The Hard Winter', desc: 'Autumn is nearly over and there are six mouths to feed. Reach spring without the village going hungry.',
+    goal: 'Reach spring (day 17) with less than a minute of hunger', ban: [],
+    setup() { G.day = 10; for (let q = 0; q < 2; q++) spawnVillager(G.center.cx + rand(-2, 2), G.center.cz + 2.6); Object.assign(G.res, { wood: 80, stone: 30, food: 70 }); G.level = 1; },
+    prog: () => [Math.min(17, G.day), 17], fail: () => G.scn.hungry > 60, done: () => G.day >= 17,
+    medal: () => (G.scn.hungry < 1 && G.happy >= 70 ? 3 : G.scn.hungry < 20 ? 2 : 1), tiers: 'Gold: never hungry and 70% happy. Silver: under 20 seconds of hunger.' },
+  { id: 'nomarket', name: 'No Market', desc: 'The merchants have boycotted the island. Build the Lighthouse without ever building a Market.',
+    goal: 'Build the Lighthouse', ban: ['market'], setup() {},
+    prog: () => [countDone('lighthouse'), 1], fail: () => false, done: () => countDone('lighthouse') > 0,
+    medal: () => (G.day <= 40 ? 3 : G.day <= 60 ? 2 : 1), tiers: 'Gold: by day 40. Silver: by day 60.' },
+  { id: 'honey', name: 'Honey Rush', desc: 'A ship will pay a fortune for honey, but it sails soon. Fill the pantry with 40 honey.',
+    goal: 'Have 40 honey in store', ban: [], setup() { G.level = 1; Object.assign(G.res, { wood: 90, stone: 30 }); },
+    prog: () => [Math.min(40, Math.floor(G.res.honey)), 40], fail: () => G.day > 16, done: () => G.res.honey >= 40,
+    medal: () => (G.day <= 8 ? 3 : G.day <= 12 ? 2 : 1), tiers: 'Gold: by day 8. Silver: by day 12. The ship leaves after day 16.' },
+  { id: 'small', name: 'Small is Beautiful', desc: 'Grow into a Village with at most 14 buildings. Paths, lanterns, flowers and other decor are free.',
+    goal: 'Reach Village with 14 buildings or fewer', ban: [], setup() {},
+    prog: () => [Math.min(2, G.level), 2], fail: () => scnBuildings() > 14, done: () => G.level >= 2,
+    medal: () => (scnBuildings() <= 10 ? 3 : scnBuildings() <= 12 ? 2 : 1), tiers: 'Gold: 10 buildings or fewer. Silver: 12 or fewer.' },
+];
+const scnBuildings = () => G.buildings.reduce((n, b) => n + (b.type !== 'center' && b.def.cat !== 'sfeer' && !b.def.flat ? 1 : 0), 0);
+const scnOf = () => (G.mode.indexOf('scn-') === 0 ? SCENARIOS.find((s) => 'scn-' + s.id === G.mode) : null);
+const MEDAL = ['', 'Bronze', 'Silver', 'Gold'];
+function medals() { try { return JSON.parse(localStorage.getItem('bumblenook-medals') || '{}'); } catch (e) { return {}; } }
+function scenarioSetup() { const s = scnOf(); if (!s) return; G.scn = { hungry: 0, over: 0 }; s.setup(); G.season = seasonOf(G.day); applySeason(); assignHomes(); }
+function scenarioTick() {                // once a second
+  const s = scnOf(); if (!s || !G.scn || G.scn.over) return;
+  if (G.hungry) G.scn.hungry++;
+  if (s.fail()) { G.scn.over = -1; sfx('error'); toast('Challenge lost: ' + s.name + '. You can keep building, or start it again from the title screen.', 'bad'); uiDirty(); return; }
+  if (!s.done()) return;
+  const m = s.medal(); G.scn.over = m;
+  try { const all = medals(); if ((all[s.id] || 0) < m) { all[s.id] = m; localStorage.setItem('bumblenook-medals', JSON.stringify(all)); } } catch (e) { /* medals are optional */ }
+  G.fireworks = Math.max(G.fireworks || 0, 10); sfx('quest');
+  toast('Challenge won: ' + s.name + '. ' + MEDAL[m] + ' medal!', 'quest'); uiDirty();
+}
+
+// ----- wiring -----
+function lifeBase() {
+  for (const r of NEW_RES) G.res[r] = 0;
+  G.isle = { on: false, up: false, crew: { salt: 0, clay: 0, grapes: 0 } };
+  G.pending = null; G.lastChoice = 0; G.prevChoice = null; G.sickUntil = -1; G.babySoon = false; G.scn = null;
+  _roadNav = -1; _hoodNav = -1;
+}
+function lifeTick() { needsTick(1); scenarioTick(); }
+function lifeDay() { ageTick(); isleDay(); pantryDay(); choiceDay(); }
+function lifeHappy(add) {
+  needParts(add);
+  if (G.res.cake > 0) add('Cake on the table', 6);
+  if (G.res.grapes > 0 && staffed('tavern')) add('Wine at the tavern', 5);
+  if (G.res.clothes > 0) add('Fine new clothes', 4);
+  const e = elderCount(); if (e) add('Wise elders', Math.min(4, Math.ceil(e / 3)));
+  const kids = G.villagers.filter(isChild).length; if (kids) add('Children playing', Math.min(4, kids));
+}
+function lifeSave() {
+  return { isle: G.isle, pending: G.pending, lastChoice: G.lastChoice, prev: G.prevChoice, sick: Math.max(0, G.sickUntil - G.clock), scn: G.scn,
+    p: G.villagers.map((v) => [v.age || 0, v.child ? 1 : 0, v.schooled ? 1 : 0, v.need ? NEED_KEYS.map((k) => +v.need[k].toFixed(2)) : 0]) };
+}
+function lifeLoad(x) {
+  if (!x) { G.villagers.forEach((v, n) => { v.age = 6 + (n * 7) % 22; }); return; }       // an older save: everyone is a grown-up of some age
+  if (x.isle) G.isle = x.isle;
+  G.pending = x.pending || null; G.lastChoice = x.lastChoice || 0; G.prevChoice = x.prev || null; G.sickUntil = x.sick ? x.sick : -1; G.scn = x.scn || null;
+  G.villagers.forEach((v, n) => {
+    const a = (x.p || [])[n]; if (!a) { v.age = 8; return; }
+    v.age = a[0]; v.child = !!a[1]; v.schooled = !!a[2]; setChildLook(v);
+    if (a[3]) { v.need = {}; NEED_KEYS.forEach((k, q) => { v.need[k] = a[3][q]; }); }
+    if (v.child && v.job) unassignWorker(v.job, v);
+  });
+}
+// per frame: the handcart shows while someone from a workplace on the road carries goods
+function lifeAnimate(v) {
+  const u = v.mesh.userData, want = !!(u.carry && u.carry.visible && v.job && v.job.onRoad && v.carry);
+  if (want && !u.barrow) { u.barrow = new THREE.Mesh(cachedGeo('barrow', mBarrow), MAT.main); u.barrow.position.set(0, 0, 0.3); u.barrow.castShadow = true; v.mesh.add(u.barrow); }
+  if (u.barrow) u.barrow.visible = want;
+}
+// four more goals, on the tracks that already exist
+TRACKS.find((t) => t.id === 'prosper').goals.push(
+  { text: 'Join 4 workplaces to a storehouse by path', hint: 'A workplace on the road sends its goods by handcart: a quarter more arrives.', prog: () => [Math.min(4, roadCount()), 4], reward: { coins: 30 } },
+  { text: 'Bake 5 cakes and sew 3 sets of clothes', hint: 'The Pastry Shop and the Tailor finish what the bakery and the weaver begin.', prog: () => [Math.min(5, G.stats.cake || 0) + Math.min(3, G.stats.clothes || 0), 8], reward: { coins: 60 } });
+TRACKS.find((t) => t.id === 'discover').goals.push(
+  { text: 'Found an outpost on the Far Isle', hint: 'Tap the Shipyard after your first expedition.', prog: () => [G.isle && G.isle.on ? 1 : 0, 1], reward: { coins: 80 } },
+  { text: 'Bring home 60 goods from the Far Isle', hint: 'Salt keeps food longer, clay makes bricks without stone, grapes become wine at the tavern.', prog: () => [Math.min(60, G.stats.isle || 0), 60], reward: { coins: 120 } });
+QUESTS.length = 0; for (const t of TRACKS) for (const q of t.goals) QUESTS.push(q);
+function lifeDirty() { _roadNav = -1; _hoodNav = -1; }
+
+// ----- interface -----
+const needBar = (id, label) => '<div class="need"><span class="grow">' + label + '</span><span class="bar"><i id="' + id + '"></i></span></div>';
+const HOOD_TIP = {
+  warm: 'A brazier, the tavern or a bakery close by would keep this home warmer in winter.',
+  company: 'A bench, a garden or the pond close by would bring company.',
+  beauty: 'Flowers, a garden or a flagpole would brighten this street.',
+};
+function lifePanelHtml(b) {
+  let h = '';
+  if (CARRIERS.includes(b.def.job)) h += '<p class="note" id="b-road"></p>';
+  if (b.type === 'house' || b.type === 'center') h += '<h3>Neighbourhood</h3>' + NEED_KEYS.map((k) => needBar('b-n-' + k, NEED_NAME[k])).join('') + '<p class="note" id="b-hood"></p>';
+  if (b.type === 'shipyard') h += '<h3>The Far Isle</h3><p class="note" id="b-isle"></p><div id="b-islec"></div>';
+  return h;
+}
+function lifePanelUpdate(b) {
+  if (CARRIERS.includes(b.def.job)) { roadNet(); $('b-road').textContent = !b.done ? '' : b.onRoad ? 'On the road: goods travel by handcart, a quarter more arrives.' : 'Not joined to a storehouse by path. Lay a path from here to a Storehouse or the green for a quarter more.'; }
+  if (b.type === 'house' || b.type === 'center') {
+    neighbourhoods(); const h = b.hood;
+    if (h) {
+      for (const k of NEED_KEYS) $('b-n-' + k).style.width = Math.round(h[k] * 100) + '%';
+      let low = 'warm'; for (const k of ['company', 'rest', 'beauty']) if (h[k] < h[low]) low = k;
+      $('b-hood').textContent = h[low] >= 0.7 ? 'A lovely place to live.' : low === 'rest' ? (b.type === 'center' ? 'A tent is no place for a good night\'s sleep. Cottages rest better.' : h.loud ? 'The ' + h.loud.def.name + ' close by is noisy. Homes sleep better away from workshops.' : 'A restless spot.') : HOOD_TIP[low];
+    }
+  }
+  if (b.type === 'shipyard') {
+    const I = G.isle, blk = I.on ? null : !b.done ? 'Build the Shipyard first.' : isleBlock();
+    $('b-isle').textContent = I.on ? 'Every morning a supply boat brings the harvest. Each crew needs ' + ISLE_FOOD + ' food a day. Salt keeps food longer, clay makes bricks without stone, grapes become wine at the tavern.'
+      : blk || 'An island over the horizon with salt pans, clay pits and vines. Found an outpost there.';
+    const c = I.crew, used = c.salt + c.clay + c.grapes;
+    setH('b-islec', !I.on ? '<div class="row"><span class="grow pline">' + costHtml(ISLE_COST) + '</span><button type="button" class="btn" id="b-found"' + (blk ? ' disabled' : '') + '>Found an outpost</button></div>'
+      : '<p class="note">Crews at work: ' + used + ' of ' + isleCrews() + '</p>' + ['salt', 'clay', 'grapes'].map((r) => '<div class="row"><span class="grow isl">' + ic(r) + '<span>' + RES[r] + ' (' + ISLE_YIELD[r] + ' a day each)</span></span><button type="button" class="sq" data-isle="' + r + ':-1" aria-label="Fewer"' + (c[r] ? '' : ' disabled') + '>' + ic('minus') + '</button><b class="cnt">' + c[r] + '</b><button type="button" class="sq plus" data-isle="' + r + ':1" aria-label="More"' + (used >= isleCrews() ? ' disabled' : '') + '>' + ic('plus') + '</button></div>').join('') +
+        (I.up ? '' : '<div class="row"><span class="grow pline">' + costHtml(ISLE_UP) + '</span><button type="button" class="btn" id="b-isleup"' + (canAfford(ISLE_UP) ? '' : ' disabled') + '>Enlarge: 5 crews</button></div>'));
+  }
+}
+function lifePanelClick(t) {
+  if (t.id === 'b-found') { foundIsle(); return true; }
+  if (t.id === 'b-isleup') { upgradeIsle(); return true; }
+  if (t.dataset.isle) { const a = t.dataset.isle.split(':'); if (!isleShift(a[0], +a[1])) sfx('error'); return true; }
+  return false;
+}
+const lifeVillagerHtml = () => '<p class="note" id="v-life"></p><p class="note" id="v-life2"></p>' + NEED_KEYS.map((k) => needBar('v-n-' + k, NEED_NAME[k])).join('');
+function lifeVillagerUpdate(v) {
+  $('v-life').textContent = ageName(v) + ', ' + v.age + (v.age === 1 ? ' day' : ' days') + ' in Bumblenook.';
+  $('v-life2').textContent = v.child ? (staffed('school') ? 'Too young to work: plays on the green and goes to school.' : 'Too young to work: plays on the green. A school helps children grow up sooner.') : v.age >= ELDER_AGE ? 'Works at a gentler pace, and the village is happier for the stories.' : '';
+  const n = v.need || hoodOf(v);
+  if (n) for (const k of NEED_KEYS) $('v-n-' + k).style.width = Math.round(n[k] * 100) + '%';
+}
+function lifeCardText(base) {
+  const s = scnOf(); if (!s || !G.scn) return base;
+  const p = s.prog();
+  return 'Challenge · ' + (G.scn.over > 0 ? MEDAL[G.scn.over] + ' medal won' : G.scn.over < 0 ? 'lost' : s.goal + ' (' + p[0] + '/' + p[1] + ')');
+}
+function lifeVillageUpdate() {
+  const s = scnOf();
+  setH('vl-scn', !s || !G.scn ? '' : '<h3>Challenge</h3><p class="status">' + s.name + '</p><p class="note">' + s.goal + '</p><p class="note">' + s.tiers + '</p><p class="note">' + (G.scn.over > 0 ? 'Won with a ' + MEDAL[G.scn.over].toLowerCase() + ' medal.' : G.scn.over < 0 ? 'Lost this time. Start it again from the title screen.' : 'Still open.') + '</p>');
+}
+function showChoice() {
+  const c = CHOICES.find((q) => q.id === G.pending); if (!c || !G.started) return;
+  $('ev-title').textContent = c.title; $('ev-text').textContent = c.text; $('ev-a').textContent = c.a[0]; $('ev-b').textContent = c.b[0];
+  openModal('event'); sfx('quest');
+}
+function openChallenges() {
+  const got = medals();
+  $('ch-list').innerHTML = SCENARIOS.map((s) => '<div class="tech' + (got[s.id] ? ' got' : '') + '"><div class="grow"><b>' + s.name + '</b><span>' + s.desc + '</span><span class="why">' + s.tiers + '</span></div><button type="button" class="btn" data-scn="' + s.id + '">' + (got[s.id] ? MEDAL[got[s.id]] : 'Play') + '</button></div>').join('');
+  openModal('chal');
+}
+function startScenario(id) {
+  const mode = 'scn-' + id, sv = readSave(mode);
+  audioInit(); UIS.hadSave = false;
+  if (sv && sv.x && sv.x.scn && !sv.x.scn.over) { try { loadGame(sv); UIS.hadSave = true; } catch (e) { UIS.hadSave = false; } }
+  if (!UIS.hadSave) { clearSave(mode); newGame((Math.random() * 1e6) | 0, mode); centerCamera(); }
+  closeModal(); enterGame(); sfx('done');
+  const s = scnOf(); toast('Challenge: ' + s.goal, 'quest');
+}
+
 // ---------- i18n: Dutch as a second language. English text is the key; anything unknown stays English. ----------
 const NL = new Map([
   // resources, tabs, levels, seasons
@@ -4410,6 +5019,220 @@ NL_TPL.unshift(
   [`{a}, day {n}`, `{a}, dag {n}`], [`You chose the {a}`, `Je koos: {a}`], [`The Winter Fair is open! Lanterns, hot cider and a great fire on the green. Visitors left {n} coins.`, `De Wintermarkt is open! Lantaarns, warme cider en een groot vuur op het plein. Bezoekers lieten {n} munten achter.`],
   [`The ship is far out at sea. It returns in about {n} hours.`, `Het schip is ver op zee. Het komt over ongeveer {n} uur terug.`], [`The expedition is home with {n} coins and a treasure: the {a}!`, `De expeditie is thuis met {n} munten en een schat: {a}!`],
   [`The expedition is home with {n} coins and tales of faraway shores.`, `De expeditie is thuis met {n} munten en verhalen over verre kusten.`], [`Build the {a} first`, `Bouw eerst: {a}`], [`Treasures brought home: {n} of {m}`, `Schatten thuisgebracht: {n} van {m}`]);
+for (const [k, v] of [
+  ["Join workplaces to a Storehouse with a path: their goods then travel by handcart and a quarter more arrives.", "Verbind werkplekken met een pad aan een Opslagschuur: hun goederen gaan dan per handkar en er komt een kwart meer aan."],
+  ["Tap a cottage to see its neighbourhood: warmth, company, rest and a lovely street all make its residents happier.", "Tik op een huisje om de buurt te zien: warmte, gezelschap, rust en een mooie straat maken de bewoners blijer."],
+  ["Now and then the village asks you to decide something. Take your time: the game waits.", "Af en toe vraagt het dorp je iets te beslissen. Neem rustig de tijd: het spel wacht."]
+]) NL.set(k, v);
+// --- added with roads, needs, the Far Isle, choices, longer chains, animals, the life course, decor and challenges ---
+for (const [k, v] of [
+  ["Cake", "Taart"],
+  ["Clothes", "Kleding"],
+  ["Salt", "Zout"],
+  ["Clay", "Klei"],
+  ["Grapes", "Druiven"],
+  ["Pastry cook", "Banketbakker"],
+  ["Pastry cooks", "Banketbakkers"],
+  ["Tailor", "Kleermaker"],
+  ["Tailors", "Kleermakers"],
+  ["Poultry keeper", "Kippenhoeder"],
+  ["Poultry keepers", "Kippenhoeders"],
+  ["Dairy farmer", "Melkveehouder"],
+  ["Dairy farmers", "Melkveehouders"],
+  ["Chicken Coop", "Kippenhok"],
+  ["Hens lay best on grain: 2 grain gives 6 food. Without grain they scratch around for a few eggs.", "Kippen leggen het best op graan: 2 graan geeft 6 voedsel. Zonder graan scharrelen ze een paar eieren bij elkaar."],
+  ["Cowshed", "Koeienstal"],
+  ["Cows give milk and cheese: 3 grain feeds them for 10 food. They graze for less when the grain runs out.", "Koeien geven melk en kaas: met 3 graan leveren ze 10 voedsel. Is het graan op, dan grazen ze voor minder."],
+  ["Pastry Shop", "Banketbakkerij"],
+  ["Bakes 6 food and 1 honey into a cake. Cake on the table makes everyone happy and sells well.", "Bakt van 6 voedsel en 1 honing een taart. Taart op tafel maakt iedereen blij en verkoopt goed."],
+  ["Sews 2 cloth into a set of clothes. Clothes keep every home warm in winter and sell for a good price.", "Naait van 2 stof een stel kleren. Kleding houdt elk huis warm in de winter en brengt een mooie prijs op."],
+  ["Brazier", "Vuurkorf"],
+  ["A fire basket for the street. Homes close by stay warm in winter.", "Een vuurkorf voor op straat. Huizen in de buurt blijven warm in de winter."],
+  ["Garden", "Tuin"],
+  ["A little park with roses and a bird bath. Makes the homes around it lovelier and good company.", "Een parkje met rozen en een vogelbadje. Maakt de huizen eromheen mooier en gezelliger."],
+  ["Flagpole", "Vlaggenmast"],
+  ["The colours of Bumblenook. A cheerful sight for the homes around it.", "De kleuren van Bumblenook. Een vrolijk gezicht voor de huizen eromheen."],
+  ["Rose Arch", "Rozenboog"],
+  ["An arch of climbing roses. Villagers can walk under it.", "Een boog van klimrozen. Dorpelingen kunnen eronderdoor lopen."],
+  ["The animals are poorly: nothing to collect today", "De dieren zijn ziek: vandaag valt er niets te halen"],
+  ["No grain to feed the hens: fewer eggs", "Geen graan voor de kippen: minder eieren"],
+  ["Walking to the coop", "Loopt naar het kippenhok"],
+  ["Feeding the hens", "Voert de kippen"],
+  ["Looking for eggs", "Zoekt eieren"],
+  ["No grain for the cows: they give less milk on grass alone", "Geen graan voor de koeien: op gras alleen geven ze minder melk"],
+  ["Walking to the cows", "Loopt naar de koeien"],
+  ["Milking a cow", "Melkt een koe"],
+  ["Leading the cows to graze", "Brengt de koeien naar het gras"],
+  ["Carrying flour and honey to the shop", "Draagt meel en honing naar de zaak"],
+  ["Fetching bread and honey from storage", "Haalt brood en honing uit de opslag"],
+  ["Baking a cake", "Bakt een taart"],
+  ["Waiting for spare food and a jar of honey", "Wacht op voedsel dat over is en een pot honing"],
+  ["Carrying cloth to the workshop", "Draagt stof naar de werkplaats"],
+  ["Fetching cloth from storage", "Haalt stof uit de opslag"],
+  ["Sewing clothes", "Naait kleren"],
+  ["Waiting for 2 cloth from the weaver", "Wacht op 2 stof van de wever"],
+  ["On the road: goods travel by handcart, a quarter more arrives.", "Aan de weg: de goederen gaan per handkar, er komt een kwart meer aan."],
+  ["Not joined to a storehouse by path. Lay a path from here to a Storehouse or the green for a quarter more.", "Niet met een pad verbonden met een opslag. Leg een pad van hier naar een Opslagschuur of het dorpsplein voor een kwart meer."],
+  ["Neighbourhood", "Buurt"],
+  ["Warmth", "Warmte"],
+  ["Company", "Gezelschap"],
+  ["Rest", "Rust"],
+  ["Lovely street", "Mooie straat"],
+  ["A brazier, the tavern or a bakery close by would keep this home warmer in winter.", "Een vuurkorf, de herberg of een bakkerij dichtbij houdt dit huis warmer in de winter."],
+  ["A bench, a garden or the pond close by would bring company.", "Een bankje, een tuin of de vijver dichtbij brengt gezelschap."],
+  ["Flowers, a garden or a flagpole would brighten this street.", "Bloemen, een tuin of een vlaggenmast fleuren deze straat op."],
+  ["A lovely place to live.", "Een heerlijke plek om te wonen."],
+  ["A tent is no place for a good night's sleep. Cottages rest better.", "In een tent slaap je niet lekker. In een huisje rust je beter uit."],
+  ["A restless spot.", "Een onrustige plek."],
+  ["Warm homes in winter", "Warme huizen in de winter"],
+  ["Cold homes: braziers, a tavern or clothes help", "Koude huizen: vuurkorven, een herberg of kleding helpen"],
+  ["Good company close to home", "Gezelschap dicht bij huis"],
+  ["Lonely streets: benches and gardens help", "Eenzame straten: bankjes en tuinen helpen"],
+  ["A good night's sleep", "Een goede nachtrust"],
+  ["Noisy nights next to the workshops", "Lawaaiige nachten naast de werkplaatsen"],
+  ["Lovely streets", "Mooie straten"],
+  ["Cake on the table", "Taart op tafel"],
+  ["Wine at the tavern", "Wijn in de herberg"],
+  ["Fine new clothes", "Mooie nieuwe kleren"],
+  ["Wise elders", "Wijze ouderen"],
+  ["Children playing", "Spelende kinderen"],
+  ["Child", "Kind"],
+  ["Elder", "Oudere"],
+  ["Grown-up", "Volwassene"],
+  ["Too young to work: plays on the green and goes to school.", "Te jong om te werken: speelt op het plein en gaat naar school."],
+  ["Too young to work: plays on the green. A school helps children grow up sooner.", "Te jong om te werken: speelt op het plein. Met een school worden kinderen sneller groot."],
+  ["Works at a gentler pace, and the village is happier for the stories.", "Werkt in een rustiger tempo, en het dorp is blijer door de verhalen."],
+  ["Running to school", "Rent naar school"],
+  ["Learning letters", "Leert letters"],
+  ["Counting bumblebees", "Telt hommels"],
+  ["Listening to a story", "Luistert naar een verhaal"],
+  ["Running across the green", "Rent over het plein"],
+  ["Chasing a butterfly", "Zit een vlinder achterna"],
+  ["Playing tag", "Speelt tikkertje"],
+  ["Playing on the green", "Speelt op het plein"],
+  ["Skipping stones", "Keilt steentjes"],
+  ["Building a den", "Bouwt een hut"],
+  ["Counting clouds", "Telt wolken"],
+  ["The Far Isle", "Het Verre Eiland"],
+  ["Build the Shipyard first.", "Bouw eerst de Scheepswerf."],
+  ["Finish one expedition first: the crew has to find the island.", "Maak eerst één expeditie af: de bemanning moet het eiland nog vinden."],
+  ["Not enough wood, food or coins yet to found an outpost.", "Nog niet genoeg hout, voedsel of munten om een buitenpost te stichten."],
+  ["The outpost on the Far Isle is founded. A supply boat will call every morning.", "De buitenpost op het Verre Eiland is gesticht. Elke ochtend komt er een bevoorradingsboot."],
+  ["An outpost was founded on the Far Isle.", "Er is een buitenpost gesticht op het Verre Eiland."],
+  ["The outpost has grown: room for 5 crews.", "De buitenpost is gegroeid: plaats voor 5 ploegen."],
+  ["Every morning a supply boat brings the harvest. Each crew needs 6 food a day. Salt keeps food longer, clay makes bricks without stone, grapes become wine at the tavern.", "Elke ochtend brengt een bevoorradingsboot de oogst. Elke ploeg heeft 6 voedsel per dag nodig. Met zout blijft voedsel langer goed, van klei bak je stenen zonder steen, en druiven worden wijn in de herberg."],
+  ["An island over the horizon with salt pans, clay pits and vines. Found an outpost there.", "Een eiland achter de horizon met zoutpannen, kleiputten en wijnstokken. Sticht er een buitenpost."],
+  ["Found an outpost", "Sticht een buitenpost"],
+  ["Enlarge: 5 crews", "Vergroot: 5 ploegen"],
+  ["The supply boat from the Far Isle brought nothing: the stores are full.", "De bevoorradingsboot van het Verre Eiland bracht niets: de opslag is vol."],
+  ["A pedlar with seeds", "Een marskramer met zaden"],
+  ["A pedlar unpacks a tray of strange seeds on the green. \"Thirty coins,\" she says, \"and your fields will thank me by morning.\"", "Een marskramer pakt op het plein een bak vreemde zaden uit. \"Dertig munten,\" zegt ze, \"en morgenochtend bedanken je akkers me.\""],
+  ["Buy the seeds (30 coins)", "Koop de zaden (30 munten)"],
+  ["The seeds were as good as her word: every field is ready and there are 15 sacks of grain besides.", "De zaden waren zo goed als beloofd: elke akker is rijp en er zijn nog 15 zakken graan bij."],
+  ["Send her on her way", "Stuur haar verder"],
+  ["She shrugs, sells a few ribbons instead and leaves 5 coins for the pitch.", "Ze haalt haar schouders op, verkoopt wat linten en laat 5 munten achter voor de standplaats."],
+  ["Dark clouds over the sea", "Donkere wolken boven zee"],
+  ["The fishers say a storm will hit tonight. The grain is not quite ripe yet.", "De vissers zeggen dat er vannacht storm komt. Het graan is nog niet helemaal rijp."],
+  ["Bring the harvest in early", "Haal de oogst vroeg binnen"],
+  ["Trust the weather to turn", "Reken erop dat het weer omslaat"],
+  ["The storm passed out at sea. The fields stand tall.", "De storm trok over zee voorbij. De akkers staan er fier bij."],
+  ["The storm came ashore and flattened most of the grain.", "De storm kwam aan land en sloeg het meeste graan plat."],
+  ["The animals are poorly", "De dieren zijn ziek"],
+  ["The sheep cough, the hens will not lay. The herb woman can mix a cure, but she wants honey for it.", "De schapen hoesten, de kippen leggen niet. De kruidenvrouw kan een drankje mengen, maar ze wil er honing voor."],
+  ["Pay her 6 honey", "Betaal haar 6 honing"],
+  ["There was not enough honey for a full cure. The animals rest until this evening.", "Er was niet genoeg honing voor een hele kuur. De dieren rusten tot vanavond."],
+  ["By noon the whole flock is back on its feet.", "Tegen de middag staat de hele kudde weer op de been."],
+  ["Let them rest", "Laat ze rusten"],
+  ["No wool, eggs or milk today. They will be better tomorrow.", "Vandaag geen wol, eieren of melk. Morgen zijn ze weer beter."],
+  ["Stranded sailors", "Gestrande zeelui"],
+  ["A small boat washed up on the beach with three hungry sailors. They ask for food, and perhaps a place to stay.", "Er is een bootje aangespoeld met drie hongerige zeelui. Ze vragen om eten, en misschien een plek om te blijven."],
+  ["Take them in (40 food)", "Neem ze op (40 voedsel)"],
+  ["There was no free bed, so they sailed on after a good meal and left 30 coins in thanks.", "Er was geen bed vrij, dus ze voeren verder na een goede maaltijd en lieten 30 munten achter als dank."],
+  ["Give them supplies for the journey (15 food)", "Geef ze proviand mee (15 voedsel)"],
+  ["They mend the boat and leave on the evening tide, paying 20 coins for the kindness.", "Ze lappen de boot op en vertrekken met het avondtij, en betalen 20 munten voor de vriendelijkheid."],
+  ["A travelling circus", "Een rondreizend circus"],
+  ["Jugglers, a fire-eater and a very old bear in a hat. They will perform on the green for forty coins.", "Jongleurs, een vuurvreter en een stokoude beer met een hoed. Voor veertig munten treden ze op het plein op."],
+  ["Let the show begin (40 coins)", "Laat de voorstelling beginnen (40 munten)"],
+  ["The whole village laughed until dark. Spirits will be high for a day and a half.", "Het hele dorp lachte tot het donker werd. De stemming blijft anderhalve dag opperbest."],
+  ["Not today", "Vandaag niet"],
+  ["The circus moves on to the next island. The children wave until it is out of sight.", "Het circus trekt door naar het volgende eiland. De kinderen zwaaien tot het uit zicht is."],
+  ["An old map", "Een oude kaart"],
+  ["A sailor at the tavern has a map of this very island, with a cross on it. He will part with it for fifty coins.", "Een zeeman in de herberg heeft een kaart van precies dit eiland, met een kruis erop. Voor vijftig munten doet hij er afstand van."],
+  ["Buy the map (50 coins)", "Koop de kaart (50 munten)"],
+  ["The cross marks a place you already know.", "Het kruis staat op een plek die je al kent."],
+  ["Keep the coins", "Houd de munten"],
+  ["He folds the map away with a grin. \"Your loss.\"", "Hij vouwt de kaart grijnzend op. \"Jammer voor jou.\""],
+  ["A wedding on the green", "Een bruiloft op het plein"],
+  ["Two villagers want to marry this week, and they would love a proper feast.", "Twee dorpelingen willen deze week trouwen, en ze zouden dolgraag een echt feestmaal hebben."],
+  ["Hold a feast (35 food, 3 honey)", "Geef een feestmaal (35 voedsel, 3 honing)"],
+  ["Music, dancing and far too much cake. The village will be cheerful for two days.", "Muziek, dans en veel te veel taart. Het dorp is twee dagen lang vrolijk."],
+  ["Keep it small", "Houd het klein"],
+  ["A quiet promise under the old tree. It was lovely all the same.", "Een stille belofte onder de oude boom. Mooi was het evengoed."],
+  ["Bees in the chimney", "Bijen in de schoorsteen"],
+  ["A swarm has moved into a cottage chimney. The beekeeper could coax them into a hive, but it will take all day.", "Een zwerm is in de schoorsteen van een huisje getrokken. De imker kan ze naar een kast lokken, maar dat kost de hele dag."],
+  ["Move them to the apiary", "Breng ze naar de bijenstal"],
+  ["It took all day and a few stings, but there is a new hive: 8 extra honey.", "Het kostte de hele dag en een paar steken, maar er is een nieuwe kast: 8 extra honing."],
+  ["Smoke them out", "Rook ze uit"],
+  ["A fire of damp wood did the trick. The bees left for the forest, and so did 10 wood.", "Een vuurtje van vochtig hout deed het werk. De bijen vertrokken naar het bos, en 10 hout ook."],
+  ["Challenges", "Uitdagingen"],
+  ["Short games with one rule and a medal to win. Each has its own island and its own save.", "Korte spellen met één regel en een medaille om te winnen. Elk heeft een eigen eiland en een eigen opslag."],
+  ["Play", "Speel"],
+  ["Bronze", "Brons"],
+  ["Silver", "Zilver"],
+  ["Gold", "Goud"],
+  ["Challenge", "Uitdaging"],
+  ["Still open.", "Nog bezig."],
+  ["Lost this time. Start it again from the title screen.", "Deze keer verloren. Begin opnieuw vanaf het titelscherm."],
+  ["Not in this challenge", "Niet in deze uitdaging"],
+  ["Challenge · lost", "Uitdaging · verloren"],
+  ["The Hard Winter", "De Strenge Winter"],
+  ["Autumn is nearly over and there are six mouths to feed. Reach spring without the village going hungry.", "De herfst is bijna voorbij en er zijn zes monden te voeden. Haal de lente zonder dat het dorp honger lijdt."],
+  ["Reach spring (day 17) with less than a minute of hunger", "Haal de lente (dag 17) met minder dan een minuut honger"],
+  ["Gold: never hungry and 70% happy. Silver: under 20 seconds of hunger.", "Goud: nooit honger en 70% tevreden. Zilver: minder dan 20 seconden honger."],
+  ["No Market", "Geen Markt"],
+  ["The merchants have boycotted the island. Build the Lighthouse without ever building a Market.", "De kooplui boycotten het eiland. Bouw de Vuurtoren zonder ooit een Markt te bouwen."],
+  ["Build the Lighthouse", "Bouw de Vuurtoren"],
+  ["Gold: by day 40. Silver: by day 60.", "Goud: uiterlijk dag 40. Zilver: uiterlijk dag 60."],
+  ["Honey Rush", "Honingkoorts"],
+  ["A ship will pay a fortune for honey, but it sails soon. Fill the pantry with 40 honey.", "Een schip betaalt een fortuin voor honing, maar het vertrekt al snel. Vul de voorraad met 40 honing."],
+  ["Have 40 honey in store", "Heb 40 honing in voorraad"],
+  ["Gold: by day 8. Silver: by day 12. The ship leaves after day 16.", "Goud: uiterlijk dag 8. Zilver: uiterlijk dag 12. Het schip vertrekt na dag 16."],
+  ["Small is Beautiful", "Klein maar Fijn"],
+  ["Grow into a Village with at most 14 buildings. Paths, lanterns, flowers and other decor are free.", "Groei uit tot een Dorp met hooguit 14 gebouwen. Paden, lantaarns, bloemen en andere sfeer tellen niet mee."],
+  ["Reach Village with 14 buildings or fewer", "Word een Dorp met 14 gebouwen of minder"],
+  ["Gold: 10 buildings or fewer. Silver: 12 or fewer.", "Goud: 10 gebouwen of minder. Zilver: 12 of minder."],
+  ["Join 4 workplaces to a storehouse by path", "Verbind 4 werkplekken via een pad met een opslag"],
+  ["A workplace on the road sends its goods by handcart: a quarter more arrives.", "Een werkplek aan de weg stuurt zijn goederen per handkar: er komt een kwart meer aan."],
+  ["Bake 5 cakes and sew 3 sets of clothes", "Bak 5 taarten en naai 3 stel kleren"],
+  ["The Pastry Shop and the Tailor finish what the bakery and the weaver begin.", "De Banketbakkerij en de Kleermaker maken af waar de bakkerij en de wever mee beginnen."],
+  ["Found an outpost on the Far Isle", "Sticht een buitenpost op het Verre Eiland"],
+  ["Tap the Shipyard after your first expedition.", "Tik op de Scheepswerf na je eerste expeditie."],
+  ["Bring home 60 goods from the Far Isle", "Haal 60 goederen van het Verre Eiland"],
+  ["Salt keeps food longer, clay makes bricks without stone, grapes become wine at the tavern.", "Met zout blijft voedsel langer goed, van klei bak je stenen zonder steen, en druiven worden wijn in de herberg."]
+]) NL.set(k, v);
+NL_TPL.unshift(
+  ["{a} was born in Bumblenook! {b}'s cottage has a new voice.", "{a} is geboren in Bumblenook! In het huisje van {b} klinkt een nieuwe stem."],
+  ["{a} was born.", "{a} is geboren."],
+  ["{a} has grown up and is ready to work, quick and clever from school.", "{a} is groot geworden en klaar om te werken, vlug en slim dankzij school."],
+  ["{a} has grown up and is ready to work.", "{a} is groot geworden en klaar om te werken."],
+  ["{a} grew up.", "{a} is groot geworden."],
+  ["{a} is now one of the village elders.", "{a} hoort nu bij de ouderen van het dorp."],
+  ["{a}, {n} days in Bumblenook.", "{a}, {n} dagen in Bumblenook."],
+  ["{a}, {n} day in Bumblenook.", "{a}, {n} dag in Bumblenook."],
+  ["The {a} close by is noisy. Homes sleep better away from workshops.", "Vlakbij is het lawaaiig: {a}. Huizen slapen beter uit de buurt van werkplaatsen."],
+  ["Crews at work: {n} of {m}", "Ploegen aan het werk: {n} van {m}"],
+  ["{a} ({n} a day each)", "{a} ({n} per dag per ploeg)"],
+  ["The supply boat from the Far Isle brought {a}. There was no food to send, so the crews worked at half strength.", "De bevoorradingsboot van het Verre Eiland bracht {a}. Er was geen voedsel om mee te sturen, dus de ploegen werkten op halve kracht."],
+  ["The supply boat from the Far Isle brought {a}.", "De bevoorradingsboot van het Verre Eiland bracht {a}."],
+  ["Everyone helped. {n} grain is safe in the store, and the storm found empty fields.", "Iedereen hielp mee. {n} graan ligt veilig in de opslag, en de storm trof lege akkers."],
+  ["{a} decides to stay in Bumblenook. The others sail on, well fed.", "{a} besluit in Bumblenook te blijven. De anderen varen verder, goed gevoed."],
+  ["The cross was real: the {a} gave up 70 coins, and its story is in the almanac.", "Het kruis klopte: {a} leverde 70 munten op, en het verhaal staat in de almanak."],
+  ["Challenge · {a} ({n}/{m})", "Uitdaging · {a} ({n}/{m})"],
+  ["Challenge · {a} medal won", "Uitdaging · medaille gewonnen: {a}"],
+  ["Challenge: {a}", "Uitdaging: {a}"],
+  ["Challenge lost: {a}. You can keep building, or start it again from the title screen.", "Uitdaging verloren: {a}. Je kunt doorbouwen, of opnieuw beginnen vanaf het titelscherm."],
+  ["Challenge won: {a}. {b} medal!", "Uitdaging gewonnen: {a}. Medaille: {b}!"],
+  ["Won with a {a} medal.", "Gewonnen met een medaille: {a}."]);
 const _nlLower = new Map(); for (const [k, v] of NL) _nlLower.set(k.toLowerCase(), v);
 const _nlRx = NL_TPL.map(([en, nl]) => {
   const names = [];
@@ -4570,6 +5393,7 @@ function initMarkers() {
 function lockReason(type) {
   const d = BT[type];
   if (d.max && G.buildings.filter((q) => q.type === type).length >= d.max) return 'Already built';
+  const sc = scnOf(); if (sc && sc.ban.includes(type)) return 'Not in this challenge';
   if (G.mode === 'sandbox') return null;
   if ((d.lvl || 0) > G.level) return 'Unlocks at ' + LEVELS[d.lvl].name;
   if (d.after && !countDone(d.after)) return 'Build the ' + BT[d.after].name + ' first';
@@ -4840,6 +5664,7 @@ function refreshBar() {
 }
 function refreshTop() {
   const show = { wood: 1, stone: 1, food: 1, grain: G.res.grain > 0 || countDone('farm') > 0, honey: G.res.honey > 0 || countDone('apiary') > 0, wool: G.res.wool > 0 || countDone('pasture') > 0, cloth: G.res.cloth > 0 || countDone('weaver') > 0, brick: G.res.brick > 0 || countDone('brickworks') > 0, cider: G.res.cider > 0 || countDone('ciderpress') > 0, coins: G.res.coins > 0 || countDone('market') > 0 };
+  for (const r of NEW_RES) show[r] = G.res[r] > 0;
   for (const r of Object.keys(RES)) {
     const el = $('r-' + r);
     el.hidden = !show[r];
@@ -4859,7 +5684,7 @@ function refreshTop() {
   $('time').textContent = (hh < 10 ? '0' : '') + hh + ':' + (mm < 10 ? '0' : '') + mm;
   $('clock').classList.toggle('night', isNight());
   const qc = $('quest');
-  $('q-n').textContent = LEVELS[G.level].name + ' \u00b7 ' + G.quest + ' of ' + QUESTS.length + ' goals';
+  $('q-n').textContent = lifeCardText(LEVELS[G.level].name + ' \u00b7 ' + G.quest + ' of ' + QUESTS.length + ' goals');
   setH('q-list', TRACKS.map((t) => {
     const q = goalOf(t);
     if (!q) return '<span class="qg done"><i>' + t.name + '</i><span class="qx">All done</span></span>';
@@ -4907,6 +5732,7 @@ function openBuildingPanel(b) {
   if (b.type === 'townhall') h += '<h3>Town improvements</h3><div id="b-civic"></div>';
   if (b.type === 'shipyard') h += '<h3>Expedition</h3><p class="note" id="b-exp"></p><div class="row"><span class="grow pline" id="b-expc"></span><button type="button" class="btn" id="b-expgo">Set sail</button></div>';
   if (d.storage) h += '<p class="note" id="b-cap"></p>';
+  h += lifePanelHtml(b);
   if (up) h += '<div id="b-up"></div>';
   if (b.type !== 'center') h += '<div class="row end"><button type="button" class="btn ghost" id="b-demo">Demolish</button></div>';
   openPanel('b', b, nameOf(b), d.job ? 'Workplace' : d.beds ? 'Home' : d.storage ? 'Storage' : 'Village', h, () => {
@@ -4919,12 +5745,13 @@ function openBuildingPanel(b) {
     else if (b.type === 'apiary') st = b.bonus ? 'The bees are thriving: double honey.' : d.desc;
     $('b-status').textContent = st; $('b-status').classList.toggle('bad', !!(b.done && ((b.warn && b.workers.length) || (d.job && !b.workers.length))));
     if (d.job) {
-      const freeV = G.villagers.filter((v) => !v.job), free = freeV.length, gift = freeV.filter((v) => v.talent === d.job).length;
+      const freeV = G.villagers.filter((v) => !v.job && !v.child), free = freeV.length, gift = freeV.filter((v) => v.talent === d.job).length;
       $('bw-n').textContent = b.workers.length + '/' + slots;
       $('bw-m').disabled = !b.workers.length; $('bw-p').disabled = !b.done || b.workers.length >= slots || !free;
       $('b-free').textContent = !b.done ? 'Workers can start once it is built.' : b.workers.length >= slots ? 'Fully staffed. Minus sends a villager back to building.'
         : free ? free + ' free villager' + (free === 1 ? '' : 's') + ' available' + (gift ? ', ' + gift + ' with a talent for this job' : '') + '. Plus puts one to work here.' : 'No free villagers. Take someone off another job or build cottages.';
     }
+    lifePanelUpdate(b);
     if (b.type === 'farm') $('b-grow').style.width = Math.round(b.growth * 100) + '%';
     if (d.beds) $('b-res').textContent = b.type === 'center' ? 'Tents for 4 villagers without a cottage.' : 'Residents (' + b.residents.length + '/' + bedsOf(b) + '): ' + (b.residents.map((v) => v.name).join(', ') || 'nobody yet');
     if (b.type === 'market') {
@@ -4984,15 +5811,16 @@ function refreshSettingsUI() {
   $('m-lang').textContent = 'Language: ' + (SET.lang === 'nl' ? 'Nederlands' : 'English');
 }
 function openVillagerPanel(v) {
-  let h = '<p class="status" id="v-say"></p><p class="note" id="v-home"></p><div class="chips" id="v-jobs"></div><div class="row end"><button type="button" class="btn ghost" id="v-follow">Follow</button><button type="button" class="btn ghost" id="v-free">Set free</button></div>';
+  let h = '<p class="status" id="v-say"></p><p class="note" id="v-home"></p>' + lifeVillagerHtml() + '<div class="chips" id="v-jobs"></div><div class="row end"><button type="button" class="btn ghost" id="v-follow">Follow</button><button type="button" class="btn ghost" id="v-free">Set free</button></div>';
   openPanel('v', v, v.name, '', h, () => {
     $('pn-sub').textContent = JOBS[v.job ? v.job.def.job : 'free'].title;
     $('v-say').textContent = v.say + (G.hungry ? ' (hungry)' : '');
     $('v-home').textContent = (v.home ? 'Lives in a cottage.' : 'Sleeps in a tent on the green.') + ' Has a talent for ' + JOBS[v.talent].title.toLowerCase() + ' work' + (v.job && v.job.def.job === v.talent ? ' and works 30% faster here.' : '.');
+    lifeVillagerUpdate(v);
     $('v-free').hidden = !v.job;
     $('v-follow').setAttribute('aria-pressed', String(CAM.follow === v));
     const open = {};
-    for (const b of G.buildings) if (b.done && b.def.job && b.workers.length < slotsOf(b) && b !== v.job) open[b.def.job] = 1;
+    if (!v.child) for (const b of G.buildings) if (b.done && b.def.job && b.workers.length < slotsOf(b) && b !== v.job) open[b.def.job] = 1;
     const html = Object.keys(open).map((j) => '<button type="button" class="chip" data-job="' + j + '">Become a ' + JOBS[j].title.toLowerCase() + '</button>').join('');
     const box = $('v-jobs'); if (box.dataset.h !== html) { box.innerHTML = html; box.dataset.h = html; }
   });
@@ -5005,7 +5833,7 @@ function openPeoplePanel() {
   h += '<p class="note">Free villagers build whatever you place.</p><div class="list" id="p-list"></div>';
   openPanel('people', null, 'Villagers', '', h, () => {
     $('pn-sub').textContent = G.villagers.length + ' villagers, ' + bedCount() + ' beds';
-    const free = G.villagers.filter((v) => !v.job).length;
+    const free = G.villagers.filter((v) => !v.job && !v.child).length;
     $('pj-free').textContent = free;
     for (const j of jobs) {
       const bs = G.buildings.filter((b) => b.done && b.def.job === j), slots = bs.reduce((n, b) => n + slotsOf(b), 0), n = jobCount(j);
@@ -5027,13 +5855,14 @@ function openHappyPanel() {
 const setH = (id, html) => { const el = $(id); if (el.dataset.h !== html) { el.innerHTML = html; el.dataset.h = html; } };
 function openVillagePanel() {
   select(null);
-  const h = '<div id="vl-daily"></div><div id="vl-needs"></div><p class="note" id="vl-unlocks"></p><div id="vl-story"></div>' +
+  const h = '<div id="vl-scn"></div><div id="vl-daily"></div><div id="vl-needs"></div><p class="note" id="vl-unlocks"></p><div id="vl-story"></div>' +
     '<h3>Goals</h3><div id="vl-goals"></div>' +
     '<h3>Requests</h3><div id="vl-missions"></div>' +
     '<h3>Festival</h3><p class="note" id="vl-fest-note"></p><div class="row end"><button type="button" class="btn" id="vl-fest">Hold a festival</button></div>' +
     '<h3>Badges</h3><div class="badges" id="vl-badges"></div><h3>Almanac</h3><div class="alms" id="vl-alm"></div><h3>News</h3><div id="vl-news"></div>';
   openPanel('village', null, 'Bumblenook', '', h, () => {
     $('pn-sub').textContent = LEVELS[G.level].name + ' \u00b7 ' + SEASONS[G.season].toLowerCase() + ', day ' + G.day;
+    lifeVillageUpdate();
     const D = G.daily, best = D ? dailyBest(D.date) : null;
     setH('vl-daily', D ? '<h3>Daily island</h3><p class="status">' + DAILY_GOALS[D.goal].text + (D.done ? ': done in ' + D.score.toFixed(1) + ' days!' : ' as fast as you can.') + '</p><p class="note">' + (best !== null ? 'Your best today: ' + best.toFixed(1) + ' days.' : 'Everyone gets the same island today.') + '</p>' : '');
     const ch = STORY[G.story], sp = ch && G.storyOn ? ch.prog() : null;
@@ -5079,7 +5908,8 @@ function initPanelEvents() {
     if (t.id === 'pn-close') { if (UIS.sel) select(null); else closePanel(); return; }
     if (P.kind === 'b') {
       const b = P.ref;
-      if (t.id === 'bw-p') { if (assignWorker(b)) sfx('click'); else sfx('error'); }
+      if (lifePanelClick(t)) { /* handled */ }
+      else if (t.id === 'bw-p') { if (assignWorker(b)) sfx('click'); else sfx('error'); }
       else if (t.id === 'bw-m') { if (unassignWorker(b)) sfx('click'); }
       else if (t.dataset.trade) doTrade(TRADES[+t.dataset.trade]);
       else if (t.dataset.tech) research(t.dataset.tech);
@@ -5114,9 +5944,9 @@ function initPanelEvents() {
 }
 
 // ----- modal: menu and help -----
-function closeModal() { $('modal').hidden = true; }
+function closeModal() { if (G.pending && !$('m-event').hidden) return; $('modal').hidden = true; }       // an event waits for an answer
 function openModal(which) {
-  $('m-menu').hidden = which !== 'menu'; $('m-help').hidden = which !== 'help'; $('m-win').hidden = which !== 'win'; $('m-letter').hidden = which !== 'letter'; $('m-final').hidden = which !== 'final';
+  $('m-menu').hidden = which !== 'menu'; $('m-help').hidden = which !== 'help'; $('m-win').hidden = which !== 'win'; $('m-letter').hidden = which !== 'letter'; $('m-final').hidden = which !== 'final'; $('m-event').hidden = which !== 'event'; $('m-chal').hidden = which !== 'chal';
   refreshSettingsUI(); translateDom();
   $('modal').hidden = false;
   $('m-sound').setAttribute('aria-pressed', String(AU.soundOn)); $('m-music').setAttribute('aria-pressed', String(AU.musicOn));
@@ -5127,6 +5957,7 @@ function enterGame() {
   $('start').hidden = true; $('hud').hidden = false;
   document.body.classList.add('playing');
   buildBar(); setSpeed(1); uiDirty();
+  if (G.pending) showChoice();
 }
 function initHud() {
   $('tabs').addEventListener('click', (e) => { const t = e.target.closest('button'); if (!t) return; UIS.tab = t.dataset.tab; buildBar(); uiDirty(); sfx('click'); });
@@ -5148,6 +5979,8 @@ function initHud() {
     if (e.target === $('modal')) { closeModal(); return; }
     const t = e.target.closest('button'); if (!t) return;
     const a = t.dataset.act;
+    if (t.dataset.scn) { startScenario(t.dataset.scn); return; }
+    if (a === 'ev0' || a === 'ev1') { const n = a === 'ev1' ? 1 : 0; $('m-event').hidden = true; resolveChoice(n); closeModal(); return; }
     if (a === 'close') closeModal();
     else if (a === 'help') openModal('help');
     else if (a === 'back') openModal('menu');
@@ -5176,6 +6009,7 @@ function initHud() {
   };
   $('s-daily').addEventListener('click', () => startMode('daily'));
   $('s-sand').addEventListener('click', () => startMode('sandbox'));
+  $('s-chal').addEventListener('click', () => { openChallenges(); sfx('click'); });
   $('c-undo').addEventListener('click', () => { if (!undoLast()) sfx('error'); });
   $('ph-exit').addEventListener('click', () => photoMode(false));
   $('ph-up').addEventListener('click', () => { CAM.tilt = clamp((CAM.tilt || 0) - 0.12, -0.5, 0.5); });
@@ -5392,7 +6226,7 @@ function frame(now) {
   requestAnimationFrame(frame);
   const dt = Math.min(0.1, (now - _last) / 1000 || 0.016); _last = now; _abs += dt;
   keyCamera(dt); updateCamera(dt);
-  const sp = G.started ? (UIS.paused ? 0 : UIS.speed) : G.demo ? 1 : 0;
+  const sp = G.started ? (UIS.paused || G.pending ? 0 : UIS.speed) : G.demo ? 1 : 0;      // the village waits while you decide on an event
   if (sp > 0) {
     const asleep = isNight() && G.villagers.length > 0 && G.villagers.every((v) => v.state === 'sleep');
     let rem = dt * sp * (asleep ? 4 : 1);
@@ -5400,7 +6234,7 @@ function frame(now) {
   }
   const adt = sp > 0 ? dt * Math.min(sp, 2.2) : G.started ? 0 : dt;
   if (G.started) { positionLabels(); tutPosition(); }
-  for (const v of G.villagers) if (v.mesh.visible) animateVillager(v, adt);
+  for (const v of G.villagers) if (v.mesh.visible) { animateVillager(v, adt); lifeAnimate(v); }
   animateBuildings(adt, _abs);
   SWAY.uTime.value = _abs;
   updateRain(dt, CAM.tx, CAM.tz); updateWildlife(adt, _abs);
@@ -5467,7 +6301,7 @@ const _hot = window.claude && window.claude.hot;
 if (_hot && _hot.snapshot) _hot.snapshot(() => ({ save: G.started ? serialize() : null }));
 if (_hot && _hot.ready) _hot.ready(boot); else boot((_hot && _hot.data) || {});
 
-window.__hh={get renderer(){return renderer;},TRACKS:TRACKS,TREASURES:TREASURES,startExpedition:startExpedition,PACE:PACE,QUESTS:QUESTS,doTrade:doTrade,TRADES:TRADES,G:G,W:W,CAM:CAM,UIS:UIS,BT:BT,TUT:TUT,LEVELS:LEVELS,ACH:ACH,TECHS:TECHS,STORY:STORY,FISH:FISH,SET:SET,UPGRADES:UPGRADES,SEASONS:SEASONS,CIVICS:CIVICS,NL:NL,GFX:GFX,api:{applySettings:applySettings,tr:trText,civic:buyCivic,capOf:capOf,research:research,upgrade:upgradeBuilding,upgradeBlock:upgradeBlock,explore:exploreSite,newGame:newGame,loadGame:loadGame,readSave:readSave,lock:lockReason,deliver:deliverMission,festival:holdFestival,newMission:newMission,blocks:sealsOff,tutSpot:tutSpot,placeBuilding:placeBuilding,canPlace:canPlace,assignWorker:assignWorker,serialize:serialize,screenOf:screenOf,stepSim:stepSim,trees:trees,rocks:rocks,bushes:bushes}};
+window.__hh={get renderer(){return renderer;},TRACKS:TRACKS,TREASURES:TREASURES,startExpedition:startExpedition,PACE:PACE,QUESTS:QUESTS,doTrade:doTrade,TRADES:TRADES,G:G,W:W,CAM:CAM,UIS:UIS,BT:BT,TUT:TUT,LEVELS:LEVELS,ACH:ACH,TECHS:TECHS,STORY:STORY,FISH:FISH,SET:SET,UPGRADES:UPGRADES,SEASONS:SEASONS,CIVICS:CIVICS,NL:NL,CHOICES:CHOICES,SCENARIOS:SCENARIOS,NEW_RES:NEW_RES,RES:RES,JOBS:JOBS,GFX:GFX,life:{tryBirth:tryBirth,ageTick:ageTick,foundIsle:foundIsle,isleDay:isleDay,isleShift:isleShift,choiceDay:choiceDay,resolveChoice:resolveChoice,showChoice:showChoice,roadCount:roadCount,neighbourhoods:neighbourhoods,lifeDay:lifeDay,medals:medals,scnOf:scnOf,calcHappy:calcHappy,pantryDay:pantryDay},api:{applySettings:applySettings,tr:trText,civic:buyCivic,capOf:capOf,research:research,upgrade:upgradeBuilding,upgradeBlock:upgradeBlock,explore:exploreSite,newGame:newGame,loadGame:loadGame,readSave:readSave,lock:lockReason,deliver:deliverMission,festival:holdFestival,newMission:newMission,blocks:sealsOff,tutSpot:tutSpot,placeBuilding:placeBuilding,canPlace:canPlace,assignWorker:assignWorker,serialize:serialize,screenOf:screenOf,stepSim:stepSim,trees:trees,rocks:rocks,bushes:bushes}};
 })();
 </script>
 </body></html>
