@@ -5681,6 +5681,20 @@ NL_TPL.unshift(
   ["Challenge lost: {a}. You can keep building, or start it again from the title screen.", "Uitdaging verloren: {a}. Je kunt doorbouwen, of opnieuw beginnen vanaf het titelscherm."],
   ["Challenge won: {a}. {b} medal!", "Uitdaging gewonnen: {a}. Medaille: {b}!"],
   ["Won with a {a} medal.", "Gewonnen met een medaille: {a}."]);
+// --- the storybook title screen ---
+for (const [k, v] of [
+  ["A place to call your own", "Een plek voor jezelf"],
+  ["A cosy island village", "Een knus eilanddorp"],
+  ["A handful of tents. A little bit of honey. A whole island of possibilities.", "Een handvol tenten. Een beetje honing. Een heel eiland vol mogelijkheden."],
+  ["Begin your village", "Begin je dorp"],
+  ["Your island needs WebGL.", "Je eiland heeft WebGL nodig."],
+  ["Bumblenook uses your browser’s graphics acceleration to draw its 3D world. Enable WebGL and graphics acceleration, then reload the game, or try another WebGL-capable browser.", "Bumblenook gebruikt de grafische versnelling van je browser om de 3D-wereld te tekenen. Zet WebGL en grafische versnelling aan en laad het spel opnieuw, of probeer een andere browser met WebGL."],
+  ["Reload the game", "Laad het spel opnieuw"],
+  ["Grow at your own pace", "Groei in je eigen tempo"],
+  ["Drag to explore · Scroll or pinch to zoom.", "Sleep om rond te kijken · Scrol of knijp om te zoomen."],
+  ["Your village is saved in this browser.", "Je dorp wordt in deze browser bewaard."],
+  ["Little moments. Big beginnings.", "Kleine momenten. Een groot begin."]
+]) NL.set(k, v);
 const _nlLower = new Map(); for (const [k, v] of NL) _nlLower.set(k.toLowerCase(), v);
 const _nlRx = NL_TPL.map(([en, nl]) => {
   const names = [];
