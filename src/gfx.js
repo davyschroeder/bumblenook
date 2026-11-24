@@ -9,6 +9,7 @@ function gfxBuild() {
   const type = float ? THREE.HalfFloatType : THREE.UnsignedByteType;
   const opt = { type, depthBuffer: false, minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter };
   GFX.rt = new THREE.WebGLRenderTarget(4, 4, { type, samples: 4, minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter });
+  GFX.rt.depthTexture = new THREE.DepthTexture(4, 4, THREE.UnsignedIntType);
   GFX.b0 = new THREE.WebGLRenderTarget(4, 4, opt); GFX.b1 = new THREE.WebGLRenderTarget(4, 4, opt);
   GFX.c0 = new THREE.WebGLRenderTarget(4, 4, opt); GFX.c1 = new THREE.WebGLRenderTarget(4, 4, opt);
   GFX.scene = new THREE.Scene(); GFX.cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
@@ -28,12 +29,14 @@ function gfxBuild() {
       c += (texture2D(t, vUv + d*3.231).rgb + texture2D(t, vUv - d*3.231).rgb)*.0703;
       gl_FragColor = vec4(c, 1.);
     }`, { t: { value: null }, d: { value: new THREE.Vector2() } });
-  GFX.mFinal = mk(`uniform sampler2D tScene, tBloom, tWide; uniform vec2 px; uniform float bloomK, blurK, focusY, vig, night, time, warm;
+  GFX.mFinal = mk(`uniform sampler2D tScene, tBloom, tWide, tDepth; uniform vec2 px, nearFar; uniform float bloomK, blurK, focusY, focusDistance, vig, night, time, warm;
     varying vec2 vUv;
     float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233)))*43758.5453); }
     void main(){
-      // miniature look: sharp in a band across the middle, softer towards the top and bottom
-      float b = smoothstep(.17, .56, abs(vUv.y - focusY))*blurK;
+      // Depth-aware miniature lens: the actual village stays in focus while distant scenery softens.
+      float depth=texture2D(tDepth,vUv).x;
+      float viewZ=nearFar.x*nearFar.y/(nearFar.y-depth*(nearFar.y-nearFar.x));
+      float b = smoothstep(.18,.74,abs(viewZ-focusDistance)/max(focusDistance,1.))*blurK;
       vec3 c = texture2D(tScene, vUv).rgb;
       if (b > .02) {
         vec2 r = px*b;
@@ -47,20 +50,20 @@ function gfxBuild() {
       }
       vec3 glow = texture2D(tBloom, vUv).rgb + texture2D(tWide, vUv).rgb*.8;
       c += glow*bloomK;
-      // highlights roll off softly instead of clipping
-      vec3 hi = max(c - .72, 0.);
-      c = min(c, vec3(.72)) + .28*(1. - exp(-hi/.28));
-      // grading: a little more contrast and colour, warm lights, cool shadows
+      // Filmic highlight roll-off preserves texture in plaster, sea foam and golden roofs.
+      c*=1.04;
+      c=clamp((c*(2.51*c+.03))/(c*(2.43*c+.59)+.14),0.,1.);
+      // Restrained split toning: warm sunlight, cool green shadows, readable nights.
       float l = dot(c, vec3(.2126, .7152, .0722));
-      c = mix(vec3(l), c, 1.1);
-      c = mix(c, c*c*(3. - 2.*c), .16);
-      c *= mix(vec3(.95, .99, 1.07), vec3(1.05, 1.005, .94), smoothstep(.04, .6, l)*warm + (1. - warm)*.5);
+      c = mix(vec3(l), c, 1.045);
+      c = mix(c, c*c*(3. - 2.*c), .055);
+      c *= mix(vec3(.94, 1.015, 1.045), vec3(1.045, 1.01, .955), smoothstep(.04, .6, l)*warm + (1. - warm)*.5);
       vec2 q = vUv - .5;
       c *= 1. - vig*smoothstep(.22, .95, dot(q, q)*2.2);
       c = pow(max(c, 0.), vec3(1./2.2));
       c += (hash(vUv*913. + time) - .5)/255.;
       gl_FragColor = vec4(c, 1.);
-    }`, { tScene: { value: null }, tBloom: { value: null }, tWide: { value: null }, px: { value: new THREE.Vector2() }, bloomK: { value: 0.5 }, blurK: { value: 3 }, focusY: { value: 0.5 }, vig: { value: 0.3 }, night: { value: 0 }, time: SWAY.uTime, warm: { value: 1 } });
+    }`, { tScene: { value: null }, tBloom: { value: null }, tWide: { value: null }, tDepth: { value: null }, nearFar: { value: new THREE.Vector2(1,400) }, focusDistance: { value: 27 }, px: { value: new THREE.Vector2() }, bloomK: { value: 0.3 }, blurK: { value: 2 }, focusY: { value: 0.5 }, vig: { value: 0.2 }, night: { value: 0 }, time: SWAY.uTime, warm: { value: 1 } });
   GFX.quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), GFX.mFinal); GFX.quad.frustumCulled = false;
   GFX.scene.add(GFX.quad);
 }
@@ -91,9 +94,10 @@ function gfxRender(dt) {
   blur(GFX.b0, GFX.b1, 1, 0); blur(GFX.b1, GFX.b0, 0, 1);
   blur(GFX.b0, GFX.c1, 1, 0); blur(GFX.c1, GFX.c0, 0, 1); blur(GFX.c0, GFX.c1, 1.6, 0); blur(GFX.c1, GFX.c0, 0, 1.6);
   u.tScene.value = GFX.rt.texture; u.tBloom.value = GFX.b0.texture; u.tWide.value = GFX.c0.texture;
-  u.bloomK.value = lerp(0.3, 0.5, night) + RAINK * 0.08;
-  u.blurK.value = (UIS.photo ? 4.4 : 3.1) * clamp(CAM.dist / 24, 0.55, 1.25) * (GFX.h / 900);
-  u.focusY.value = 0.48; u.vig.value = lerp(0.26, 0.42, night); u.warm.value = 1 - night * 0.6;
+  u.tDepth.value = GFX.rt.depthTexture; u.nearFar.value.set(camera.near,camera.far); u.focusDistance.value=CAM.dist-.25;
+  u.bloomK.value = lerp(0.16, 0.37, night) + RAINK * 0.04;
+  u.blurK.value = (UIS.photo ? 3.6 : 1.8) * clamp(CAM.dist / 24, 0.55, 1.25) * (GFX.h / 900);
+  u.focusY.value = 0.48; u.vig.value = lerp(0.18, 0.31, night); u.warm.value = 1 - night * 0.6;
   gfxPass(GFX.mFinal, null);
   // phones that cannot keep up fall back to the plain picture by themselves, unless the player chose this setting
   if (!SET.gfxSet && G.started && !UIS.paused) {
@@ -137,17 +141,26 @@ function gfxTick() {
 }
 // the ground: flat triangles keep their colour, with a little painted variation inside each of them
 function terrainMaterial() {
-  const m = new THREE.MeshLambertMaterial({ vertexColors: true });
+  const m = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 1, envMapIntensity: .2 });
   m.onBeforeCompile = (sh) => {
-    sh.vertexShader = 'varying vec3 vWp;\n' + sh.vertexShader.replace('#include <project_vertex>', '#include <project_vertex>\n  vWp = (modelMatrix*vec4(transformed, 1.)).xyz;');
-    sh.fragmentShader = `varying vec3 vWp;
+    sh.vertexShader = 'attribute float aSurface; varying float vSurface; varying vec3 vWp;\n' + sh.vertexShader.replace('#include <project_vertex>', '#include <project_vertex>\n  vWp = (modelMatrix*vec4(transformed, 1.)).xyz;vSurface=aSurface;');
+    sh.fragmentShader = `varying float vSurface; varying vec3 vWp;
       float tHash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7)))*43758.5453); }
       float tNoise(vec2 p){ vec2 i = floor(p), f = fract(p); f = f*f*(3. - 2.*f);
         return mix(mix(tHash(i), tHash(i + vec2(1., 0.)), f.x), mix(tHash(i + vec2(0., 1.)), tHash(i + vec2(1., 1.)), f.x), f.y); }
       ` + sh.fragmentShader.replace('#include <color_fragment>', `#include <color_fragment>
       float tn = tNoise(vWp.xz*.55)*.5 + tNoise(vWp.xz*2.1 + 7.)*.32 + tNoise(vWp.xz*6.3 + 19.)*.18;
       diffuseColor.rgb *= .9 + .2*tn;
-      diffuseColor.rgb *= .9 + .1*smoothstep(-.15, .3, vWp.y);`);
+      diffuseColor.rgb *= .9 + .1*smoothstep(-.15, .3, vWp.y);
+      if(vSurface>.5&&vSurface<1.5){
+        vec2 pp=vWp.xz*5.;pp.x+=mod(floor(pp.y),2.)*.5;
+        vec2 ff=fract(pp);float edge=min(min(ff.x,1.-ff.x),min(ff.y,1.-ff.y));
+        float aa=max(fwidth(pp.x),fwidth(pp.y));
+        float mortar=1.-smoothstep(.028,.055+aa,edge);
+        float stone=tHash(floor(pp));
+        diffuseColor.rgb*=.87+stone*.23-mortar*.15;
+      }
+      if(vSurface>2.5){float furrow=sin(vWp.x*TAU);diffuseColor.rgb*=.92+.08*furrow;}`.replace('TAU','6.2831853'));
   };
   return m;
 }
@@ -155,7 +168,7 @@ function terrainMaterial() {
 // buildings: surfaces drawn into the flat colours. Roofs get rows of shingles, timber gets planks,
 // stone gets blocks and plaster a soft, uneven wash; everything is a touch darker where it meets the ground.
 function buildingMaterial() {
-  const m = new THREE.MeshLambertMaterial({ vertexColors: true });
+  const m = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: .87, metalness: .025, envMapIntensity: .4 });
   m.extensions = { derivatives: true };
   m.onBeforeCompile = (sh) => {
     sh.vertexShader = 'varying vec3 vOP; varying vec3 vON;\n' + sh.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\n  vOP = position; vON = normal;');
@@ -189,7 +202,15 @@ function buildingMaterial() {
         } else pat = (bNoise(vOP.xz*11.) - .5)*.08;
         diffuseColor.rgb *= 1. + pat*fade;
         diffuseColor.rgb *= .84 + .16*smoothstep(0., .2, vOP.y);
-      }`);
+      }`).replace('#include <metalnessmap_fragment>', `#include <metalnessmap_fragment>
+        #ifdef USE_COLOR
+          float gilded=step(.68,vColor.r)*step(.17,vColor.g)*(1.-step(.72,vColor.g))*(1.-step(.16,vColor.b));
+          metalnessFactor=mix(metalnessFactor,.57,gilded);
+        #endif`).replace('#include <roughnessmap_fragment>', `#include <roughnessmap_fragment>
+        #ifdef USE_COLOR
+          float polished=step(.68,vColor.r)*step(.17,vColor.g)*(1.-step(.72,vColor.g))*(1.-step(.16,vColor.b));
+          roughnessFactor=mix(roughnessFactor,.38,polished);
+        #endif`);
   };
   return m;
 }

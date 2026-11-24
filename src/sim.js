@@ -749,19 +749,92 @@ function faceTo(v, x, z, dt) {
 }
 function animateVillager(v, dt) {
   const u = v.mesh.userData;
-  v.animT += dt * (v.moving ? 11 : 7);
-  let legs = 0, aL = 0, aR = 0, lean = 0, bob = 0, lift = 0, legsBoth = null;
-  if (v.moving) { legs = Math.sin(v.animT) * 0.75; aL = -legs * 0.6; aR = legs * 0.6; bob = Math.abs(Math.sin(v.animT)) * 0.02; }
-  else if (v.anim === 'chop') { const s = Math.sin(v.animT * 1.25); aL = aR = -1.7 + s * 0.9; lean = 0.18 + s * 0.12; }
-  else if (v.anim === 'bend') { lean = 0.55 + Math.sin(v.animT * 0.7) * 0.1; aL = aR = -0.9 + Math.sin(v.animT * 0.7) * 0.3; }
-  else if (v.anim === 'fish') { aR = -1.1; aL = -0.2; lean = Math.sin(v.animT * 0.2) * 0.04; }
-  else if (v.anim === 'sit') { legsBoth = -1.45; aL = aR = -0.45; lift = 0.1; }
-  else if (v.anim === 'cheer') { const s = Math.sin(v.animT * 1.1); aL = -2.7 + s * 0.35; aR = -2.7 - s * 0.35; bob = Math.abs(Math.sin(v.animT * 1.1)) * 0.06; lean = s * 0.05; }
-  else bob = Math.sin(v.animT * 0.35) * 0.008;
-  if (v.carry || v.hold) aL = aR = -1.25;
-  u.legL.rotation.x = legsBoth === null ? legs : legsBoth; u.legR.rotation.x = legsBoth === null ? -legs : legsBoth; u.armL.rotation.x = aL; u.armR.rotation.x = aR;
-  u.inner.rotation.x = lean; u.inner.position.y = bob;
-  v.mesh.position.set(v.x, v.y + lift, v.z); v.mesh.rotation.y = v.rot + (v.anim === 'cheer' ? Math.sin(v.animT * 0.55) * 0.5 : 0);
+  if (!u.head) return; // A defensive guard for an already-running, older hot-reload rig.
+  const distance = typeof CAM !== 'undefined' ? CAM.dist : 18;
+  const quality = typeof SET !== 'undefined' ? SET.gfx : 'high';
+  const compact = quality === 'low' || distance > 34 || (quality === 'mid' && distance > 25);
+  if (u.detailLevel !== compact) {
+    u.detailLevel = compact;
+    u.legL.geometry = u.legR.geometry = compact ? u.simpleLegGeo : u.thighGeo;
+    u.armL.geometry = u.armR.geometry = compact ? u.simpleArmGeo : u.armGeo;
+    u.kneeL.visible = u.kneeR.visible = u.elbowL.visible = u.elbowR.visible = u.eyes.visible = !compact;
+  }
+  const alpha = dt > 0 ? 1 - Math.exp(-dt * 13) : 0;
+  const travel = Math.hypot(v.x - u.oldX, v.z - u.oldZ);
+  u.oldX = v.x; u.oldZ = v.z; u.clock += dt;
+  u.gait = lerp(u.gait, v.moving ? 1 : 0, alpha);
+  // Footfall follows distance, so paths and wheelbarrows do not turn walking into sliding.
+  if (dt > 0) u.step += Math.min(travel, dt * 5) * (v.child ? 9.2 : 7.4);
+  v.animT += dt * (v.moving ? 10.4 : 6.3);
+  const t = u.clock, ph = u.phase, walk = u.gait, step = u.step + ph;
+  const stride = Math.sin(step), sway = Math.cos(step);
+  const still = 1 - walk;
+  let legL = stride * 0.59 * walk, legR = -legL;
+  let kneeL = Math.max(0, -stride) * 0.82 * walk, kneeR = Math.max(0, stride) * 0.82 * walk;
+  let aL = -legL * 0.62 - 0.06, aR = -legR * 0.62 - 0.06, elbowL = -0.12, elbowR = -0.12;
+  let lean = 0.045 * walk, bob = (1 - Math.cos(step * 2)) * 0.0085 * walk + Math.sin(t * 2.8 + ph) * 0.003 * still;
+  let lift = 0, roll = Math.sin(step) * 0.035 * walk, armsOut = 0.07, headPitch = 0, headYaw = 0;
+  let toolKind = null;
+  if (!v.moving && v.anim === 'chop') {
+    // A slower lift, a crisp downstroke and a little recovery give tools a sense of weight.
+    const cycle = (t * 1.65 + ph) % 1;
+    const swing = cycle < 0.62 ? smooth(0, 0.62, cycle) : 1 - smooth(0.62, 0.88, cycle);
+    aR = -0.53 - swing * 1.85; aL = -0.5 - swing * 1.1;
+    elbowR = -0.35 - swing * 0.55; elbowL = -0.36;
+    lean = 0.18 - swing * 0.12; bob -= (1 - swing) * 0.015; headPitch = 0.12;
+    const job = v.job && v.job.def.job;
+    toolKind = v.buildSite || !job ? 'hammer' : job === 'lumber' ? 'axe' : ['quarry','miner'].includes(job) ? 'pick' : 'hammer';
+  } else if (!v.moving && v.anim === 'bend') {
+    const reach = (1 + Math.sin(t * 2.4 + ph)) * 0.5;
+    lean = 0.38 + reach * 0.22; aR = -0.28 - reach * 0.46; aL = -0.54;
+    elbowR = -0.1 - (1 - reach) * 0.7; elbowL = -0.38;
+    kneeL = kneeR = 0.2; legL = legR = -0.1; bob -= 0.026;
+    headPitch = 0.12; roll = Math.sin(t * 2.4 + ph) * 0.045;
+  } else if (!v.moving && v.anim === 'fish') {
+    aR = -0.9; aL = -0.28; elbowR = -0.5; elbowL = -0.22;
+    lean = 0.025 + Math.sin(t * 1.3 + ph) * 0.018;
+    headPitch = 0.045 + Math.sin(t * 0.8) * 0.03;
+  } else if (!v.moving && v.anim === 'sit') {
+    legL = legR = -1.37; kneeL = kneeR = 1.28;
+    aL = aR = -0.42; elbowL = elbowR = -0.45; lift = 0.085;
+    headYaw = Math.sin(t * 0.54 + ph) * 0.13;
+    headPitch = Math.sin(t * 1.7 + ph) * 0.025;
+  } else if (!v.moving && v.anim === 'cheer') {
+    const dance = Math.sin(t * 5.6 + ph);
+    aL = -2.55 + dance * 0.29; aR = -2.55 - dance * 0.29;
+    elbowL = elbowR = -0.42; armsOut = 0.28; roll = dance * 0.075;
+    bob = Math.pow(Math.max(0, Math.sin(t * 5.6 + ph)), 2) * 0.085;
+    legL = -0.12 + dance * 0.12; legR = -0.12 - dance * 0.12; kneeL = kneeR = 0.18;
+    headPitch = -0.07; headYaw = dance * 0.1;
+  } else {
+    const look = Math.sin(t * 0.48 + ph) * Math.sin(t * 0.19 + ph * 0.7);
+    headYaw = look * 0.24 * still;
+    headPitch = Math.sin(t * 1.25 + ph) * 0.022;
+    aL -= Math.sin(t * 1.8 + ph) * 0.018 * still; aR += Math.sin(t * 1.8 + ph) * 0.018 * still;
+  }
+  if (v.carry || v.hold) { aL = aR = -0.93; elbowL = elbowR = -0.42; armsOut = 0.035; lean += 0.035; toolKind = null; }
+  if (u.barrow && u.barrow.visible) { aL = aR = -0.68; elbowL = elbowR = -0.27; lean += 0.055; }
+  const turn = (o, axis, target) => { o.rotation[axis] = lerp(o.rotation[axis], target, alpha); };
+  turn(u.legL,'x',legL); turn(u.legR,'x',legR); turn(u.kneeL,'x',kneeL); turn(u.kneeR,'x',kneeR);
+  turn(u.armL,'x',aL);turn(u.armR,'x',aR);turn(u.elbowL,'x',elbowL);turn(u.elbowR,'x',elbowR);
+  turn(u.armL,'z',armsOut);turn(u.armR,'z',-armsOut);
+  turn(u.inner,'x',lean);turn(u.inner,'z',roll);
+  u.inner.position.x = lerp(u.inner.position.x,sway * 0.007 * walk,alpha);
+  u.inner.position.y = lerp(u.inner.position.y,bob,alpha);
+  u.body.scale.y = 1 + Math.sin(t * 2.8 + ph) * 0.008;
+  turn(u.head,'x',headPitch - lean * 0.3);turn(u.head,'y',headYaw);
+  // Brief, staggered blinks rather than all villagers blinking together.
+  const blinkT = (t + ph * 1.7) % (3.6 + ph * 0.22);
+  u.eyes.scale.y = blinkT < 0.13 ? Math.max(0.06, Math.abs(blinkT - 0.065) / 0.065) : 1;
+  u.carry.rotation.z = Math.sin(step) * 0.025 * walk;
+  u.rod.rotation.x = 0.72 + Math.sin(t * 1.7 + ph) * 0.025;
+  if (toolKind && toolKind !== u.toolKind) { u.toolKind = toolKind; u.tool.geometry = villagerToolGeo(toolKind); }
+  u.tool.visible = !!toolKind;
+  if (u.barrow && u.barrow.visible) { u.barrow.position.y = Math.abs(Math.sin(step * 2)) * 0.004; u.barrow.rotation.z = Math.sin(step) * 0.008; }
+  const rootY = v.y + lift;
+  // Position is authoritative; only the visual rig is eased, never collision or pathfinding.
+  v.mesh.position.set(v.x,rootY,v.z);
+  v.mesh.rotation.y = v.rot + (v.anim === 'cheer' && !v.moving ? Math.sin(t * 2.8 + ph) * 0.2 : 0);
 }
 
 // ----- economy tick -----
@@ -875,45 +948,67 @@ function newDay() {
 
 // ----- per-frame building animation -----
 function animateBuildings(dt, t) {
+  // Animation has its own clock. Pausing does not leave flames, animals or sails racing on.
+  ANIMATION.time.value += dt;
+  t = ANIMATION.time.value;
   for (const b of G.buildings) {
     const g = b.mesh; if (!g) continue;
     const u = g.userData;
-    if (!b.done) u.body.scale.y = lerp(0.1, 1, b.progress);
-    if (b.pop > 0) { b.pop = Math.max(0, b.pop - dt * 2.2); const s = 1 + Math.sin(b.pop * Math.PI) * 0.16; g.scale.set(s, 1 + Math.sin(b.pop * Math.PI) * 0.22, s); }
+    if (!b.done) {
+      u.body.scale.y = lerp(0.055,1,smooth(0,1,b.progress));
+      if (u.glow) u.glow.visible = false;
+    } else if (u.glow) u.glow.visible = true;
+    if (u.living) u.living.visible = b.done;
+    if (b.pop > 0) {
+      b.pop = Math.max(0,b.pop-dt*2.2);
+      const bounce = Math.sin(b.pop*Math.PI) * b.pop;
+      g.scale.set(1-bounce*0.055,1+bounce*0.16,1-bounce*0.055);
+      if (b.pop === 0) g.scale.setScalar(1);
+    }
     b.t += dt;
     if (!b.done) continue;
-    if (u.blades) u.blades.rotation.z -= dt * 0.9;
-    if (u.sheep) animateSheep(u, dt, t);
-    if (u.flock) animateFlock(u, dt, t);
-    if (u.ducks) animateDucks(u, dt, t);
-    if (u.crops) { const gr = b.growth; u.crops.scale.y = Math.max(0.03, gr); u.cropMat.color.set(0x7fbf4d).lerp(_c2.set(0xe6c450), smooth(0.6, 1, gr)); }
-    if (u.flame) { u.flame.scale.set(1 + Math.sin(t * 13) * 0.12, 1 + Math.sin(t * 17 + 1) * 0.2, 1 + Math.cos(t * 11) * 0.12); u.flame.rotation.y = t * 2; }
-    if (u.beam) { u.beam.rotation.y += dt * 0.7; u.beamMat.opacity = DAY.glow * 0.14; }
-    let smoke = null, rate = 0;
-    if (b.type === 'house' && b.residents.length && (DAY.glow > 0.3 || b.id % 3 === 0)) { smoke = [0.38, 1.66, -0.25]; rate = 1.3; }
-    else if (b.type === 'bakery' && b.baking) { smoke = [0.62, 1.64, -0.4]; rate = 0.35; }
-    else if (b.type === 'center') { smoke = [0, 0.6, 0]; rate = 0.9; }
-    else if (b.type === 'brickworks' && b.baking) { smoke = [-0.7, 1.5, -0.7]; rate = 0.4; }
-    else if (b.type === 'bathhouse' && b.workers.length) { smoke = [rand(-0.3, 0.3), 0.25, 0.5 + rand(-0.3, 0.3)]; rate = 0.7; }
-    else if (b.type === 'fountain') { if (b.t > 0.25) { b.t = 0; puff(b.cx, b.y + 1.0, b.cz, [0xbfe9f5, 0xffffff, 0x8fd3ea], 2, { speed: 0.5, up: 1.3, life: 0.6, size: 0.045, grav: 4 }); } }
-    if (smoke && b.t > rate) {
-      b.t = 0; const p = toWorld(b, smoke[0], smoke[2]);
-      puff(p[0], b.y + smoke[1], p[1], [0xe6e2da, 0xcfcac0], 1, { speed: 0.12, up: 0.55, grav: -0.15, life: 2.2, size: 0.09, grow: 0.16 });
+    const ph = b.id * 0.731;
+    if (u.blades) {
+      const want = 0.43 + (Math.sin(t*0.27+ph)*0.5+0.5)*0.38 + RAINK*0.23;
+      u.windSpeed = lerp(u.windSpeed || 0.1,want,1-Math.exp(-dt*0.8));
+      u.blades.rotation.z -= dt*u.windSpeed;
+    }
+    if (u.sheep) animateSheep(u,dt,t);
+    if (u.flock) animateFlock(u,dt,t);
+    if (u.ducks) animateDucks(u,dt,t);
+    if (u.crops) { const gr=b.growth;u.crops.scale.y=Math.max(0.03,gr);u.cropMat.color.set(0x7fbf4d).lerp(_c2.set(0xe6c450),smooth(0.6,1,gr));u.crops.rotation.z=Math.sin(t*1.6+ph)*0.008*Math.max(0,gr); }
+    if (u.flame) {
+      const flutter=Math.sin(t*7.9+ph)*0.07+Math.sin(t*17.2+ph)*0.035;
+      u.flame.scale.set(1-flutter,0.88+flutter*2.1+Math.sin(t*11.4)*0.08,1+flutter);
+      u.flame.rotation.y=t*0.9;u.flame.rotation.z=Math.sin(t*2.8+ph)*0.075;
+    }
+    if (u.beam) { u.beam.rotation.y += dt*0.5;u.beamMat.opacity=DAY.glow*(0.085+Math.sin(t*0.8)*0.005); }
+    animateLivingBuilding(b,u,dt,t);
+    let smoke=null,rate=0;
+    if(b.type==='house'&&b.residents.length&&(DAY.glow>0.3||b.id%3===0)){smoke=[0.38,1.66,-0.25];rate=0.8;}
+    else if(b.type==='bakery'&&b.baking){smoke=[0.62,1.64,-0.4];rate=0.38;}
+    else if(b.type==='center'){smoke=[0,0.64,0];rate=0.65;}
+    else if(b.type==='tavern'&&b.workers.length){smoke=[-0.5,2.08,-0.4];rate=1.2;}
+    else if(b.type==='brickworks'&&b.baking){smoke=[-0.7,1.5,-0.7];rate=0.4;}
+    else if(b.type==='bathhouse'&&b.workers.length){smoke=[rand(-0.3,0.3),0.25,0.5+rand(-0.3,0.3)];rate=0.7;}
+    else if(b.type==='fountain'&&b.t>0.28){b.t=0;puff(b.cx,b.y+0.95,b.cz,[0xbfe9f5,0xe9ffff,0x8fd3ea],2,{speed:0.4,up:1.1,life:0.6,size:0.026,grav:4});}
+    if(smoke&&b.t>rate&&dt>0){
+      b.t=0;const p=toWorld(b,smoke[0],smoke[2]);
+      puff(p[0],b.y+smoke[1],p[1],[0xe7dfd4,0xd3cdc5],1,{speed:0.065,up:0.3,grav:-0.085,life:3.2,size:0.075,grow:0.19});
     }
   }
-  for (const tr of W.falling) setTreeMatrix(tr);
-  const em = G.exp.mesh;
-  if (em && em.visible) { em.position.set(G.exp.x, -0.04 + Math.sin(t * 1.5) * 0.03, G.exp.z); em.rotation.set(Math.sin(t * 1.2) * 0.04, G.exp.rot, 0); }
-  const sm = G.ship.mesh;
-  if (sm && sm.visible) { sm.position.set(G.ship.x, -0.04 + Math.sin(t * 1.7) * 0.03, G.ship.z); sm.rotation.set(Math.sin(t * 1.3) * 0.04, G.ship.rot, Math.sin(t * 1.1) * 0.03); }
-  for (const tr of trees) if (tr && tr.shake > 0 && tr.state === 0) { tr.shake = Math.max(0, tr.shake - dt * 3); setTreeMatrix(tr); }
-  if (G.fireworks > 0) {
-    G.fwT = (G.fwT || 0) - dt;
-    if (G.fwT <= 0) {
-      G.fwT = 0.45; G.fireworks--;
-      const c = G.center, x = c.cx + rand(-7, 7), z = c.cz + rand(-7, 7), y = rand(5, 8), col = pick([0xffd84d, 0xff7a66, 0x8fd0ff, 0xb48ae0, 0x9be37a, 0xffffff]);
-      puff(x, y, z, col, 26, { speed: 3.2, up: 0.8, grav: 2.2, life: 1.3, size: 0.11, glow: true, spread: 0.05 }); sfx('boom', 0.7);
-    }
+  for(const tr of W.falling)setTreeMatrix(tr);
+  const sail=(m,x,z,rot,ph)=>{
+    m.position.set(x,-0.035+Math.sin(t*1.35+ph)*0.024+Math.sin(t*2.2+ph)*0.008,z);
+    m.rotation.set(Math.sin(t*1.12+ph)*0.032,rot,Math.sin(t*1.62+ph)*0.045);
+    animateBoatCloth(m,dt,t);
+  };
+  const em=G.exp.mesh;if(em&&em.visible)sail(em,G.exp.x,G.exp.z,G.exp.rot,1.7);
+  const sm=G.ship.mesh;if(sm&&sm.visible)sail(sm,G.ship.x,G.ship.z,G.ship.rot,0);
+  for(const tr of trees)if(tr&&tr.shake>0&&tr.state===0){tr.shake=Math.max(0,tr.shake-dt*3);setTreeMatrix(tr);}
+  if(G.fireworks>0&&dt>0){
+    G.fwT=(G.fwT||0)-dt;
+    if(G.fwT<=0){G.fwT=0.45;G.fireworks--;const c=G.center,x=c.cx+rand(-7,7),z=c.cz+rand(-7,7),y=rand(5,8),col=pick([0xffd84d,0xff7a66,0x8fd0ff,0xb48ae0,0x9be37a,0xffffff]);puff(x,y,z,col,26,{speed:3.2,up:0.8,grav:2.2,life:1.3,size:0.11,glow:true,spread:0.05});sfx('boom',0.7);}
   }
 }
 

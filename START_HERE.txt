@@ -1,0 +1,30 @@
+BUMBLENOOK — STORYBOOK GRAPHICS EDITION
+
+PLAY
+1. Extract this ZIP completely.
+2. Open Bumblenook.html in your browser.
+3. Choose Begin your village, or Sandbox to explore all the buildings.
+
+Bumblenook.html contains the complete game, its engine and fonts. It works offline.
+Your browser needs WebGL / graphics acceleration enabled.
+
+WEBSITE
+Upload the contents of the site folder to the existing game directory.
+Keep index.html, three.min.js and the fonts folder together.
+
+SOURCE
+The editable JavaScript and interface are in src.
+Run node build.js to rebuild the website and standalone HTML.
+
+GRAPHICS
+The menu's Graphics button cycles between High, Plain and Low.
+High uses the full lighting, bloom and depth-aware focus pipeline.
+Plain keeps the improved models and materials with fewer screen effects.
+Low reduces shadows and detail for slower devices.
+
+SAVES
+The save format and original game rules are retained.
+A website save belongs to that browser and website address.
+The standalone file uses a separate browser storage location.
+
+Details of the graphics, animation and verification are in README.md.

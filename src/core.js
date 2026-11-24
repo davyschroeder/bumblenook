@@ -126,8 +126,8 @@ class MB {
 }
 
 const C = {
-  wood: 0x9a6b42, woodD: 0x6b4529, woodL: 0xc79b69, plank: 0xb5814f, plaster: 0xf5e8c9, plasterD: 0xe3d0a6,
-  stone: 0x9f9c95, stoneD: 0x7b7975, stoneL: 0xc2bfb6, roofR: 0xc9553c, roofB: 0x4c7ea9, roofG: 0x5c9463,
+  wood: 0x986b4c, woodD: 0x594431, woodL: 0xcfa578, plank: 0xb58358, plaster: 0xffedcc, plasterD: 0xe7cba2,
+  stone: 0x9ca59d, stoneD: 0x667a74, stoneL: 0xcdd2bc, roofR: 0xbf593e, roofB: 0x397c8a, roofG: 0x4f866b,
   roofY: 0xdfa637, roofP: 0x8d5c9e, thatch: 0xdcb95a, white: 0xf8f4ea, red: 0xd2483a, leaf: 0x6fae4a,
   leafD: 0x4e8f3f, gold: 0xf5b63c, dark: 0x3a2a1f, blue: 0x4a90c2, soil: 0x7c5637, wheat: 0xe6c450,
   honey: 0xf0a422, pink: 0xe98ba2, bread: 0xcc8d47, iron: 0x55565c, skin: [0xf2c7a0, 0xe0a878, 0xb97a4e, 0x8a5a38],
@@ -135,7 +135,7 @@ const C = {
 };
 
 const MAT = {
-  main: new THREE.MeshLambertMaterial({ vertexColors: true }),
+  main: new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.88, metalness: 0.015 }),
   build: null,
   glow: new THREE.MeshBasicMaterial({ color: 0x2d3d50 }),
   ghostOk: new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.82, depthWrite: false }),

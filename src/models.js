@@ -297,26 +297,82 @@ const JOBS = {
   bee: { title: 'Beekeeper', plural: 'Beekeepers', shirt: 0xf0e2a8, hat: 'veil' },
   merchant: { title: 'Merchant', plural: 'Merchants', shirt: 0x7a4fa0, hat: 'beret', hatC: 0x4c2f6b },
 };
+// The villagers use a compact, jointed toy rig. Shared geometry keeps a busy town light.
 function villagerBodyGeo(job, skinI, hairI) {
-  return cachedGeo('vb:' + job + skinI + hairI, () => {
-    const J = JOBS[job], b = new MB(), hc = J.hatC, hair = C.hair[hairI];
-    b.cyl(0.075, 0.118, 0.22, 7, 0, 0.13, 0, J.shirt).cyl(0.12, 0.12, 0.03, 7, 0, 0.13, 0, C.dark);
-    b.sph(0.092, 0, 0.435, 0, C.skin[skinI], null, 1);
-    b.box(0.022, 0.032, 0.02, -0.035, 0.425, 0.082, C.dark).box(0.022, 0.032, 0.02, 0.035, 0.425, 0.082, C.dark);
-    if (J.hat !== 'toque' && J.hat !== 'helmet') b.sph(0.097, 0, 0.455, -0.02, hair, [1, 0.8, 1], 1);
-    if (J.hat === 'beanie') b.sph(0.099, 0, 0.475, -0.005, hc, [1, 0.7, 1], 1).sph(0.032, 0, 0.56, -0.01, C.white);
-    else if (J.hat === 'helmet') b.sph(0.103, 0, 0.465, 0, hc, [1, 0.72, 1], 1).cyl(0.125, 0.125, 0.016, 8, 0, 0.455, 0.01, hc);
-    else if (J.hat === 'straw') b.cyl(0.18, 0.18, 0.014, 9, 0, 0.5, 0, C.thatch).cyl(0.075, 0.09, 0.07, 7, 0, 0.51, 0, C.thatch).cyl(0.092, 0.092, 0.02, 7, 0, 0.512, 0, J.shirt);
-    else if (J.hat === 'cap') b.sph(0.1, 0, 0.475, 0, hc, [1, 0.7, 1], 1).cyl(0.15, 0.16, 0.014, 8, 0, 0.47, -0.02, hc);
-    else if (J.hat === 'toque') b.cyl(0.075, 0.07, 0.1, 7, 0, 0.5, 0, C.white).sph(0.092, 0, 0.62, 0, C.white, [1, 0.7, 1], 1);
-    else if (J.hat === 'veil') b.cyl(0.17, 0.17, 0.014, 9, 0, 0.5, 0, C.white).cyl(0.08, 0.09, 0.06, 7, 0, 0.51, 0, C.white).cyl(0.165, 0.165, 0.012, 9, 0, 0.47, 0, 0xd9d2b8);
-    else if (J.hat === 'beret') b.sph(0.11, 0.02, 0.51, 0, hc, [1.1, 0.42, 1.1], 1);
+  return cachedGeo('vb2:' + job + ':' + skinI, () => {
+    const J = JOBS[job] || JOBS.free, b = new MB();
+    b.cyl(0.082, 0.113, 0.19, 10, 0, 0.18, 0, J.shirt);
+    b.sph(0.092, 0, 0.31, 0, J.shirt, [1.05, 0.65, 0.82], 1);
+    b.cyl(0.109, 0.109, 0.025, 10, 0, 0.182, 0, C.woodD);
+    b.box(0.029, 0.026, 0.009, 0, 0.182, 0.108, C.gold);
+    b.cyl(0.033, 0.04, 0.05, 8, 0, 0.352, 0, C.skin[skinI]);
+    // Linen collars, little buttons and a visibly different apron for each trade.
+    b.box(0.036, 0.046, 0.012, -0.023, 0.324, 0.062, C.white, [0, 0, -0.35]);
+    b.box(0.036, 0.046, 0.012, 0.023, 0.324, 0.062, C.white, [0, 0, 0.35]);
+    for (let q = 0; q < 3; q++) b.sph(0.007, 0, 0.267 + q * 0.025, 0.091, C.gold);
+    if (['baker', 'brewer', 'brickmaker', 'confectioner', 'attendant', 'tailor'].includes(job)) {
+      b.box(0.13, 0.127, 0.018, 0, 0.203, 0.089, job === 'brickmaker' ? C.woodL : C.white);
+      b.box(0.075, 0.04, 0.014, 0, 0.236, 0.106, job === 'brickmaker' ? C.wood : 0xd9d6c4);
+    } else if (['farmer', 'gardener', 'shepherd', 'poulterer', 'dairy'].includes(job)) {
+      for (const side of [-1, 1]) b.box(0.023, 0.14, 0.014, side * 0.05, 0.22, 0.079, 0xcdbb8b);
+      b.box(0.065, 0.046, 0.02, 0, 0.245, 0.1, C.woodL);
+    } else if (['docker', 'fisher', 'shipwright'].includes(job)) {
+      for (let q = 0; q < 3; q++) b.box(0.14 - q * 0.008, 0.012, 0.012, 0, 0.242 + q * 0.025, 0.086, C.white);
+    }
+    return b.build().geo;
+  });
+}
+function villagerHeadGeo(job, skinI, hairI) {
+  return cachedGeo('vh2:' + job + ':' + skinI + ':' + hairI, () => {
+    const J = JOBS[job] || JOBS.free, b = new MB(), hc = J.hatC || C.gold, hair = C.hair[hairI], skin = C.skin[skinI];
+    b.sph(0.106, 0, 0, 0, skin, [1, 1.03, 0.94], 2);
+    b.sph(0.024, -0.101, -0.002, -0.006, skin, [0.6, 1, 0.8], 1).sph(0.024, 0.101, -0.002, -0.006, skin, [0.6, 1, 0.8], 1);
+    b.sph(0.016, 0, -0.008, 0.099, skin, [0.8, 0.8, 1.1], 1);
+    b.sph(0.015, -0.056, -0.019, 0.079, 0xd98b75, [1.15, 0.55, 0.25], 1).sph(0.015, 0.056, -0.019, 0.079, 0xd98b75, [1.15, 0.55, 0.25], 1);
+    b.box(0.021, 0.004, 0.004, 0, -0.042, 0.09, C.woodD);
+    b.sph(0.004, -0.013, -0.038, 0.088, C.woodD).sph(0.004, 0.013, -0.038, 0.088, C.woodD);
+    b.sph(0.109, 0, 0.036, -0.027, hair, [1.02, 0.75, 1], 1);
+    // Five hairstyles are readable as silhouettes, even without a hat.
+    if (hairI === 0) {
+      for (let q = 0; q < 4; q++) b.sph(0.041, -0.06 + q * 0.04, 0.075 + Math.sin(q) * 0.012, 0.038, hair, [0.85, 0.65, 1], 1);
+    } else if (hairI === 1) {
+      b.sph(0.049, -0.073, -0.037, -0.052, hair, [0.65, 1.4, 0.72], 1).sph(0.049, 0.073, -0.037, -0.052, hair, [0.65, 1.4, 0.72], 1);
+      b.sph(0.046, 0.018, 0.082, 0.045, hair, [1.3, 0.48, 0.75], 1);
+    } else if (hairI === 2) {
+      b.sph(0.052, -0.027, 0.089, 0.018, hair, [1.3, 0.8, 1.1], 1).sph(0.035, 0.044, 0.077, 0.05, hair, [1, 0.6, 0.9], 1);
+    } else if (hairI === 3) {
+      b.sph(0.049, 0.025, 0.048, -0.11, hair, [1.1, 1, 0.85], 1);
+      b.sph(0.045, -0.04, 0.066, 0.052, hair, [1, 0.5, 0.7], 1);
+    } else {
+      for (let q = 0; q < 6; q++) { const a = q / 6 * TAU; b.sph(0.04, Math.cos(a) * 0.074, 0.062 + (q % 2) * 0.01, Math.sin(a) * 0.061 - 0.02, hair, null, 1); }
+    }
+    if (J.hat === 'beanie') b.sph(0.113, 0, 0.075, -0.008, hc, [1, 0.65, 1], 1).cyl(0.109, 0.109, 0.025, 12, 0, 0.068, 0, hc).sph(0.027, 0, 0.155, -0.01, C.white, null, 1);
+    else if (J.hat === 'helmet') b.sph(0.118, 0, 0.067, 0, hc, [1, 0.72, 1], 1).cyl(0.135, 0.135, 0.018, 12, 0, 0.057, 0.008, hc).box(0.025, 0.085, 0.19, 0, 0.058, 0, C.gold);
+    else if (J.hat === 'straw') b.cyl(0.176, 0.18, 0.017, 14, 0, 0.078, 0, C.thatch).cyl(0.083, 0.098, 0.066, 12, 0, 0.095, 0, C.thatch).cyl(0.1, 0.103, 0.023, 12, 0, 0.096, 0, J.shirt);
+    else if (J.hat === 'cap') b.sph(0.112, 0, 0.075, -0.004, hc, [1, 0.58, 1], 1).sph(0.083, 0, 0.065, 0.087, hc, [1.2, 0.11, 0.9], 1).sph(0.012, 0, 0.136, 0, C.gold, null, 1);
+    else if (J.hat === 'toque') {
+      b.cyl(0.085, 0.09, 0.081, 12, 0, 0.068, 0, C.white);
+      for (const p of [[0,0.173,0],[-0.043,0.162,0.018],[0.04,0.163,0.02],[0,0.16,-0.04]]) b.sph(0.057,p[0],p[1],p[2],C.white,null,1);
+    } else if (J.hat === 'veil') {
+      b.cyl(0.16, 0.17, 0.014, 14, 0, 0.081, 0, C.white).cyl(0.085, 0.1, 0.061, 10, 0, 0.096, 0, C.white);
+      for (const x of [-0.11,0.11]) b.box(0.007,0.12,0.007,x,-0.045,0.07,0xd9d2b8);
+      b.box(0.22,0.007,0.007,0,-0.044,0.07,0xd9d2b8);
+    } else if (J.hat === 'beret') b.sph(0.118, 0.018, 0.101, -0.008, hc, [1.1, 0.4, 1.05], 1).cyl(0.008,0.01,0.021,5,0.025,0.137,-0.012,hc);
     return b.build().geo;
   });
 }
 function villagerArmGeo(job, skinI) {
-  return cachedGeo('va:' + job + skinI, () => {
-    const b = new MB(); b.box(0.046, 0.1, 0.046, 0, -0.1, 0, JOBS[job].shirt).box(0.04, 0.05, 0.04, 0, -0.15, 0, C.skin[skinI]); return b.build().geo;
+  return cachedGeo('va2:' + job + ':' + skinI, () => {
+    const b = new MB(), J = JOBS[job] || JOBS.free;
+    b.cyl(0.034, 0.029, 0.09, 8, 0, -0.084, 0, J.shirt).sph(0.035, 0, -0.005, 0, J.shirt, [1, 1.1, 1], 1);
+    b.cyl(0.03,0.03,0.017,8,0,-0.088,0,C.white); return b.build().geo;
+  });
+}
+function villagerSimpleArmGeo(job,skinI) {
+  return cachedGeo('villager-simple-arm:'+job+':'+skinI,()=>{
+    const b=new MB(),J=JOBS[job]||JOBS.free;
+    b.cyl(0.034,0.027,0.103,8,0,-0.098,0,J.shirt).cyl(0.027,0.023,0.06,8,0,-0.158,0,C.skin[skinI]);
+    b.sph(0.026,0,-0.16,0.006,C.skin[skinI],[1,1.1,0.9],1);return b.build().geo;
   });
 }
 const CARRY_FN = {
@@ -332,24 +388,53 @@ function carryGeo(kind) { return cachedGeo('carry:' + kind, () => { const b = ne
 
 function makeVillagerMesh(v) {
   const g = new THREE.Group(), job = v.job ? v.job.def.job : 'free';
-  const body = new THREE.Mesh(villagerBodyGeo(job, v.skin, v.hair), MAT.main); body.castShadow = true;
-  const legG = cachedGeo('leg', () => { const b = new MB(); b.box(0.06, 0.14, 0.065, 0, -0.14, 0, 0x4a4038).box(0.065, 0.03, 0.09, 0, -0.14, 0.012, C.dark); return b.build().geo; });
-  const legL = new THREE.Mesh(legG, MAT.main), legR = new THREE.Mesh(legG, MAT.main);
-  legL.position.set(-0.05, 0.14, 0); legR.position.set(0.05, 0.14, 0);
-  const ag = villagerArmGeo(job, v.skin);
-  const armL = new THREE.Mesh(ag, MAT.main), armR = new THREE.Mesh(ag, MAT.main);
-  armL.position.set(-0.125, 0.34, 0); armR.position.set(0.125, 0.34, 0);
-  const carry = new THREE.Mesh(carryGeo('wood'), MAT.main); carry.position.set(0, 0.2, 0.15); carry.visible = false;
-  const rod = new THREE.Mesh(cachedGeo('rod', () => { const b = new MB(); b.cyl(0.008, 0.012, 0.6, 4, 0, 0, 0, C.woodD).box(0.005, 0.5, 0.005, 0, 0.1, 0.29, C.white, [0.0, 0, 0]); return b.build().geo; }), MAT.main);
-  rod.position.set(0.12, 0.2, 0.08); rod.rotation.x = 0.9; rod.visible = false;
-  const inner = new THREE.Group(); inner.add(body, armL, armR, carry, rod);
-  g.add(inner, legL, legR);
+  const mesh = (geo) => { const m = new THREE.Mesh(geo, MAT.main); m.castShadow = true; return m; };
+  const body = mesh(villagerBodyGeo(job, v.skin, v.hair));
+  const head = new THREE.Group(); head.position.y = 0.461;
+  const headBody = mesh(villagerHeadGeo(job, v.skin, v.hair)); head.add(headBody);
+  const eyes = mesh(cachedGeo('villager-eyes', () => {
+    const b = new MB();
+    for (const x of [-0.036, 0.036]) {
+      b.sph(0.012, x, 0, 0, 0x302b28, [0.8, 1.2, 0.38], 1);
+      b.sph(0.0035, x - 0.003, 0.004, 0.0045, C.white, [1,1,0.5],1);
+    }
+    return b.build().geo;
+  })); eyes.position.set(0, 0.009, 0.097); eyes.castShadow = false; head.add(eyes);
+  const thighGeo = cachedGeo('villager-thigh', () => {
+    const b = new MB(); b.cyl(0.038,0.032,0.10,8,0,-0.10,0,0x455661).sph(0.038,0,-0.012,0,0x455661,[1,0.75,1],1); return b.build().geo;
+  });
+  const shinGeo = cachedGeo('villager-shin', () => {
+    const b = new MB(); b.cyl(0.032,0.028,0.078,8,0,-0.078,0,0x455661).box(0.061,0.028,0.091,0,-0.092,0.013,0x4c3730).box(0.065,0.012,0.096,0,-0.099,0.013,0x2f2924); return b.build().geo;
+  });
+  const legL = mesh(thighGeo), legR = mesh(thighGeo), kneeL = mesh(shinGeo), kneeR = mesh(shinGeo);
+  legL.position.set(-0.052,0.198,0); legR.position.set(0.052,0.198,0); kneeL.position.y = kneeR.position.y = -0.1;
+  legL.add(kneeL); legR.add(kneeR);
+  const ag = villagerArmGeo(job,v.skin), armL = mesh(ag), armR = mesh(ag);
+  armL.position.set(-0.117,0.35,0); armR.position.set(0.117,0.35,0);
+  const foreGeo = cachedGeo('villager-forearm:' + v.skin, () => {
+    const b = new MB(); b.cyl(0.027,0.023,0.068,8,0,-0.068,0,C.skin[v.skin]).sph(0.026,0,-0.071,0.006,C.skin[v.skin],[1,1.1,0.9],1); return b.build().geo;
+  });
+  const elbowL=mesh(foreGeo),elbowR=mesh(foreGeo); elbowL.position.y=elbowR.position.y=-0.087;
+  armL.add(elbowL);armR.add(elbowR);
+  const carry=mesh(carryGeo('wood'));carry.position.set(0,0.247,0.157);carry.visible=false;
+  const rod = mesh(cachedGeo('rod2', () => {
+    const b = new MB();
+    b.cyl(0.006,0.011,0.57,6,0,0,0,C.woodD).cyl(0.013,0.013,0.065,6,0,0.025,0,C.woodL);
+    b.box(0.003,0.47,0.003,0,0.1,0.24,C.white).sph(0.016,0,0.1,0.24,C.red,[0.7,1,0.7],1);
+    b.box(0.003,0.003,0.24,0,0.568,0.12,C.white); return b.build().geo;
+  })); rod.position.set(0.12,0.23,0.11);rod.rotation.x=0.72;rod.visible=false;
+  const tool=mesh(cachedGeo('tool:hammer',()=>{
+    const b=new MB();b.cyl(0.009,0.013,0.19,6,0,-0.025,0,C.woodL).box(0.088,0.04,0.045,0,0.148,0,C.iron);return b.build().geo;
+  }));tool.position.set(0,-0.067,0.018);tool.visible=false;elbowR.add(tool);
+  const inner=new THREE.Group();inner.add(body,head,armL,armR,carry,rod);g.add(inner,legL,legR);
   g.scale.setScalar(1.2);
-  g.userData = { body, legL, legR, armL, armR, carry, rod, inner };
+  g.userData={body,head,headBody,eyes,legL,legR,kneeL,kneeR,armL,armR,elbowL,elbowR,carry,rod,tool,inner,
+    gait:0,phase:((v.id||0)*1.713)%TAU,clock:0,oldX:v.x,oldZ:v.z,step:0,toolKind:'hammer',detailLevel:null,thighGeo,armGeo:ag,
+    simpleArmGeo:villagerSimpleArmGeo(job,v.skin),simpleLegGeo:cachedGeo('villager-simple-leg',()=>{const b=new MB();b.cyl(0.036,0.029,0.18,8,0,-0.18,0,0x455661).box(0.064,0.03,0.095,0,-0.199,0.013,C.dark);return b.build().geo;})};
   return g;
 }
 function refreshVillagerLook(v) {
-  const u = v.mesh.userData, job = v.job ? v.job.def.job : 'free';
-  u.body.geometry = villagerBodyGeo(job, v.skin, v.hair);
-  u.armL.geometry = u.armR.geometry = villagerArmGeo(job, v.skin);
+  const u=v.mesh.userData,job=v.job?v.job.def.job:'free';
+  u.body.geometry=villagerBodyGeo(job,v.skin,v.hair);u.headBody.geometry=villagerHeadGeo(job,v.skin,v.hair);
+  u.armGeo=villagerArmGeo(job,v.skin);u.simpleArmGeo=villagerSimpleArmGeo(job,v.skin);u.armL.geometry=u.armR.geometry=u.armGeo;u.detailLevel=null;
 }

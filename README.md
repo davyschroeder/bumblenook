@@ -1,5 +1,40 @@
 # Bumblenook
 
+## Storybook graphics edition.
+
+This edition gives the original game a substantial procedural 3D art and animation upgrade. The game interface defaults to English.
+
+### Play immediately.
+
+Extract the ZIP and open **`Bumblenook.html`** in a WebGL-capable browser. It is a self-contained offline edition: Three.js, the game and both fonts are embedded. No installation, internet connection or build step is required to play it.
+
+For a website, upload the **contents of `site/`** to the game's existing directory. Keep `index.html`, `three.min.js` and `fonts/` together. Serving the game from the same origin and path preserves access to its existing browser save. Opening the standalone file is a separate browser storage location.
+
+The menu's Graphics setting cycles through the original High, Plain and Low levels. High adds glow, filmic grading and depth-aware miniature focus. Plain retains the new models and materials; Low reduces shadows, environmental decoration and character detail. Existing gameplay, building identifiers, production chains and save format remain compatible.
+
+### What changed.
+
+- 37 building types have new models or substantial architectural detail. Twelve cottage variants now have modelled shingles, roof caps, framed windows, doors, shutters, flower boxes and masonry.
+- A richer four-tent starting camp; a new timber harbour; a rebuilt striped lighthouse; a cathedral with a rose window, open belfries and moving bells; and a layered golden Great Hive crowned by a sculpted bee.
+- New villager rigs with rounded faces, ears, cheeks, hair and profession clothing, separate heads, elbows and knees, staggered blinking and visible hand tools.
+- Distance-driven footsteps, weight transfer, idle breathing and glancing, eased poses, carrying, gathering, fishing, construction, chopping and celebration animation.
+- Gust-driven windmills, deforming cloth flags and sails, rocking boats, continuous fountain arcs, droplets and ripples, softer chimney smoke and springy construction completion.
+- Richer tree crowns, layered pines, grass and flower clusters, coastal reeds, pebbles, shells and driftwood. Populated instance ranges reduce unnecessary geometry submissions.
+- Rough physically based materials, warm sky reflections, softer edge highlights and a more restrained bloom and colour grade.
+- A new water shader with shallow-to-deep colour, animated shore foam, caustic-like moving light, ripples and glints.
+- A forest-green, parchment and honey-gold interface, clearer build cards with actual model thumbnails, responsive phone controls, focus states and reduced-motion interface support.
+- Better cleanup of per-island graphics resources when starting or loading another island.
+
+### Verification.
+
+The integrated source passed non-browser checks for 65 model/variant combinations, 27 profession rigs, four starting inhabitants, placement, worker assignment, construction, 120 seconds of simulation, save/load, child sizing, paused poses and a populated town with all four major landmarks. Fourteen shader pairs compiled and linked without warnings in an OpenGL ES 3.2 software context. Actual geometry was also rendered separately for visual inspection.
+
+Desktop and 390-by-844 mobile interface flows were checked in a browser using a clearly labelled renderer stub. The available browser had WebGL disabled even for the original game, so full browser GPU rendering, frame rates and hardware-specific behaviour could not be measured here. The UI-only harness and external model-review render are not part of the playable edition.
+
+The original project documentation follows below.
+
+---
+
 A cosy 3D village builder that runs in the browser. Settle a small island, put your villagers to work,
 and grow a camp of four tents into a harbour town with a lighthouse, a cathedral and a great golden hive.
 
@@ -43,6 +78,9 @@ There is nothing to install for the build; it only needs Node.
 | `src/world.js` | The island: terrain, water, trees, rocks, weather, sky, day and night. |
 | `src/models*.js` | Buildings, villagers and animals. |
 | `src/gfx.js` | The look: soft glow, miniature depth of field and colour grading on top of the picture, contact shadows, light on the ground at night, detail in the grass. Graphics has three settings; a phone that cannot keep up drops to the plain picture by itself. |
+| `src/visuals.js` | Sky reflections, fill lighting, instanced shore details, pollen and night stars. |
+| `src/artmodels.js` | Handcrafted architecture, detailed cottages and rebuilt landmarks. Loaded after the original model catalogue. |
+| `src/animation.js` | Animated cloth, hand tools, bells, fountain streams and sailing boat details. |
 | `src/audio.js` | Sound effects and music. |
 | `src/sim.js` | Buildings, pathfinding, villagers and their jobs, saving and loading. Pacing lives in `PACE`. |
 | `src/progress.js` | Village levels, requests, badges, festivals and the trading ship. |

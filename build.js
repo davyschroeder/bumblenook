@@ -1,6 +1,6 @@
 // Bundles src/*.js into one page. dist/bumblenook.html is the page body; dist/index.html is a standalone copy.
 const fs = require('fs'), path = require('path');
-const order = ['core', 'world', 'gfx', 'models', 'models2', 'models3', 'models4', 'audio', 'sim', 'progress', 'expand', 'more', 'life', 'i18n', 'ui', 'tutorial', 'main'];
+const order = ['core', 'world', 'gfx', 'models', 'models2', 'models3', 'models4', 'audio', 'sim', 'progress', 'expand', 'more', 'life', 'i18n', 'visuals', 'artmodels', 'animation', 'ui', 'tutorial', 'main'];
 const js = order.map((n) => fs.readFileSync(path.join(__dirname, 'src', n + '.js'), 'utf8')).join('\n');
 const CDN = 'https://cdn.jsdelivr.net/npm/three@0.149.0/build/three.min.js';
 const bundle = '(function(){\n"use strict";\n' + js + '\nwindow.__hh={get renderer(){return renderer;},TRACKS:TRACKS,TREASURES:TREASURES,startExpedition:startExpedition,PACE:PACE,QUESTS:QUESTS,doTrade:doTrade,TRADES:TRADES,G:G,W:W,CAM:CAM,UIS:UIS,BT:BT,TUT:TUT,LEVELS:LEVELS,ACH:ACH,TECHS:TECHS,STORY:STORY,FISH:FISH,SET:SET,UPGRADES:UPGRADES,SEASONS:SEASONS,CIVICS:CIVICS,NL:NL,CHOICES:CHOICES,SCENARIOS:SCENARIOS,NEW_RES:NEW_RES,RES:RES,JOBS:JOBS,GFX:GFX,life:{tryBirth:tryBirth,ageTick:ageTick,foundIsle:foundIsle,isleDay:isleDay,isleShift:isleShift,choiceDay:choiceDay,resolveChoice:resolveChoice,showChoice:showChoice,roadCount:roadCount,neighbourhoods:neighbourhoods,lifeDay:lifeDay,medals:medals,scnOf:scnOf,calcHappy:calcHappy,pantryDay:pantryDay},api:{applySettings:applySettings,tr:trText,civic:buyCivic,capOf:capOf,research:research,upgrade:upgradeBuilding,upgradeBlock:upgradeBlock,explore:exploreSite,newGame:newGame,loadGame:loadGame,readSave:readSave,lock:lockReason,deliver:deliverMission,festival:holdFestival,newMission:newMission,blocks:sealsOff,tutSpot:tutSpot,placeBuilding:placeBuilding,canPlace:canPlace,assignWorker:assignWorker,serialize:serialize,screenOf:screenOf,stepSim:stepSim,trees:trees,rocks:rocks,bushes:bushes}};\n})();';
@@ -35,4 +35,10 @@ const DESC = 'Bumblenook, a cosy 3D village builder: settle a little island, put
 const siteHead = head.replace('<title>Bumblenook</title>', '<title>Bumblenook · Cosy village builder</title><meta name="description" content="' + DESC + '"><meta name="theme-color" content="#2b1e14">');
 if (siteHead === head) throw new Error('title not found in head');
 fs.writeFileSync(path.join(site, 'index.html'), siteHead + sitePage + '</body></html>\n');
+// A genuinely portable edition: scripts and fonts are embedded, so double-clicking works offline.
+const EMBED_FONTS = "<style>@font-face{font-family:'Caprasimo';font-weight:400;font-display:swap;src:url(data:font/woff2;base64," + fs.readFileSync(path.join(__dirname,'fonts','caprasimo.woff2')).toString('base64') + ") format('woff2')}" +
+  "@font-face{font-family:'Nunito';font-weight:200 1000;font-display:swap;src:url(data:font/woff2;base64," + fs.readFileSync(path.join(__dirname,'fonts','nunito.woff2')).toString('base64') + ") format('woff2')}</style>";
+const portable = src.replace(/<title>[^<]*<\/title>\n?/, '').replace(/<meta name="claude:[^>]*>\n?/, '').replace(GF, () => EMBED_FONTS + '\n')
+  .replace('<!--JS-->', () => '<script>\n' + three.toString('utf8') + '\n</script>\n<script>\n' + bundle + '\n</script>');
+fs.writeFileSync(path.join(__dirname, 'Bumblenook.html'), siteHead + portable + '</body></html>\n');
 console.log('built', (page.length / 1024).toFixed(0) + ' KB');

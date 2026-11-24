@@ -29,6 +29,7 @@ function frame(now) {
   if (G.started) { positionLabels(); tutPosition(); }
   for (const v of G.villagers) if (v.mesh.visible) { animateVillager(v, adt); lifeAnimate(v); }
   animateBuildings(adt, _abs);
+  environmentTick(dt, _abs);
   SWAY.uTime.value = _abs;
   updateRain(dt, CAM.tx, CAM.tz); updateWildlife(adt, _abs);
   applyDaylight(G.time, _v2.set(CAM.tx, 0, CAM.tz));
@@ -41,7 +42,7 @@ function frame(now) {
   }
   updateParticles(dt, DAY.lightK); updateCritters(_abs, DAY.glow); updateSky(dt, _abs, DAY.glow); updateMarkers(_abs); updateFloats(dt);
   audioTick(DAY.glow);
-  if (W.tDirty) { const a = W.terrain.geometry.attributes; a.position.needsUpdate = a.color.needsUpdate = a.normal.needsUpdate = true; W.tDirty = false; }
+  if (W.tDirty) { const a = W.terrain.geometry.attributes; a.position.needsUpdate = a.color.needsUpdate = a.normal.needsUpdate = true; if(a.aSurface)a.aSurface.needsUpdate=true; W.tDirty = false; }
   if (W.hmapDirty) updateHmap();
   if (G.critDirty) {
     G.critDirty = false; const homes = [];
@@ -61,7 +62,12 @@ function frame(now) {
 function boot(hotData) {
   const cv = $('c');
   try { renderer = new THREE.WebGLRenderer({ canvas: cv, antialias: true, powerPreference: 'high-performance' }); }
-  catch (e) { $('s-tag').textContent = 'This browser can\'t draw the 3D island (WebGL is off).'; $('s-new').disabled = true; return; }
+  catch (e) {
+    document.body.classList.add('webgl-unavailable'); $('start').classList.add('ready', 'webgl-unavailable');
+    $('s-tag').textContent = 'Your browser could not start 3D graphics. Enable hardware acceleration in your browser settings, then reload. Bumblenook needs WebGL.';
+    for (const id of ['s-new', 's-cont', 's-daily', 's-sand', 's-chal']) $(id).disabled = true;
+    return;
+  }
   UIS.coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
   UIS.touch = UIS.coarse; document.body.classList.toggle('touch', UIS.touch);
   renderer.outputEncoding = THREE.sRGBEncoding;
@@ -71,9 +77,9 @@ function boot(hotData) {
   hemi = new THREE.HemisphereLight(0xd6efff, 0x93a86f, 0.75); scene.add(hemi);
   sun = new THREE.DirectionalLight(0xffffff, 1.1); sun.castShadow = true;
   const sm = UIS.coarse ? 1024 : 2048; sun.shadow.mapSize.set(sm, sm);
-  sun.shadow.camera.near = 5; sun.shadow.camera.far = 140; sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.04;
+  sun.shadow.camera.near = 5; sun.shadow.camera.far = 140; sun.shadow.bias = -0.00025; sun.shadow.normalBias = 0.028;
   scene.add(sun, sun.target);
-  initColors(); initParticles(); initCritters(); initSky(); initRain(); initWildlife(); initMarkers(); loadSettings();
+  initColors(); initParticles(); initCritters(); initSky(); initRain(); initWildlife(); initMarkers(); loadSettings(); initEnvironment();
   const save = (hotData && hotData.save) || readSave();
   UIS.hadSave = false;
   if (save) { try { loadGame(save); UIS.hadSave = true; } catch (e) { UIS.hadSave = false; } }

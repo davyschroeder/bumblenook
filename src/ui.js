@@ -315,35 +315,57 @@ function setSpeed(s) {
 function renderThumbs() {
   let r;
   try { r = new THREE.WebGLRenderer({ alpha: true, antialias: true, preserveDrawingBuffer: true }); } catch (e) { return; }
+  const temporary = [];
   try {
-    r.setSize(132, 132); r.outputEncoding = THREE.sRGBEncoding;
+    // Render once at startup; larger transparent portraits reveal the new model details.
+    r.setPixelRatio(1); r.setSize(176, 176); r.outputEncoding = THREE.sRGBEncoding;
+    r.setClearColor(0x000000, 0);
     const sc = new THREE.Scene();
-    sc.add(new THREE.HemisphereLight(0xffffff, 0x9a8f7a, 0.85));
-    const dl = new THREE.DirectionalLight(0xfff2dd, 0.9); dl.position.set(3, 6, 4); sc.add(dl);
+    sc.add(new THREE.HemisphereLight(0xe9f5ff, 0x8b8e60, 0.9));
+    const dl = new THREE.DirectionalLight(0xffefd4, 1.05); dl.position.set(-3, 7, 6); sc.add(dl);
+    const rim = new THREE.DirectionalLight(0xb8e3ef, 0.28); rim.position.set(4, 3, -4); sc.add(rim);
     const cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 50);
+    const glow = new THREE.MeshBasicMaterial({ color: 0xffd491 });
+    const crops = new THREE.MeshLambertMaterial({ color: 0xd9c04f });
+    const shadowTexture = softTexture(false);
+    const shadowMat = new THREE.MeshBasicMaterial({ color: 0x091f17, map: shadowTexture, transparent: true, opacity: 0.25, depthWrite: false });
+    const shadowGeo = new THREE.PlaneGeometry(1, 1);
+    const shadow = new THREE.Mesh(shadowGeo, shadowMat); shadow.rotation.x = -Math.PI / 2; sc.add(shadow);
+    temporary.push(glow, crops, shadowMat, shadowGeo, shadowTexture);
+    const p = new THREE.Vector3();
     for (const type of Object.keys(BT)) {
       if (type === 'center') continue;
       const g = new THREE.Group();
       if (type === 'path') {
-        const b = new MB(); b.box(1.5, 0.08, 1.5, 0, 0, 0, 0xdcc79c);
-        for (let q = 0; q < 9; q++) b.box(0.36, 0.03, 0.36, -0.5 + (q % 3) * 0.5, 0.08, -0.5 + ((q / 3) | 0) * 0.5, q % 2 ? 0xcdb588 : 0xe6d4ac, [0, q * 0.4, 0]);
-        g.add(new THREE.Mesh(b.build().geo, MAT.main));
+        const b = new MB(); b.box(1.5, 0.08, 1.5, 0, 0, 0, 0xc6c3a3);
+        for (let q = 0; q < 9; q++) b.box(0.43, 0.04, 0.43, -0.48 + (q % 3) * 0.48, 0.08, -0.48 + ((q / 3) | 0) * 0.48, q % 2 ? 0xd8d0b6 : 0xeee0bd, [0, (q % 3 - 1) * 0.035, 0]);
+        const pathGeo = b.build().geo; temporary.push(pathGeo);
+        g.add(new THREE.Mesh(pathGeo, MAT.main));
       } else {
         const m = getModel(type, type === 'house' ? 0 : type === 'flowers' ? 1 : 0);
         g.add(new THREE.Mesh(m.geo, MAT.build));
-        if (m.glow) g.add(new THREE.Mesh(m.glow, new THREE.MeshBasicMaterial({ color: 0xffd98a })));
+        if (m.glow) g.add(new THREE.Mesh(m.glow, glow));
         if (type === 'windmill') { const bl = new THREE.Mesh(cachedGeo('blades', mBlades), MAT.main); bl.position.set(0, 1.6, 0.6); bl.rotation.z = 0.4; g.add(bl); }
-        if (type === 'farm') { const cr = new THREE.Mesh(cachedGeo('crops', mCrops), new THREE.MeshLambertMaterial({ color: 0xd9c04f })); g.add(cr); }
+        if (type === 'farm') { const cr = new THREE.Mesh(cachedGeo('crops', mCrops), crops); g.add(cr); }
       }
       sc.add(g);
-      const box = new THREE.Box3().setFromObject(g), c = box.getCenter(new THREE.Vector3()), rad = box.getSize(new THREE.Vector3()).length() / 2 * 0.86;
+      const box = new THREE.Box3().setFromObject(g), c = box.getCenter(new THREE.Vector3()), size = box.getSize(new THREE.Vector3());
+      cam.position.set(c.x + 6, c.y + 5.2, c.z + 7.5); cam.lookAt(c); cam.updateMatrixWorld(true);
+      // Fit the actual camera-space silhouette, keeping tall landmarks and broad farms equally legible.
+      let extent = 0;
+      for (const x of [box.min.x, box.max.x]) for (const y of [box.min.y, box.max.y]) for (const z of [box.min.z, box.max.z]) {
+        p.set(x, y, z).applyMatrix4(cam.matrixWorldInverse); extent = Math.max(extent, Math.abs(p.x), Math.abs(p.y));
+      }
+      const rad = Math.max(0.3, extent * 1.12);
       cam.left = -rad; cam.right = rad; cam.top = rad; cam.bottom = -rad; cam.updateProjectionMatrix();
-      cam.position.set(c.x + 6, c.y + 5.2, c.z + 7.5); cam.lookAt(c);
+      shadow.position.set(c.x, box.min.y - 0.012, c.z);
+      shadow.scale.set(Math.max(0.7, size.x * 1.2), Math.max(0.7, size.z * 1.2), 1);
       r.render(sc, cam);
       UIS.thumbs[type] = r.domElement.toDataURL('image/png');
       sc.remove(g);
     }
   } catch (e) { /* buttons fall back to text only */ }
+  for (const o of temporary) o.dispose();
   r.dispose(); if (r.forceContextLoss) r.forceContextLoss();
 }
 

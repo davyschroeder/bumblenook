@@ -1,0 +1,49 @@
+{
+  "edition": "Bumblenook Storybook Graphics Edition",
+  "date": "2026-11-24",
+  "language_default": "English",
+  "model_variants_checked": 65,
+  "profession_rigs_checked": 27,
+  "simulation_checks": [
+    {
+      "name": "Fresh normal village starts with four inhabitants",
+      "pass": true
+    },
+    {
+      "name": "Every model and variant has finite geometry and valid bounds",
+      "pass": true
+    },
+    {
+      "name": "All job rigs are finite and preserve child size",
+      "pass": true
+    },
+    {
+      "name": "Placement, assignment, working simulation and construction",
+      "pass": true
+    },
+    {
+      "name": "Serialize and load preserve buildings, inhabitants, jobs and resource totals",
+      "pass": true
+    },
+    {
+      "name": "Paused animation is stable and all action poses remain finite",
+      "pass": true
+    },
+    {
+      "name": "Completed showcase models and world animation are finite",
+      "pass": true
+    }
+  ],
+  "shader_compilation": {
+    "context": "Mesa llvmpipe OpenGL ES 3.2 via surfaceless EGL",
+    "pairs": 14,
+    "all_linked": true
+  },
+  "visual_review": "Actual scene geometry rendered separately in Blender for model inspection.",
+  "interface_review": "Desktop and 390 x 844 mobile UI: menus, continuation, construction toolbar and settings checked with an isolated renderer stub.",
+  "limitations": [
+    "The available browser has WebGL disabled even for the original game. Full browser GPU rendering and frame rates were not measured.",
+    "The separate model review approximates game shaders and is not a gameplay screenshot."
+  ],
+  "portable_html": "Bumblenook.html contains embedded Three.js and both fonts; no external scripts."
+}

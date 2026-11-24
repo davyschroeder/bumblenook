@@ -38,15 +38,15 @@ const COL = {};
 function initColors() {
   const mk = (h) => new THREE.Color(h);
   Object.assign(COL, {
-    sandA: mk(0xf1dfa9), sandB: mk(0xe7d197), wetA: mk(0xcfc08c), deep: mk(0x5f958f),
-    grassA: mk(0xa3d15e), grassB: mk(0x86c250), grassC: mk(0x74b24a), grassH: mk(0x93ab5c),
+    sandA: mk(0xf2deb1), sandB: mk(0xddc299), wetA: mk(0xb7c49e), deep: mk(0x386f78),
+    grassA: mk(0x8db75c), grassB: mk(0x77a950), grassC: mk(0x659653), grassH: mk(0x8da369),
     rockA: mk(0xaaa79c), rockB: mk(0x908e87), rockT: mk(0xcfcbc0),
     pathA: mk(0xdcc79c), pathB: mk(0xcdb588), dirt: mk(0xb99d6c), field: mk(0x8a6240),
     autumn: mk(0xc9a84a), snow: mk(0xf2f6fa), summer: mk(0xb8cf5a),
   });
 }
 function tileColor(k, i, j, tri, out) {
-  const t = W.type[k], n = hash2(i, j, W.seed + tri * 31), hgt = W.tileH[k];
+  const t = W.type[k], n = fbm(i*.31,j*.31,W.seed+71,2)*.78 + hash2(i,j,W.seed+tri*31)*.22, hgt = W.tileH[k];
   if (W.paint[k] === 1) out.copy(COL.pathA).lerp(COL.pathB, n);
   else if (W.paint[k] === 2) out.copy(COL.dirt).lerp(COL.pathB, n * 0.4);
   else if (W.paint[k] === 3) out.copy(COL.field).lerp(COL.dirt, n * 0.25);
@@ -84,6 +84,7 @@ function refreshTile(i, j) {
     }
   }
   W.tDirty = true;
+  if(W.tSurface)for(let q=0;q<6;q++)W.tSurface[k*6+q]=W.paint[k];
 }
 function paintTile(k, v) { W.paint[k] = v; refreshTile(k % N, (k / N) | 0); }
 function flattenArea(i0, j0, size, y) {
@@ -102,17 +103,19 @@ function footprintHeight(i0, j0, size) {
 
 function buildTerrain() {
   W.tPos = new Float32Array(N * N * 18); W.tCol = new Float32Array(N * N * 18); W.tNor = new Float32Array(N * N * 18);
+  W.tSurface = new Float32Array(N*N*6);
   for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) refreshTile(i, j);
   const g = new THREE.BufferGeometry();
   g.setAttribute('position', new THREE.BufferAttribute(W.tPos, 3));
   g.setAttribute('color', new THREE.BufferAttribute(W.tCol, 3));
   g.setAttribute('normal', new THREE.BufferAttribute(W.tNor, 3));
+  g.setAttribute('aSurface', new THREE.BufferAttribute(W.tSurface, 1));
   W.terrain = new THREE.Mesh(g, terrainMaterial());
   W.terrain.receiveShadow = true;
   worldGroup.add(W.terrain);
   const floor = new THREE.Mesh(new THREE.PlaneGeometry(600, 600), new THREE.MeshBasicMaterial({ color: 0x2f7f93 }));
   floor.rotation.x = -Math.PI / 2; floor.position.y = -1.9;
-  worldGroup.add(floor);
+  W.seabed=floor;worldGroup.add(floor);
 }
 
 function buildWater() {
@@ -124,37 +127,53 @@ function buildWater() {
     transparent: true,
     uniforms: {
       hmap: { value: W.hmap }, time: SWAY.uTime, lin: { value: 0 }, sunK: { value: 1 }, tint: { value: new THREE.Color(1, 1, 1) },
-      shallow: { value: new THREE.Color(0x7fdcd6) }, deep: { value: new THREE.Color(0x2f8fb5) },
+      shallow: { value: new THREE.Color(0x6cc8b2) }, deep: { value: new THREE.Color(0x267a8c) }, sunD: { value: new THREE.Vector3(.5,.8,.3) },
       fogC: { value: new THREE.Color(0xffffff) }, fogN: { value: 60 }, fogF: { value: 160 },
     },
     vertexShader: `varying vec3 wp; varying float vd;
       void main(){ vec4 w = modelMatrix*vec4(position,1.); wp = w.xyz; vec4 mv = viewMatrix*w; vd = -mv.z; gl_Position = projectionMatrix*mv; }`,
-    fragmentShader: `uniform sampler2D hmap; uniform float time, lin, sunK; uniform vec3 tint, shallow, deep, fogC; uniform float fogN, fogF;
+    fragmentShader: `uniform sampler2D hmap; uniform float time, lin, sunK; uniform vec3 tint, shallow, deep, fogC, sunD; uniform float fogN, fogF;
       varying vec3 wp; varying float vd;
+      float whash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+      float wnoise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(whash(i),whash(i+vec2(1.,0.)),f.x),mix(whash(i+vec2(0.,1.)),whash(i+1.),f.x),f.y);}
       void main(){
         vec2 uv = (wp.xz + ${HALF.toFixed(1)}) / ${N.toFixed(1)};
         vec2 tuv = (uv*${N.toFixed(1)} + .5) / ${(N + 1).toFixed(1)};
         float h = texture2D(hmap, clamp(tuv, 0., 1.)).r*4. - 2.;
         float inside = step(0.,uv.x)*step(uv.x,1.)*step(0.,uv.y)*step(uv.y,1.);
         float depth = mix(1.6, -h, inside);
-        float w = sin(wp.x*1.3 + time*.9)*sin(wp.z*1.1 - time*.7);
-        vec3 col = mix(shallow, deep, smoothstep(0., .95, depth));
-        float sp = sin(wp.x*3.1 + time*1.3 + sin(wp.z*2.3 + time))*sin(wp.z*2.7 - time*1.1);
-        col += smoothstep(.9, 1., sp)*.1;
-        float sw = sin(wp.x*.55 + wp.z*.32 + time*.45) + sin(wp.x*.21 - wp.z*.63 - time*.33);
-        col *= 1. + .05*sw*smoothstep(.2, 1., depth);
-        float gl = sin(wp.x*7.3 + time*2.1 + sin(wp.z*5.1 - time*1.3)*1.7)*sin(wp.z*6.7 - time*1.7 + sin(wp.x*4.3 + time)*1.4);
-        col += vec3(1., .95, .8)*smoothstep(.93, 1., gl)*(.35 + .35*sw*.5)*sunK*smoothstep(.15, .7, depth);
-        float band = sin(depth*24. - time*1.5 + w*1.6);
-        float foam = smoothstep(.5, .9, band)*smoothstep(.4, .08, depth);
-        foam = max(foam, smoothstep(.075, .02, depth));
-        col = mix(col, vec3(1.), foam*.8);
-        float alpha = max(mix(.6, .96, smoothstep(0., .7, depth)), foam);
-        col *= tint;
+        vec2 p=wp.xz;
+        float swell=sin(p.x*.64+p.y*.33-time*.54)+sin(p.y*.91-p.x*.24+time*.43)*.55;
+        float ripple=sin(p.x*3.4+time*.81+sin(p.y*2.6-time*.46))*sin(p.y*3.1-time*.74);
+        vec3 col=mix(shallow,deep,smoothstep(.02,1.5,depth));
+        col*=.96+.035*swell+.035*ripple;
+        // Moving light lattices are strongest over the visible sandy seabed.
+        float ca=abs(sin(p.x*3.1+sin(p.y*2.9+time*.47)+time*.32));
+        float cb=abs(sin(p.y*3.7+sin(p.x*2.4-time*.36)-time*.28));
+        float caustic=pow(max(0.,1.-min(ca,cb)),16.);
+        col+=vec3(.22,.32,.19)*caustic*(1.-smoothstep(.12,.92,depth))*sunK;
+        // A broad soft reflection and tiny moving glints, without expensive reflection passes.
+        vec3 norm=normalize(vec3(cos(p.x*2.7+time*.7+sin(p.y*1.9))*.09,1.,sin(p.y*2.9-time*.62+sin(p.x*2.1))*.08));
+        vec3 eye=normalize(cameraPosition-wp), halfway=normalize(eye+sunD);
+        float spec=pow(max(0.,dot(norm,halfway)),96.)*.42;
+        float sparkle=pow(max(0.,dot(norm,halfway)),650.)*.75;
+        col+=vec3(1.,.88,.63)*(spec+sparkle)*sunK*smoothstep(.03,.5,depth);
+        float fres=pow(1.-max(0.,dot(norm,eye)),3.);
+        col=mix(col,fogC*.73,fres*.28);
+        // Several narrow wavelets arrive at the shore and dissolve into broken foam.
+        float coast=1.-smoothstep(.03,.4,depth);
+        float band=sin(depth*37.-time*1.45+swell*.7);
+        float broken=.45+.55*wnoise(p*6.+vec2(time*.12,-time*.09));
+        float foam=smoothstep(.62,.96,band)*coast*broken;
+        foam=max(foam,(1.-smoothstep(.006,.045,depth))*.7);
+        col=mix(col,vec3(.88,.98,.91),foam*.76);
+        float alpha=max(mix(.48,.97,smoothstep(0.,.9,depth)),foam*.84);
+        col*=tint;
         col = mix(col, fogC, smoothstep(fogN, fogF, vd));
-        gl_FragColor = vec4(mix(pow(col, vec3(1./2.2)), col, lin), alpha);
+        gl_FragColor = vec4(mix(pow(max(col,vec3(0.)), vec3(1./2.2)), col, lin), alpha);
       }`,
   });
+  mat.depthWrite = false;
   W.water = new THREE.Mesh(new THREE.PlaneGeometry(600, 600), mat);
   W.water.rotation.x = -Math.PI / 2;
   W.water.renderOrder = 1;
@@ -168,35 +187,51 @@ function updateHmap() {
 }
 
 // ----- nature -----
-const TREE_TINT = [[0x6fb04a, 0x5fa243, 0x84c057, 0x9fc94f, 0x79b94f, 0xe2a23c], [0x3f8a55, 0x357a4c, 0x4a9660]];
+const TREE_TINT = [[0x77a65b, 0x5c925b, 0x96b969, 0xb4c877, 0x6ea774, 0xe5b866], [0x397e70, 0x3d7863, 0x5c9974]];
 function buildNatureMeshes() {
   const mkMat = (sway) => {
-    const m = new THREE.MeshLambertMaterial({ color: 0xffffff, vertexColors: true });
+    const m = new THREE.MeshStandardMaterial({ color: 0xffffff, vertexColors: true, roughness: 0.95 });
     if (sway) m.onBeforeCompile = (sh) => {
       sh.uniforms.uTime = SWAY.uTime;
       sh.vertexShader = 'uniform float uTime;\n' + sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>
         #ifdef USE_INSTANCING
           float ph = instanceMatrix[3][0]*.9 + instanceMatrix[3][2]*.7;
-          transformed.x += sin(uTime*1.6 + ph)*.05*position.y;
-          transformed.z += cos(uTime*1.3 + ph*1.3)*.035*position.y;
+          float bend = pow(max(position.y - .12, 0.), 1.45);
+          float gust = .55 + .45*sin(uTime*.42 + ph*.3);
+          transformed.x += (sin(uTime*1.22 + ph)*.026 + sin(uTime*2.7 + ph*1.9)*.009)*bend*gust;
+          transformed.z += cos(uTime*.97 + ph*1.3)*.025*bend;
         #endif`);
     };
     return m;
   };
   const flat = (g) => { const n = g.index ? g.toNonIndexed() : g; n.computeVertexNormals(); return n; };
-  let b = new MB(); b.cyl(0.06, 0.1, 0.55, 5, 0, 0, 0, 0xffffff);
+  let b = new MB(); b.cyl(0.048, 0.12, 0.98, 7, 0, 0, 0, 0xffffff);
+  b.cyl(0.024, 0.055, 0.45, 5, -.10, .45, .02, 0xe1d0bd, [0, 0, .53]);
+  b.cyl(0.019, 0.044, 0.39, 5, .12, .57, -.02, 0xead4bd, [.18, 0, -.63]);
   const trunkG = b.build().geo;
-  b = new MB(); b.sph(0.46, 0, 0.86, 0, 0xffffff, [1, 0.92, 1], 1); b.sph(0.32, 0.12, 1.26, 0.05, 0xffffff, null, 1); b.sph(0.26, -0.28, 0.98, 0.14, 0xffffff, null, 1); b.sph(0.24, 0.3, 0.9, -0.16, 0xf2f2f2, null, 1); b.sph(0.2, -0.08, 1.08, -0.3, 0xececec);
+  b = new MB();
+  b.sph(.47, 0, 1.02, 0, 0xe8eedc, [1,.9,1], 1).sph(.36, .08, 1.43, .02, 0xffffff, [.9,1,.93], 1);
+  b.sph(.34, -.32, 1.14, .12, 0xf4f5e5, [1,.83,1], 1).sph(.32, .31, 1.17, -.12, 0xe1ebd8, [1,.9,1], 1);
+  b.sph(.27, -.16, 1.25, -.31, 0xd8e6ce, [1,.91,1], 1).sph(.25, .18, 1.11, .34, 0xf1f4e1, [1,.9,1], 1);
+  b.sph(.16, -.18, 1.51, .16, 0xffffff, [1,.85,1], 1).sph(.16, .4, 1.32, .02, 0xf4f7e9, [1,.9,1], 1);
   const roundG = b.build().geo;
-  b = new MB(); b.cone(0.5, 0.52, 7, 0, 0.34, 0, 0xe9e9e9); b.cone(0.41, 0.5, 7, 0, 0.62, 0, 0xf2f2f2, [0, 0.45, 0]); b.cone(0.32, 0.48, 7, 0, 0.9, 0, 0xfafafa, [0, 0.9, 0]); b.cone(0.22, 0.46, 7, 0, 1.18, 0, 0xffffff, [0, 1.35, 0]);
+  b = new MB();
+  for (let q = 0; q < 5; q++) {
+    const y = .30 + q*.24, rad = .53 - q*.086;
+    b.cone(rad,.58,9,0,y,0,[0xcbded1,0xd8e8db,0xe5efdf,0xf0f3e5,0xffffff][q],[0,q*.47,0]);
+    for (let a = 0; a < 5 && q < 3; a++) {
+      const ang = a*TAU/5 + q*.48;
+      b.cone(rad*.30,.3,5,Math.cos(ang)*rad*.58,y+.04,Math.sin(ang)*rad*.58,0xe3eddf,[0,ang,.08]);
+    }
+  }
   const pineG = b.build().geo;
   const mk = (g, mat, max, shadow) => {
     const m = new THREE.InstancedMesh(g, mat, max);
-    m.castShadow = shadow; m.receiveShadow = true; m.frustumCulled = false; m.count = max;
+    m.castShadow = shadow; m.receiveShadow = true; m.frustumCulled = false; m.count = 0;
     for (let q = 0; q < max; q++) { m.setMatrixAt(q, ZERO_M); m.setColorAt(q, _c.set(0xffffff)); }
     worldGroup.add(m); return m;
   };
-  W.mTrunk = mk(trunkG, new THREE.MeshLambertMaterial({ color: 0x8a5d3b, vertexColors: true }), MAXT, true);
+  W.mTrunk = mk(trunkG, new THREE.MeshStandardMaterial({ color: 0x826248, vertexColors: true, roughness: 1 }), MAXT, true);
   W.mRound = mk(roundG, mkMat(true), MAXT, true);
   W.mPine = mk(pineG, mkMat(true), MAXT, true);
   W.mRock = mk(flat(new THREE.DodecahedronGeometry(0.42, 0)), new THREE.MeshLambertMaterial({ color: 0xffffff }), MAXR, true);
@@ -206,10 +241,21 @@ function buildNatureMeshes() {
   for (const p of [[0.1, 0.36, 0.2], [-0.2, 0.3, 0.12], [0.24, 0.26, -0.08], [-0.05, 0.4, -0.12], [0.28, 0.3, 0.2], [-0.24, 0.22, -0.14], [0.02, 0.3, 0.28]])
     b.sph(0.055, p[0], p[1], p[2], 0xffffff);
   W.mBerry = mk(b.build().geo, new THREE.MeshLambertMaterial({ color: 0xd9304a }), MAXB, false);
-  b = new MB(); b.cone(0.035, 0.2, 3, 0, 0, 0, 0xffffff, [0, 0, 0.25]); b.cone(0.035, 0.26, 3, 0.05, 0, 0.03, 0xffffff); b.cone(0.03, 0.18, 3, -0.04, 0, 0.05, 0xffffff, [0.3, 0, -0.2]);
+  b = new MB();
+  for (let q = 0; q < 7; q++) {
+    const a = q*2.4, h = .12 + (q%3)*.046;
+    b.cone(.021,h,3,Math.sin(a)*.1,0,Math.cos(a)*.1,q%2 ? 0xe5edcc : 0xffffff,[Math.cos(a)*.25, a, Math.sin(a)*.3]);
+  }
+  b.sph(.062,-.1,.025,.07,0xf0f6dc,[1,.22,.7]).sph(.05,-.03,.027,.12,0xe7edcc,[1,.2,.8]);
   W.mTuft = mk(b.build().geo, mkMat(true), MAXTUFT, false);
-  b = new MB(); b.cyl(0.012, 0.012, 0.14, 3, 0, 0, 0, 0x5c9a45); b.sph(0.05, 0, 0.16, 0, 0xffffff, [1, 0.6, 1]);
-  W.mFlower = mk(b.build().geo, new THREE.MeshLambertMaterial({ vertexColors: true }), MAXFLOWER, false);
+  b = new MB();
+  for (const [x,z,h] of [[0,0,.19],[.15,.06,.13],[-.1,.13,.22]]) {
+    b.cyl(.009,.012,h,4,x,0,z,0x61954b);
+    for (let p=0;p<5;p++) { const a=p*TAU/5; b.sph(.034,x+Math.cos(a)*.042,h,z+Math.sin(a)*.042,0xffffff,[1,.34,1],0); }
+    b.sph(.022,x,h+.009,z,0xffcf62,[1,.6,1],0);
+    b.sph(.042,x+.025,h*.4,z,0x739d5a,[1,.25,.55]);
+  }
+  W.mFlower = mk(b.build().geo, mkMat(true), MAXFLOWER, false);
   W.tuftAt = new Int16Array(N * N); W.flowerAt = new Int16Array(N * N);
   W.nTuft = 0; W.nFlower = 0;
 }
@@ -239,6 +285,7 @@ function addTree(i, j, kind, size, r) {
   W.natK[k] = NAT_TREE; W.natI[k] = idx;
   (kind ? W.mRound : W.mPine).setMatrixAt(idx, ZERO_M);
   const mF = kind ? W.mPine : W.mRound;
+  W.mTrunk.count=Math.max(W.mTrunk.count,idx+1);mF.count=Math.max(mF.count,idx+1);
   mF.setColorAt(idx, _c.set(t.tint)); mF.instanceColor.needsUpdate = true;
   (kind ? W.mRound : W.mPine).instanceMatrix.needsUpdate = true;
   setTreeMatrix(t); hideDeco(k);
@@ -263,6 +310,7 @@ function addRock(i, j, amount, r) {
   const k = tileIdx(i, j), x = tileX(i) + (r() - 0.5) * 0.2, z = tileX(j) + (r() - 0.5) * 0.2;
   const rk = { idx: rocks.length, i, j, k, x, z, y: heightAt(x, z), amount, max: 36, rot: r() * TAU, sc: 0.9 + r() * 0.5 };
   rocks.push(rk);
+  W.mRock.count=rocks.length;
   W.natK[k] = NAT_ROCK; W.natI[k] = rk.idx; W.solid[k] = 1;
   W.mRock.setColorAt(rk.idx, _c.set(pick([0xb3b0a6, 0xa19e96, 0xc0bcb0]))); W.mRock.instanceColor.needsUpdate = true;
   setRockMatrix(rk); hideDeco(k);
@@ -283,6 +331,7 @@ function addBush(i, j, r, ripe, timer) {
   const k = tileIdx(i, j), x = tileX(i) + (r() - 0.5) * 0.4, z = tileX(j) + (r() - 0.5) * 0.4;
   const bu = { idx: bushes.length, i, j, k, x, z, y: heightAt(x, z), rot: r() * TAU, sc: 0.9 + r() * 0.35, ripe: ripe !== false, timer: timer || 0, res: false, gone: false };
   bushes.push(bu);
+  W.mBush.count=W.mBerry.count=bushes.length;
   W.natK[k] = NAT_BUSH; W.natI[k] = bu.idx;
   W.mBush.setColorAt(bu.idx, _c.set(pick([0x4f9a48, 0x5aa550, 0x468c44]))); W.mBush.instanceColor.needsUpdate = true;
   setBushMatrix(bu); hideDeco(k);
@@ -292,6 +341,7 @@ function hideDeco(k) {
   if (!W.tuftAt) return;
   if (W.tuftAt[k]) { W.mTuft.setMatrixAt(W.tuftAt[k] - 1, ZERO_M); W.mTuft.instanceMatrix.needsUpdate = true; W.tuftAt[k] = 0; }
   if (W.flowerAt[k]) { W.mFlower.setMatrixAt(W.flowerAt[k] - 1, ZERO_M); W.mFlower.instanceMatrix.needsUpdate = true; W.flowerAt[k] = 0; }
+  if (W.shoreAt && W.shoreAt[k]) for (const item of W.shoreAt[k]) { item.mesh.setMatrixAt(item.idx, ZERO_M); item.mesh.instanceMatrix.needsUpdate = true; }
 }
 function clearNat(k) {
   const kind = W.natK[k];
@@ -326,6 +376,7 @@ function scatterDeco(r) {
   }
   W.mTuft.instanceMatrix.needsUpdate = true; W.mTuft.instanceColor.needsUpdate = true;
   W.mFlower.instanceMatrix.needsUpdate = true; W.mFlower.instanceColor.needsUpdate = true;
+  W.mTuft.count=W.nTuft;W.mFlower.count=W.nFlower;
 }
 function generateNature(clear) {
   const r = mulberry32(W.seed * 7 + 3);
@@ -360,6 +411,7 @@ function generateNature(clear) {
   ring(5, 7, 11, (i, j) => addRock(i, j, 36, r));
   W.treeTarget = trees.filter((t) => t.state === 0).length;
   scatterDeco(r);
+  buildShoreDetails();
 }
 
 // ----- particles (unlit little chunks) -----
@@ -370,6 +422,7 @@ function initParticles() {
   const g = new THREE.IcosahedronGeometry(0.5, 0);
   partMesh = new THREE.InstancedMesh(g, new THREE.MeshBasicMaterial({ color: 0xffffff }), PART_MAX);
   partMesh.frustumCulled = false;
+  partMesh.count=0;
   for (let q = 0; q < PART_MAX; q++) { partMesh.setMatrixAt(q, ZERO_M); partMesh.setColorAt(q, _c.set(0xffffff)); }
   scene.add(partMesh);
 }
@@ -402,6 +455,7 @@ function updateParticles(dt, lightK) {
   }
   for (; q < (partMesh.userData.last || 0); q++) partMesh.setMatrixAt(q, ZERO_M);
   partMesh.userData.last = parts.length;
+  partMesh.count=parts.length;
   partMesh.instanceMatrix.needsUpdate = true; partMesh.instanceColor.needsUpdate = true;
 }
 
@@ -411,6 +465,7 @@ let critMesh; const crits = [];
 function initCritters() {
   critMesh = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 0.7, 1.5), new THREE.MeshBasicMaterial({ color: 0xffffff }), CRIT_MAX);
   critMesh.frustumCulled = false;
+  critMesh.count=0;
   for (let q = 0; q < CRIT_MAX; q++) { critMesh.setMatrixAt(q, ZERO_M); critMesh.setColorAt(q, _c.set(0xffffff)); }
   scene.add(critMesh);
 }
@@ -446,13 +501,14 @@ function rebuildCritters(homes) {
     else if (ff < 34 && (W.natK[k] === NAT_TREE || r() < 0.15)) { addCritter(2, tileX(i), W.tileH[k] + 0.5 + r() * 0.5, tileX(j), 0.9); ff++; }
   }
   for (let q = 0; q < crits.length; q++) critMesh.setColorAt(q, _c.set(crits[q].col));
+  critMesh.count=crits.length;
   critMesh.instanceColor.needsUpdate = true;
 }
 
 // ----- clouds & birds -----
 const clouds = [], birds = [];
 function initSky() {
-  const cm = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.9 });
+  const cm = new THREE.MeshStandardMaterial({ color: 0xfffaf0, roughness: 1, transparent: true, opacity: 0.83, depthWrite: false });
   W.cloudMat = cm;
   for (let q = 0; q < 7; q++) {
     const b = new MB();
@@ -548,6 +604,7 @@ function applyDaylight(t, target) {
   else { const tt = t >= 0.97 ? t - 1 : t; const an = lerp(0.12, Math.PI - 0.12, (tt + 0.03) / 0.73); _v.set(Math.cos(an) * 0.85, Math.sin(an) * 0.8 + 0.28, 0.5); }
   _v.normalize();
   sun.position.copy(target).addScaledVector(_v, 60);
+  if (wu.sunD) wu.sunD.value.copy(_v);
   sun.target.position.copy(target); sun.target.updateMatrixWorld();
 }
 
@@ -568,7 +625,14 @@ function resetWorld(seed) {
   if (worldGroup) {
     scene.remove(worldGroup);
     worldGroup.traverse((o) => { if (o.isInstancedMesh) o.dispose(); });
-    if (W.terrain) W.terrain.geometry.dispose();
+    const seen=new Set();
+    for(const key of ['terrain','water','seabed','mTrunk','mRound','mPine','mRock','mBush','mBerry','mTuft','mFlower']){
+      const o=W[key];if(!o)continue;
+      if(o.geometry&&!seen.has(o.geometry)){o.geometry.dispose();seen.add(o.geometry);}
+      if(o.material&&!seen.has(o.material)){o.material.dispose();seen.add(o.material);}
+    }
+    if(W.shoreDecor)W.shoreDecor.traverse(o=>{if(o.geometry)o.geometry.dispose();});
+    if(W.hmap)W.hmap.dispose();
   }
   worldGroup = new THREE.Group(); scene.add(worldGroup);
   trees.length = 0; rocks.length = 0; bushes.length = 0;
