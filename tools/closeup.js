@@ -14,7 +14,7 @@ const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'application/javascr
   const info = await page.evaluate((TIME) => {
     const { G, BT, api, UIS, CAM, SET } = __hh; SET.gfxSet = true; api.newGame(77, 'sandbox'); G.started = true; UIS.paused = true; G.tut = 6;
     const c = G.center; let n = 0; const spots = [];
-    for (let row = 0; row < 3 && n < BT.house.variants; row++) for (let col = 0; col < 4 && n < BT.house.variants; col++) {
+    for (let row = 0; row < 4 && n < BT.house.variants; row++) for (let col = 0; col < 6 && n < BT.house.variants; col++) {
       let done = false;
       for (let r = 0; r < 30 && !done; r++) for (let dj = -r; dj <= r && !done; dj++) for (let di = -r; di <= r && !done; di++) {
         const i = c.i + 5 + col * 3 + di, j = c.j - 3 + row * 3 + dj;
@@ -26,7 +26,7 @@ const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'application/javascr
     for (const t of ['lumber', 'store', 'bakery', 'quarry', 'market']) { for (let j = 4; j < 50; j++) { let ok = false; for (let i = 4; i < 50; i++) if (!api.canPlace(t, i, j) && Math.hypot(i - c.i, j - c.j - 6) < 6 && !api.blocks(t, i, j, 0)) { api.placeBuilding(t, i, j, 0, { done: true, silent: true }); ok = true; break; } if (ok) break; } }
     G.time = TIME; api.stepSim(0.05); G.time = TIME;
     const xs = spots.map((s) => s[0] + 1 - 28), zs = spots.map((s) => s[1] + 1 - 28);
-    CAM.gx = CAM.tx = (Math.min(...xs) + Math.max(...xs)) / 2; CAM.gz = CAM.tz = (Math.min(...zs) + Math.max(...zs)) / 2; CAM.gd = CAM.dist = 15; CAM.gyaw = CAM.yaw = 0.35; CAM.attract = false;
+    CAM.gx = CAM.tx = (Math.min(...xs) + Math.max(...xs)) / 2; CAM.gz = CAM.tz = (Math.min(...zs) + Math.max(...zs)) / 2; CAM.gd = CAM.dist = 21; CAM.gyaw = CAM.yaw = 0.5; CAM.attract = false;
     return { houses: spots.length, post: __hh.GFX.on };
   }, +(process.env.TIME || 0.4));
   console.log(JSON.stringify(info));

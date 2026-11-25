@@ -3,7 +3,7 @@ const BRICK_STOP = 150;
 const RES = { wood: 'Wood', stone: 'Stone', food: 'Food', grain: 'Grain', honey: 'Honey', wool: 'Wool', cloth: 'Cloth', brick: 'Bricks', cider: 'Cider', coins: 'Coins' };
 const BT = {
   center: { name: 'Village Green', size: 3, beds: 4, storage: true, decor: 5, desc: 'The heart of the village. Villagers bring their harvest here.' },
-  house: { name: 'Cottage', cat: 'dorp', size: 2, cost: { wood: 20 }, time: 10, beds: 3, variants: 12, desc: 'A snug home for 3 villagers. More beds bring new settlers.' },
+  house: { name: 'Cottage', cat: 'dorp', size: 2, cost: { wood: 20 }, time: 10, beds: 3, variants: 24, desc: 'A snug home for 3 villagers. More beds bring new settlers.' },
   store: { lvl: 1, name: 'Storehouse', cat: 'dorp', size: 2, cost: { wood: 40, stone: 10 }, time: 14, storage: true, desc: 'An extra drop-off point. Put one near your workplaces to shorten the walk.' },
   well: { name: 'Well', cat: 'dorp', size: 1, cost: { stone: 20 }, time: 8, decor: 6, desc: 'Fresh water in the middle of the village. A real boost to happiness.' },
   market: { name: 'Market', cat: 'dorp', size: 2, cost: { wood: 40, stone: 30 }, time: 16, job: 'merchant', slots: 1, lvl: 2, desc: 'Trade goods for coins and back. With a merchant, every morning is market day.' },

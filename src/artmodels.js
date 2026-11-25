@@ -131,8 +131,45 @@ function artCenter() {
   for (let q = 0; q < 3; q++) b.sph(0.09, -0.16 + q * 0.16, 0.03, 1.24, ART.limestone, [1, 0.3, 1]);
   return b.build();
 }
+// More roof shapes for the cottages: hipped, gambrel and saltbox, laid in rows like the gable roof.
+function artSlope(b, pts, col, rows, cx, cy, cz, ry, ox, oy, oz) {       // pts: eave left, eave right, top right, top left
+  const L = (a, c, t) => [a[0] + (c[0] - a[0]) * t, a[1] + (c[1] - a[1]) * t, a[2] + (c[2] - a[2]) * t];
+  for (let r = 0; r < rows; r++) {
+    const t0 = r / rows, t1 = (r + 1) / rows;
+    const q = [L(pts[0], pts[3], t0), L(pts[1], pts[2], t0), L(pts[1], pts[2], t1), L(pts[0], pts[3], t1)];
+    let tris = [q[0], q[1], q[2], q[0], q[2], q[3]];
+    const u = [q[1][0] - q[0][0], q[1][1] - q[0][1], q[1][2] - q[0][2]], w = [q[3][0] - q[0][0] + q[2][0] - q[1][0], q[3][1] - q[0][1] + q[2][1] - q[1][1], q[3][2] - q[0][2] + q[2][2] - q[1][2]];
+    const n = [u[1] * w[2] - u[2] * w[1], u[2] * w[0] - u[0] * w[2], u[0] * w[1] - u[1] * w[0]];
+    const mid = [(q[0][0] + q[2][0]) / 2 - cx, (q[0][1] + q[2][1]) / 2 - cy, (q[0][2] + q[2][2]) / 2 - cz];
+    if (n[0] * mid[0] + n[1] * mid[1] + n[2] * mid[2] < 0) tris = [q[0], q[2], q[1], q[0], q[3], q[2]];
+    const arr = []; for (const v of tris) arr.push(v[0], v[1] + 0.012 * (rows - r) / rows, v[2]);
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(arr, 3));
+    b._add(g, ox, oy, oz, artTint(col, 0.86 + (r % 2) * 0.1 + ((r * 5) % 3) * 0.02), [0, ry || 0, 0]);
+  }
+}
+function artRoofForm(b, form, x, y, z, w, d, h, col, ry, wall) {
+  const a = w / 2, c = d / 2, S = (pts, cl, rows, cy) => artSlope(b, pts, cl, rows, 0, cy === undefined ? h * 0.3 : cy, 0, ry, x, y, z);
+  const A = [-a, 0, -c], B = [a, 0, -c], Cc = [a, 0, c], D = [-a, 0, c];
+  b._add(new THREE.BoxGeometry(w, 0.035, d), x, y + 0.012, z, artTint(col, 0.6), [0, ry || 0, 0]);
+  if (form === 1) {                        // hipped: four slopes meeting in a short ridge
+    const rl = Math.max(0.02, (w - d) / 2 + 0.12), R1 = [-rl, h, 0], R2 = [rl, h, 0];
+    S([D, Cc, R2, R1], col, 5); S([B, A, R1, R2], col, 5); S([A, D, R1, R1], col, 5); S([Cc, B, R2, R2], col, 5);
+    b._add(new THREE.CylinderGeometry(0.03, 0.03, rl * 2 + 0.06, 6), x, y + h + 0.02, z, artTint(col, 1.15), [0, ry || 0, Math.PI / 2]);
+  } else if (form === 2) {                 // gambrel: steep below, gentle above, like a little barn
+    const k = c * 0.56, m = h * 0.66, R1 = [-a, h, 0], R2 = [a, h, 0];
+    for (const s of [1, -1]) { const E0 = [-a, 0, s * c], E1 = [a, 0, s * c], M0 = [-a, m, s * k], M1 = [a, m, s * k]; S([E0, E1, M1, M0], col, 3, 0); S([M0, M1, R2, R1], artTint(col, 1.06), 3, 0); }
+    for (const sx of [-1, 1]) { const X = sx * (a - 0.05); S([[X, 0, -c + 0.04], [X, 0, c - 0.04], [X, m, k - 0.03], [X, m, -k + 0.03]], wall, 1, 0); S([[X, m, -k + 0.03], [X, m, k - 0.03], [X, h - 0.02, 0], [X, h - 0.02, 0]], wall, 1, 0); }
+    b._add(new THREE.CylinderGeometry(0.03, 0.03, w + 0.06, 6), x, y + h + 0.02, z, artTint(col, 1.15), [0, ry || 0, Math.PI / 2]);
+  } else {                                 // saltbox: the ridge sits towards the back, with one long slope to the front
+    const rz = -c * 0.42, R1 = [-a, h, rz], R2 = [a, h, rz];
+    S([D, Cc, R2, R1], col, 6, 0); S([B, A, R1, R2], artTint(col, 0.94), 3, 0);
+    for (const sx of [-1, 1]) { const X = sx * (a - 0.05); S([[X, 0, -c + 0.04], [X, 0, c - 0.04], [X, h - 0.02, rz], [X, h - 0.02, rz]], wall, 1, 0); }
+    b._add(new THREE.CylinderGeometry(0.03, 0.03, w + 0.06, 6), x, y + h + 0.02, z + (ry ? 0 : rz), artTint(col, 1.15), [0, ry || 0, Math.PI / 2]);
+  }
+}
 function artHouse(v) {
-  const b = new MB(), palette = [0xbd6249, 0x628998, 0x718e64, 0xc59b4e, 0x8b789c], roof = palette[v % 5];
+  // 24 cottages: six wall styles, four roof shapes and eight roof colours, mixed so neighbours rarely match
+  const b = new MB(), palette = [0xbd6249, 0x628998, 0x718e64, 0xc59b4e, 0x8b789c, 0x9a4638, 0x45616d, 0xd8b45e], form = ((v / 6) | 0) % 4, roof = palette[(v * 3 + form * 5) % 8];
   const style = v % 6, wall = [0xffebcd, 0xf2d9ba, 0xe2d6c4, 0xf8efd9, 0xd7e2d8, 0xf0dfbf][style];
   const h = style === 2 ? 1.02 : style === 4 ? 0.68 : 0.79, ry = style === 1 || style === 5 ? Math.PI / 2 : 0;
   b.box(1.46, 0.1, 1.3, 0, 0, 0, ART.mortar).box(1.3, h, 1.08, 0, 0.1, 0, wall);
@@ -143,9 +180,11 @@ function artHouse(v) {
     b.box(1.33, 0.055, 1.12, 0, 0.1 + h - 0.055, 0, ART.timber);
   }
   const peak = style === 2 ? 0.43 : style === 4 ? 0.65 : 0.56;
-  artRoof(b, 0, h + 0.1, 0, ry ? 1.34 : 1.53, ry ? 1.52 : 1.35, peak, roof, ry, 5);
+  if (form) artRoofForm(b, form, 0, h + 0.1, 0, ry ? 1.34 : 1.53, ry ? 1.52 : 1.35, form === 1 ? peak * 0.92 : form === 2 ? peak * 1.12 : peak * 1.05, roof, ry, wall);
+  else artRoof(b, 0, h + 0.1, 0, ry ? 1.34 : 1.53, ry ? 1.52 : 1.35, peak, roof, ry, 5);
   // A small proper dormer gives the broad roof a recognisable handmade silhouette.
-  if (!ry) {
+  if (form) { if (form === 2 && ry) artWindow(b, 0, h + 0.29, 0.55, 0.18, 0, false); }
+  else if (!ry) {
     b.box(0.33, 0.24, 0.3, 0.16, h + 0.19, 0.37, wall);
     artRoof(b, 0.16, h + 0.43, 0.37, 0.4, 0.44, 0.2, artTint(roof, 0.93), Math.PI / 2, 2);
     artWindow(b, 0.16, h + 0.32, 0.529, 0.13, 0, false);
