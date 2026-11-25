@@ -126,10 +126,11 @@ function startBuild(type) {
 }
 function hideGhost() { ghost.visible = false; ghostTile.visible = false; ghostFrame.visible = false; ghostX.visible = false; }
 function stopBuild() { UIS.build = null; hideGhost(); radRing.visible = false; document.body.classList.remove('building'); uiDirty(); }
+const placeReason = (B, i, j) => lockReason(B.type) || canPlace(B.type, i, j) || sealsOff(B.type, i, j, B.rot) || (canAfford(BT[B.type].cost) ? null : 'Not enough resources');
 function setGhostAt(i, j) {
   const B = UIS.build, d = BT[B.type];
   B.i = i; B.j = j; B.has = true;
-  B.reason = lockReason(B.type) || canPlace(B.type, i, j) || sealsOff(B.type, i, j, B.rot) || (canAfford(d.cost) ? null : 'Not enough resources');
+  B.reason = placeReason(B, i, j);
   const cx = i + d.size / 2 - HALF, cz = j + d.size / 2 - HALF;
   B.reach = null;
   if (d.radius && !B.reason) {
@@ -427,6 +428,8 @@ function refreshPlace() {
   const B = UIS.build, el = $('place');
   el.hidden = !B;
   if (!B) return;
+  // the chosen spot is judged again while you wait: once the wood or stone has come in, Place works straight away
+  if (B.has && placeReason(B, B.i, B.j) !== B.reason) setGhostAt(B.i, B.j);
   const d = BT[B.type];
   $('p-name').textContent = d.name; $('p-desc').textContent = d.desc;
   const ch = costHtml(d.cost); if ($('p-cost').dataset.h !== ch) { $('p-cost').innerHTML = ch; $('p-cost').dataset.h = ch; }
