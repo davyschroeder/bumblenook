@@ -69,7 +69,7 @@ function mCowshed() {
 function mCow() {
   const b = new MB();
   b.box(0.2, 0.2, 0.42, 0, 0.16, 0, C.white).box(0.15, 0.16, 0.18, 0, 0.26, 0.28, C.white).box(0.11, 0.08, 0.08, 0, 0.26, 0.4, C.pink);
-  b.box(0.21, 0.12, 0.16, 0, 0.24, -0.06, 0x3a2f2a).box(0.12, 0.1, 0.19, 0.045, 0.3, 0.2, 0x3a2f2a);
+  b.box(0.236, 0.13, 0.16, 0, 0.25, -0.06, 0x3a2f2a).box(0.1, 0.11, 0.14, 0.05, 0.33, 0.27, 0x3a2f2a);      // patches stand well clear of the white, or they shimmer
   for (const sx of [-1, 1]) { b.box(0.05, 0.16, 0.05, sx * 0.07, 0, 0.15, C.white).box(0.05, 0.16, 0.05, sx * 0.07, 0, -0.15, C.white).cone(0.02, 0.06, 4, sx * 0.06, 0.42, 0.26, C.woodL); }
   b.box(0.02, 0.16, 0.02, 0, 0.18, -0.23, C.white, [0.3, 0, 0]);
   return b.build().geo;
@@ -140,10 +140,11 @@ EXTRA_FN.cowshed = (g, ex) => addFlock(g, ex, 3, 'cow', mCow, [-1.1, 1.1, -0.1, 
 EXTRA_FN.brazier = (g, ex) => { ex.sprite = makeGlowSprite(1.5); ex.sprite.position.set(0, 0.5, 0); g.add(ex.sprite); };
 POOLS.brazier = 2.2; POOLS.pastry = 2.2; POOLS.tailor = 2.2;
 function animateFlock(u, dt, t) {
-  const f = u.flock, cow = f.box[1] - f.box[0] > 1.5;
+  const f = u.flock, cow = f.box[1] - f.box[0] > 1.5, gap = cow ? 0.6 : 0.24;
+  herdApart(f.list, f.box, gap, dt);
   for (const s of f.list) {
     s.wait -= dt;
-    if (s.wait <= 0 && s.wait > -90) { s.tx = rand(f.box[0], f.box[1]); s.tz = rand(f.box[2], f.box[3]); s.wait = -100; }
+    if (s.wait <= 0 && s.wait > -90) { herdTarget(f.list, s, f.box, gap); s.wait = -100; }
     let bob = 0;
     if (s.wait < -90) {
       const dx = s.tx - s.x, dz = s.tz - s.z, d = Math.hypot(dx, dz), sp = cow ? 0.16 : 0.3;

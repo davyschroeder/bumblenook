@@ -114,10 +114,37 @@ EXTRA_FN.pasture = (g, ex) => {
     m.position.set(s.x, 0, s.z); g.add(m); ex.sheep.push(s);
   }
 };
+// animals in one pen keep out of each other: they pick a spot away from the others and step aside when crowded
+function herdTarget(list, s, box, minD) {
+  let best = null, bd = -1;
+  for (let q = 0; q < 5; q++) {
+    const x = rand(box[0], box[1]), z = rand(box[2], box[3]); let near = 1e9;
+    for (const o of list) if (o !== s) near = Math.min(near, Math.hypot((o.wait < -90 ? o.tx : o.x) - x, (o.wait < -90 ? o.tz : o.z) - z));
+    if (near > bd) { bd = near; best = [x, z]; }
+    if (near > minD * 1.6) break;
+  }
+  s.tx = best[0]; s.tz = best[1];
+}
+function herdApart(list, box, minD, dt) {
+  for (let a = 0; a < list.length; a++) for (let b = a + 1; b < list.length; b++) {
+    const p = list[a], q = list[b]; let dx = q.x - p.x, dz = q.z - p.z, d = Math.hypot(dx, dz);
+    if (d >= minD) continue;
+    if (d < 1e-4) { dx = 1; dz = 0; d = 1; }
+    const push = (minD - d) * 0.5 * Math.min(1, dt * 4);
+    p.x = clamp(p.x - dx / d * push, box[0], box[1]); p.z = clamp(p.z - dz / d * push, box[2], box[3]);
+    q.x = clamp(q.x + dx / d * push, box[0], box[1]); q.z = clamp(q.z + dz / d * push, box[2], box[3]);
+    // two animals heading for the same patch: the one further from it thinks again
+    if (p.wait < -90 && q.wait < -90 && Math.hypot(p.tx - q.tx, p.tz - q.tz) < minD) herdTarget(list, Math.hypot(p.tx - p.x, p.tz - p.z) > Math.hypot(q.tx - q.x, q.tz - q.z) ? p : q, box, minD);
+    else if (p.wait >= 0 && q.wait < -90 && Math.hypot(q.tx - p.x, q.tz - p.z) < minD) herdTarget(list, q, box, minD);
+    else if (q.wait >= 0 && p.wait < -90 && Math.hypot(p.tx - q.x, p.tz - q.z) < minD) herdTarget(list, p, box, minD);
+  }
+}
+const SHEEP_BOX = [-1.1, 1.1, -0.2, 1.1];
 function animateSheep(u, dt, t) {
+  herdApart(u.sheep, SHEEP_BOX, 0.46, dt);
   for (const s of u.sheep) {
     s.wait -= dt;
-    if (s.wait <= 0 && s.wait > -90) { s.tx = rand(-1.1, 1.1); s.tz = rand(-0.2, 1.1); s.wait = -100; }
+    if (s.wait <= 0 && s.wait > -90) { herdTarget(u.sheep, s, SHEEP_BOX, 0.46); s.wait = -100; }
     if (s.wait < -90) {
       const dx = s.tx - s.x, dz = s.tz - s.z, d = Math.hypot(dx, dz);
       if (d < 0.05) s.wait = rand(2, 7);
