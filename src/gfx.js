@@ -59,7 +59,8 @@ function gfxBuild() {
       c=clamp((c*(2.51*c+.03))/(c*(2.43*c+.59)+.14),0.,1.);
       // Restrained split toning: warm sunlight, cool green shadows, readable nights.
       float l = dot(c, vec3(.2126, .7152, .0722));
-      c = mix(vec3(l), c, 1.045);
+      c = mix(vec3(l), c, 1.14);
+      c = mix(c, c*c*(3. - 2.*c), .26*warm);
       c = mix(c, c*c*(3. - 2.*c), .055);
       c *= mix(vec3(.94, 1.015, 1.045), vec3(1.045, 1.01, .955), smoothstep(.04, .6, l)*warm + (1. - warm)*.5);
       vec2 q = vUv - .5;
@@ -196,7 +197,7 @@ function gfxRender(dt) {
   blur(GFX.b0, GFX.c1, 1, 0); blur(GFX.c1, GFX.c0, 0, 1); blur(GFX.c0, GFX.c1, 1.6, 0); blur(GFX.c1, GFX.c0, 0, 1.6);
   u.tScene.value = GFX.rt.texture; u.tBloom.value = GFX.b0.texture; u.tWide.value = GFX.c0.texture;
   u.tDepth.value = GFX.rt.depthTexture; u.nearFar.value.set(camera.near,camera.far); u.focusDistance.value=CAM.dist-.25;
-  u.bloomK.value = lerp(0.16, 0.37, night) + RAINK * 0.04;
+  u.bloomK.value = lerp(0.1, 0.37, night) + RAINK * 0.04;
   u.blurK.value = (UIS.photo ? 3.6 : 1.8) * clamp(CAM.dist / 24, 0.55, 1.25) * (GFX.h / 900);
   u.focusY.value = 0.48; u.vig.value = lerp(0.18, 0.31, night); u.warm.value = 1 - night * 0.6;
   gfxPass(GFX.mFinal, null);

@@ -61,6 +61,17 @@ function tileColor(k, i, j, tri, out) {
   }
   if (W.season === 3 && t !== T_WATER) out.lerp(COL.snow, W.paint[k] ? 0.3 : t === T_SAND ? 0.3 : t === T_ROCK ? 0.55 : 0.8 - n * 0.1);
 }
+const _cc = new THREE.Color(), _ct = new THREE.Color();
+function cornerColor(ci, cj, out) {      // the mean colour of the unpainted tiles that meet at a grid corner
+  let r = 0, g = 0, b = 0, n = 0;
+  for (let dj = -1; dj <= 0; dj++) for (let di = -1; di <= 0; di++) {
+    const i = ci + di, j = cj + dj; if (!inGrid(i, j)) continue;
+    const k = tileIdx(i, j); if (W.paint[k]) continue;
+    tileColor(k, i, j, 0, _ct); r += _ct.r; g += _ct.g; b += _ct.b; n++;
+  }
+  if (!n) return false;
+  out.setRGB(r / n, g / n, b / n); return true;
+}
 // writes the two triangles of a tile into the terrain buffers
 function refreshTile(i, j) {
   const k = tileIdx(i, j), o = k * 18;
@@ -80,13 +91,20 @@ function refreshTile(i, j) {
     tileColor(k, i, j, t, _c);
     for (let q = 0; q < 3; q++) {
       Nn[p + q * 3] = nx; Nn[p + q * 3 + 1] = ny; Nn[p + q * 3 + 2] = nz;
-      Cc[p + q * 3] = _c.r; Cc[p + q * 3 + 1] = _c.g; Cc[p + q * 3 + 2] = _c.b;
+      // open ground blends from tile to tile, so the shore and the edge of the rocks are soft instead of stepped;
+      // paths, plots and fields keep their own crisp colour
+      const soft = !W.paint[k] && cornerColor(Math.round(P[p + q * 3] + HALF), Math.round(P[p + q * 3 + 2] + HALF), _cc) ? _cc : _c;
+      Cc[p + q * 3] = soft.r; Cc[p + q * 3 + 1] = soft.g; Cc[p + q * 3 + 2] = soft.b;
     }
   }
   W.tDirty = true;
   if(W.tSurface)for(let q=0;q<6;q++)W.tSurface[k*6+q]=W.paint[k];
 }
-function paintTile(k, v) { W.paint[k] = v; refreshTile(k % N, (k / N) | 0); }
+function paintTile(k, v) {              // the neighbours blend with this tile, so they are redrawn too
+  if (W.paint[k] === v) { refreshTile(k % N, (k / N) | 0); return; }
+  W.paint[k] = v; const ci = k % N, cj = (k / N) | 0;
+  for (let j = cj - 1; j <= cj + 1; j++) for (let i = ci - 1; i <= ci + 1; i++) if (inGrid(i, j)) refreshTile(i, j);
+}
 function flattenArea(i0, j0, size, y) {
   for (let j = j0; j <= j0 + size; j++) for (let i = i0; i <= i0 + size; i++) W.h[j * (N + 1) + i] = y;
   for (let j = j0 - 1; j <= j0 + size; j++) for (let i = i0 - 1; i <= i0 + size; i++) {
@@ -570,6 +588,7 @@ function updateRain(dt, cx, cz) {
 }
 
 // ----- day / night -----
+const DAY_DIM = 0.72;
 const DAYKEYS = [
   // t, sun colour, sun int, sky, ground, hemi int, background, glow, water tint
   [0.00, 0xffb07a, 0.55, 0xffd9c0, 0x7a6a5a, 0.62, 0xf6c7a2, 0.7, 0xe6c2b0],
@@ -594,6 +613,8 @@ function applyDaylight(t, target) {
   scene.background = DAY.bg; scene.fog.color.copy(DAY.bg);
   DAY.glow = lerp(k0[7], k1[7], f);
   if (RAINK > 0.01) { DAY.bg.lerp(_c2.set(0x8fa3b0), RAINK * 0.45); sun.intensity *= 1 - RAINK * 0.4; scene.fog.color.copy(DAY.bg); }
+  const dim = lerp(DAY_DIM, 1, clamp(DAY.glow * 2, 0, 1));      // full daylight was glaring on phone screens
+  sun.intensity *= dim; hemi.intensity *= dim * dim;
   DAY.lightK = clamp(sun.intensity * 0.55 + hemi.intensity * 0.6, 0.3, 1.1);
   MAT.glow.color.copy(GLOW_DAY).lerp(GLOW_NIGHT, DAY.glow);
   const wu = W.water.material.uniforms;
