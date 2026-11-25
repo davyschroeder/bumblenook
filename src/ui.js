@@ -158,6 +158,19 @@ function moveGhost(cx, cy) {
   const s = BT[B.type].size, i = Math.round(p.x + HALF - s / 2), j = Math.round(p.z + HALF - s / 2);
   if (i !== B.i || j !== B.j || !B.has) { setGhostAt(i, j); uiDirty(); }
 }
+function onGhost(cx, cy) {             // is this press on the building that is being placed?
+  const B = UIS.build; if (!G.started || !B || !B.has || BT[B.type].flat || BT[B.type].plant) return false;
+  const p = groundAt(cx, cy); if (!p) return false;
+  const s = BT[B.type].size, x = B.i + s / 2 - HALF, z = B.j + s / 2 - HALF, r = s / 2 + 0.45;
+  return Math.abs(p.x - x) <= r && Math.abs(p.z - z) <= r;
+}
+function turnGhostTo(cx, cy) {
+  const B = UIS.build, p = groundAt(cx, cy); if (!B || !B.has || !p) return;
+  const s = BT[B.type].size, dx = p.x - (B.i + s / 2 - HALF), dz = p.z - (B.j + s / 2 - HALF);
+  if (Math.hypot(dx, dz) < 0.5) return;
+  const rot = ((Math.round(Math.atan2(dx, dz) / (Math.PI / 2)) % 4) + 4) % 4;      // the front of a building is +z at rot 0
+  if (rot !== B.rot) { B.rot = rot; setGhostAt(B.i, B.j); sfx('click'); uiDirty(); }
+}
 function rotateGhost() { const B = UIS.build; if (!B) return; B.rot = (B.rot + 1) % 4; if (B.has) setGhostAt(B.i, B.j); sfx('click'); }
 function confirmBuild(keep) {
   const B = UIS.build; if (!B || !B.has) return false;
@@ -242,7 +255,7 @@ function initInput() {
     ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
     const paint = !!(G.started && UIS.build && BT[UIS.build.type].flat && e.button === 0 && ptrs.size === 1);
     if (paint) paintAt(e.clientX, e.clientY);
-    if (ptrs.size === 1) drag = { paint, sx: e.clientX, sy: e.clientY, lx: e.clientX, ly: e.clientY, moved: false, button: e.button, rot: e.button !== 0 || e.ctrlKey, t: performance.now() };
+    if (ptrs.size === 1) drag = { turn: !paint && e.button === 0 && UIS.touch && onGhost(e.clientX, e.clientY), paint, sx: e.clientX, sy: e.clientY, lx: e.clientX, ly: e.clientY, moved: false, button: e.button, rot: e.button !== 0 || e.ctrlKey, t: performance.now() };
     else if (ptrs.size === 2) { drag = null; gest = two(); }
     CAM.attract = CAM.attract && !G.started;
   });
@@ -259,6 +272,11 @@ function initInput() {
       gest = n; return;
     }
     if (drag && p && drag.paint) { paintAt(e.clientX, e.clientY); drag.moved = true; return; }
+    if (drag && p && drag.turn) {           // press the building you are placing and drag: it turns to face your finger
+      if (!drag.moved && Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) > 9) drag.moved = true;
+      if (drag.moved) turnGhostTo(e.clientX, e.clientY);
+      return;
+    }
     if (drag && p) {
       const dx = e.clientX - drag.lx, dy = e.clientY - drag.ly;
       if (!drag.moved && Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) > (UIS.touch ? 9 : 5)) drag.moved = true;
@@ -436,7 +454,7 @@ function refreshPlace() {
   const lock = lockReason(B.type);
   const few = B.has && !B.reason && B.reach && B.reach[0] < 4;
   const good = B.reach ? (few ? 'Only ' : '') + B.reach[0] + ' ' + B.reach[1] + ' in reach' : 'Good spot';
-  const msg = lock || (B.has ? B.reason : null) || (!B.has ? (UIS.touch ? 'Tap the island to pick a spot' : 'Click the island to place it') : good + (UIS.touch && !d.quick ? '. Tap Place.' : ''));
+  const msg = lock || (B.has ? B.reason : null) || (!B.has ? (UIS.touch ? 'Tap the island to pick a spot' : 'Click the island to place it') : good + (UIS.touch && !d.quick ? (d.size > 1 ? '. Drag it to turn, then tap Place.' : '. Tap Place.') : ''));
   $('p-msg').textContent = msg; $('p-msg').classList.toggle('bad', !!(lock || (B.has && B.reason) || few));
   $('p-rot').hidden = d.size === 1 && B.type !== 'lantern' && B.type !== 'bench';
   $('p-ok').hidden = !(UIS.touch && !d.quick);

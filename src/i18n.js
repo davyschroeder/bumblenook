@@ -489,7 +489,10 @@ for (const [k, v] of [
   ["Bring home 60 goods from the Far Isle", "Haal 60 goederen van het Verre Eiland"],
   ["Salt keeps food longer, clay makes bricks without stone, grapes become wine at the tavern.", "Met zout blijft voedsel langer goed, van klei bak je stenen zonder steen, en druiven worden wijn in de herberg."]
 ]) NL.set(k, v);
+NL.set('Good spot. Drag it to turn, then tap Place.', 'Goede plek. Sleep eraan om te draaien en tik dan op Plaats.');
 NL_TPL.unshift(
+  ["Only {n} {a} in reach. Drag it to turn, then tap Place.", "Maar {n} {a} binnen bereik. Sleep eraan om te draaien en tik dan op Plaats."],
+  ["{n} {a} in reach. Drag it to turn, then tap Place.", "{n} {a} binnen bereik. Sleep eraan om te draaien en tik dan op Plaats."],
   ["{a} was born in Bumblenook! {b}'s cottage has a new voice.", "{a} is geboren in Bumblenook! In het huisje van {b} klinkt een nieuwe stem."],
   ["{a} was born.", "{a} is geboren."],
   ["{a} has grown up and is ready to work, quick and clever from school.", "{a} is groot geworden en klaar om te werken, vlug en slim dankzij school."],
